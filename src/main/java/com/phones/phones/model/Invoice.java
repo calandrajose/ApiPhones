@@ -1,17 +1,18 @@
 package com.phones.phones.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
-@Entity
 public class Invoice {
-
+/*
     @Id
     @GeneratedValue
     private Long id;
@@ -34,4 +35,6 @@ public class Invoice {
     // Relacion DB
     @NotNull
     private Line line;
+
+ */
 }

@@ -1,22 +1,33 @@
 package com.phones.phones.controller;
 
-import com.phones.phones.service.ProviceService;
+import com.phones.phones.model.Province;
+import com.phones.phones.service.ProvinceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/provinces")
 public class ProvinceController {
 
-    private final ProviceService proviceService;
+    private final ProvinceService provinceService;
 
     @Autowired
-    public ProvinceController(ProviceService proviceService) {
-        this.proviceService = proviceService;
+    public ProvinceController(ProvinceService provinceService) {
+        this.provinceService = provinceService;
     }
 
 
+    @PostMapping("/")
+    public void add(@RequestBody @Valid final Province province) {
+        provinceService.add(province);
+    }
 
+    @GetMapping("/")
+    public List<Province> getAll() {
+        return provinceService.getAll();
+    }
 
 }

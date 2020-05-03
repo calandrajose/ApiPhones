@@ -1,12 +1,13 @@
 package com.phones.phones.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -37,8 +38,21 @@ public class User {
     @NotNull
     private boolean isActive;
 
-    //Ciudad - relacion DB
-    @NotNull
+    // Muchos USUARIOS tienen una CIUDAD
+    @JsonManagedReference
+    @ManyToOne()
+    @JoinColumn(name="id_city", nullable = false)
     private City city;
+
+    /*
+    @NotNull
+    @ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(
+            name = "user_x_user_rol",
+            joinColumns = { @JoinColumn(name = "id_user") },
+            inverseJoinColumns = { @JoinColumn(name = "id_user_rol") }
+    )
+    private Set<UserRol> projects = new HashSet<>();
+    */
 
 }

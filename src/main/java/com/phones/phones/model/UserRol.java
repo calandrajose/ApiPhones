@@ -1,13 +1,15 @@
 package com.phones.phones.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
+@NoArgsConstructor
 @Entity
 public class UserRol {
 
@@ -17,5 +19,11 @@ public class UserRol {
 
     @NotNull
     private String rol;
+
+/*
+    @ManyToMany(mappedBy = "user")
+    private Set<User> employees = new HashSet<>();
+
+ */
 
 }

@@ -34,4 +34,5 @@ public class CityService {
     public Optional<City> getByName(String name) {
         return cityRepository.findByName(name);
     }
+
 }

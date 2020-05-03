@@ -21,14 +21,14 @@ public class CityController {
     }
 
 
-    @GetMapping("/")
-    public List<City> getAll() {
-        return cityService.getAll();
-    }
-
     @PostMapping("/")
     public void add(@RequestBody @Valid final City city) {
         cityService.add(city);
+    }
+
+    @GetMapping("/")
+    public List<City> getAll() {
+        return cityService.getAll();
     }
 
     @GetMapping("/{id}")

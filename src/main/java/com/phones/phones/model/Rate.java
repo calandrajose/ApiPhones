@@ -1,29 +1,34 @@
 package com.phones.phones.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Data
-@Entity
+@NoArgsConstructor
+//@Entity
 public class Rate {
-
+/*
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //Relacion DB
     @NotNull
+    @ManyToOne()
+    @JoinColumn(name = "id_city")
+
     private City originCity;
 
     @NotNull
+    @ManyToOne()
+    @JoinColumn(name = "id_city")
     private City destinationCity;
-
 
     @NotNull
     private Float priceMinute;
+
+ */
 
 }
