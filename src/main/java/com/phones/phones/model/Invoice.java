@@ -1,20 +1,21 @@
 package com.phones.phones.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
+@NoArgsConstructor
+@Entity
+@Table(name = "invoice")
 public class Invoice {
-/*
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
@@ -32,9 +33,9 @@ public class Invoice {
     @NotNull
     private Date dueDate;
 
-    // Relacion DB
-    @NotNull
+    @JsonManagedReference
+    @ManyToOne()
+    @JoinColumn(name="id_line", nullable = false)
     private Line line;
 
- */
 }

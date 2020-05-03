@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Entity
+@Table(name = "province")
 public class Province {
 
     @Id

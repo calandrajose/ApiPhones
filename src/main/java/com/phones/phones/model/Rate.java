@@ -8,27 +8,25 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
-//@Entity
+@Entity
+@Table(name = "rate")
 public class Rate {
-/*
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
-    @ManyToOne()
-    @JoinColumn(name = "id_city")
+    private Float priceMinute;
 
+    @NotNull
+    @ManyToOne()
+    @JoinColumn(name = "id_city_origin")
     private City originCity;
 
     @NotNull
     @ManyToOne()
-    @JoinColumn(name = "id_city")
+    @JoinColumn(name = "id_city_destination")
     private City destinationCity;
-
-    @NotNull
-    private Float priceMinute;
-
- */
 
 }

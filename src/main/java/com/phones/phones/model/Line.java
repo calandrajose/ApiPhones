@@ -1,24 +1,27 @@
 package com.phones.phones.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 @Data
+@NoArgsConstructor
+@Entity
+@Table(name = "line")
 public class Line {
-/*
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
-    private Integer number;
+    private String number;
 
     @NotNull
     private Date creationDate;
@@ -26,10 +29,29 @@ public class Line {
     @NotNull
     private boolean isActive;
 
-    // Relaciones DB
-    @NotNull
-    private User user;
+    @JsonManagedReference
+    @ManyToOne()
+    @JoinColumn(name="id_line_type", nullable = false)
+    private LineType lineType;
 
- */
+    @JsonManagedReference
+    @ManyToOne()
+    @JoinColumn(name="id_user", nullable = false)
+    private User userLine;
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "line")
+    private List<Invoice> invoices;
+
+
+    // Error al mapear las llamadas con la linea
+    // Testing...
+    @JsonBackReference
+    @OneToMany(mappedBy = "originline")
+    private List<Call> originCalls;
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "destinationline")
+    private List<Call> destinationCalls;
 
 }
