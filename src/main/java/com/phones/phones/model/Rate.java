@@ -1,6 +1,7 @@
 package com.phones.phones.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -22,11 +23,13 @@ public class Rate {
     private Float priceMinute;
 
     @NotNull
+    @JsonManagedReference
     @ManyToOne()
     @JoinColumn(name = "id_city_origin", nullable = false)
     private City originCity;
 
     @NotNull
+    @JsonManagedReference
     @ManyToOne()
     @JoinColumn(name = "id_city_destination", nullable = false)
     private City destinationCity;

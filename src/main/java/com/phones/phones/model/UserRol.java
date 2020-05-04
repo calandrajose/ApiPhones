@@ -22,10 +22,8 @@ public class UserRol {
     @NotNull
     private String rol;
 
-    /*
     @JsonBackReference
     @ManyToMany(mappedBy = "userRols")
     private Set<User> users = new HashSet<>();
-     */
 
 }

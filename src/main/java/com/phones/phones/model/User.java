@@ -50,9 +50,8 @@ public class User {
     @JoinColumn(name="id_city", nullable = false)
     private City city;
 
-    /*
     //Error al mapeo con user_rol (many to many)
-    //@NotNull
+    @NotNull
     @JsonManagedReference
     @ManyToMany()
     @JoinTable(
@@ -61,7 +60,6 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "id_user_rol")
     )
     private Set<UserRol> userRols = new HashSet<>();
-     */
 
     @JsonBackReference
     @OneToMany(mappedBy = "userLine")
