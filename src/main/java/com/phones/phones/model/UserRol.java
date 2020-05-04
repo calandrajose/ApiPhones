@@ -6,8 +6,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -24,6 +24,6 @@ public class UserRol {
 
     @JsonBackReference
     @ManyToMany(mappedBy = "userRols")
-    private Set<User> users = new HashSet<>();
+    private List<User> users = new ArrayList<>();
 
 }

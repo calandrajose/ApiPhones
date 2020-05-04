@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -50,7 +47,6 @@ public class User {
     @JoinColumn(name="id_city", nullable = false)
     private City city;
 
-    //Error al mapeo con user_rol (many to many)
     @NotNull
     @JsonManagedReference
     @ManyToMany()
@@ -59,7 +55,7 @@ public class User {
             joinColumns = @JoinColumn(name = "id_user") ,
             inverseJoinColumns = @JoinColumn(name = "id_user_rol")
     )
-    private Set<UserRol> userRols = new HashSet<>();
+    private List<UserRol> userRols = new ArrayList<>();
 
     @JsonBackReference
     @OneToMany(mappedBy = "userLine")
