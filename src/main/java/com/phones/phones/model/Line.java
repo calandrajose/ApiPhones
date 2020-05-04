@@ -43,15 +43,12 @@ public class Line {
     @OneToMany(mappedBy = "line")
     private List<Invoice> invoices;
 
-
-    // Error al mapear las llamadas con la linea
-    // Testing...
     @JsonBackReference
-    @OneToMany(mappedBy = "originline")
+    @OneToMany(mappedBy = "originLine")
     private List<Call> originCalls;
 
     @JsonBackReference
-    @OneToMany(mappedBy = "destinationline")
+    @OneToMany(mappedBy = "destinationLine")
     private List<Call> destinationCalls;
 
 }

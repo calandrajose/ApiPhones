@@ -11,7 +11,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "call")
+@Table(name = "`call`")
 public class Call {
 
     @Id
@@ -27,25 +27,28 @@ public class Call {
     @NotNull
     private Date creationDate;
 
-
-    //Relaciones DB
-/*
-    //Tarifa
     @NotNull
-    private Rate rate;
-    //Factura
-    @NotNull
-    private Invoice invoice;
- */
-
     @JsonManagedReference
     @ManyToOne()
     @JoinColumn(name="id_origin_line", nullable = false)
-    private Line originline;
+    private Line originLine;
 
+    @NotNull
     @JsonManagedReference
     @ManyToOne()
     @JoinColumn(name="id_destination_line", nullable = false)
-    private Line destinationline;
+    private Line destinationLine;
+
+    @NotNull
+    @JsonManagedReference
+    @ManyToOne()
+    @JoinColumn(name = "id_rate", nullable = false)
+    private Rate rate;
+
+    @NotNull
+    @JsonManagedReference
+    @ManyToOne()
+    @JoinColumn(name="id_invoice", nullable = false)
+    private Invoice invoice;
 
 }

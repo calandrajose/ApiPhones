@@ -44,6 +44,7 @@ public class User {
     private boolean isActive;
 
     // Muchos USUARIOS tienen una CIUDAD
+    @NotNull
     @JsonManagedReference
     @ManyToOne()
     @JoinColumn(name="id_city", nullable = false)
