@@ -40,7 +40,6 @@ public class User {
     @NotNull
     private boolean isActive;
 
-    // Muchos USUARIOS tienen una CIUDAD
     @NotNull
     @JsonManagedReference
     @ManyToOne()
@@ -55,7 +54,7 @@ public class User {
             joinColumns = @JoinColumn(name = "id_user") ,
             inverseJoinColumns = @JoinColumn(name = "id_user_rol")
     )
-    private List<UserRol> userRols = new ArrayList<>();
+    private List<UserRole> userRoles = new ArrayList<>();
 
     @JsonBackReference
     @OneToMany(mappedBy = "userLine")

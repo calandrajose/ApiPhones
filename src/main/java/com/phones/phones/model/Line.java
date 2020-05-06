@@ -29,11 +29,13 @@ public class Line {
     @NotNull
     private boolean isActive;
 
+    @NotNull
     @JsonManagedReference
     @ManyToOne()
     @JoinColumn(name="id_line_type", nullable = false)
     private LineType lineType;
 
+    @NotNull
     @JsonManagedReference
     @ManyToOne()
     @JoinColumn(name="id_user", nullable = false)

@@ -10,7 +10,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      del-auto: create-drop
+      format_sql: true
 
   #h2:
     #console:
