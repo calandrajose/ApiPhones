@@ -18,6 +18,10 @@ public class InvoiceService {
     }
 
 
+    public void add(Invoice invoice) {
+        invoiceRepository.save(invoice);
+    }
+
     public List<Invoice> getAll() {
         return invoiceRepository.findAll();
     }

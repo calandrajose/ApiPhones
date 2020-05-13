@@ -22,4 +22,7 @@ public class LineService {
         return lineRepository.findAll();
     }
 
+    public void add(Line line) {
+        lineRepository.save(line);
+    }
 }

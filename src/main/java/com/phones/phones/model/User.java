@@ -1,7 +1,6 @@
 package com.phones.phones.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -41,13 +40,12 @@ public class User {
     private boolean isActive;
 
     @NotNull
-    @JsonManagedReference
-    @ManyToOne()
-    @JoinColumn(name="id_city", nullable = false)
+    @JsonBackReference(value = "cityUser")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_city", nullable = false)
     private City city;
 
     @NotNull
-    @JsonManagedReference
     @ManyToMany()
     @JoinTable(
             name = "user_x_user_rol",
@@ -56,8 +54,7 @@ public class User {
     )
     private List<UserRole> userRoles = new ArrayList<>();
 
-    @JsonBackReference
-    @OneToMany(mappedBy = "userLine")
+    @OneToMany(mappedBy = "user")
     private List<Line> lines;
 
 }

@@ -1,6 +1,5 @@
 package com.phones.phones.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -21,7 +20,6 @@ public class LineType {
     @NotNull
     private String type;
 
-    @JsonBackReference
     @OneToMany(mappedBy = "lineType")
     private List<Line> lines;
 

@@ -18,8 +18,13 @@ public class CallService {
     }
 
 
+    public void add(Call call) {
+        callRepository.save(call);
+    }
+
     public List<Call> getAll() {
         return callRepository.findAll();
     }
+
 
 }

@@ -1,6 +1,5 @@
 package com.phones.phones.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,7 +22,6 @@ public class Province {
     @NotNull
     private String name;
 
-    @JsonBackReference
     @OneToMany(mappedBy = "province")
     private List<City> cities;
 

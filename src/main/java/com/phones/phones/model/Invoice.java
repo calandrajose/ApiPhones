@@ -1,7 +1,6 @@
 package com.phones.phones.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -35,12 +34,12 @@ public class Invoice {
     @NotNull
     private Date dueDate;
 
-    @JsonManagedReference
-    @ManyToOne()
-    @JoinColumn(name="id_line", nullable = false)
+    @NotNull
+    @JsonBackReference(value = "lineInvoice")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_line", nullable = false)
     private Line line;
 
-    @JsonBackReference
     @OneToMany(mappedBy = "invoice")
     private List<Call> calls;
 

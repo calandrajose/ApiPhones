@@ -1,7 +1,6 @@
 package com.phones.phones.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -25,20 +24,18 @@ public class City {
     @NotNull
     private String prefix;
 
-    @JsonManagedReference
-    @ManyToOne()
+    @NotNull
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="id_province", nullable = false)
     private Province province;
 
-    @JsonBackReference
     @OneToMany(mappedBy = "city")
     private List<User> users;
 
-    @JsonBackReference
     @OneToMany(mappedBy = "originCity")
     private List<Rate> originRates;
 
-    @JsonBackReference
     @OneToMany(mappedBy = "destinationCity")
     private List<Rate> destinationRates;
 

@@ -1,12 +1,12 @@
 package com.phones.phones.controller;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import com.phones.phones.model.User;
 import com.phones.phones.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -20,8 +20,15 @@ public class UserController {
         this.userService = userService;
     }
 
+    @PostMapping("/")
+    public void add(@RequestBody @Valid final User user) {
+        userService.add(user);
+        //System.out.println(user);
+    }
+
     @GetMapping("/")
     public List<User> getAll() {
         return userService.getAll();
     }
+
 }

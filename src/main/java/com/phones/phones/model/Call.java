@@ -1,6 +1,6 @@
 package com.phones.phones.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -28,27 +28,27 @@ public class Call {
     private Date creationDate;
 
     @NotNull
-    @JsonManagedReference
-    @ManyToOne()
-    @JoinColumn(name="id_origin_line", nullable = false)
+    @JsonBackReference(value = "originLineCall")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_origin_line", nullable = false)
     private Line originLine;
 
     @NotNull
-    @JsonManagedReference
-    @ManyToOne()
-    @JoinColumn(name="id_destination_line", nullable = false)
+    @JsonBackReference(value = "destinationLineCall")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_destination_line", nullable = false)
     private Line destinationLine;
 
     @NotNull
-    @JsonManagedReference
-    @ManyToOne()
+    @JsonBackReference(value = "rateCall")
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_rate", nullable = false)
     private Rate rate;
 
     @NotNull
-    @JsonManagedReference
-    @ManyToOne()
-    @JoinColumn(name="id_invoice", nullable = false)
+    @JsonBackReference(value = "invoiceCall")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_invoice", nullable = false)
     private Invoice invoice;
 
 }

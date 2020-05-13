@@ -9,8 +9,8 @@ spring:
 
   jpa:
     show-sql: true
-    hibernate:
-      format_sql: true
+    #hibernate:
+      #format_sql: true
 
   #h2:
     #console:
