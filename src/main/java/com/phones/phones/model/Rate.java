@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "rate")
+@Table(name = "rates")
 public class Rate {
 
     @Id
@@ -20,6 +20,9 @@ public class Rate {
 
     @NotNull
     private Float priceMinute;
+
+    @NotNull
+    private Float cost;
 
     @NotNull
     @JsonBackReference(value = "originCityRate")

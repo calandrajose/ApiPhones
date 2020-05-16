@@ -20,7 +20,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     )
     int disableById(Long id);
 
+    @Query(
+            value = "SELECT count(u.id) FROM user u WHERE u.username = ?1",
+            nativeQuery = true
+    )
+    int findByUsername(String username);
+
     Optional<User> findByDni(String dni);
-    Optional<User> findByUsername(String username);
 
 }

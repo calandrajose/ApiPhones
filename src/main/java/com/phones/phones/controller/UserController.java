@@ -4,6 +4,7 @@ import com.phones.phones.dto.UserDTO;
 import com.phones.phones.exception.user.UserAlreadyExistException;
 import com.phones.phones.exception.user.UserNotExistException;
 import com.phones.phones.exception.user.UsernameAlreadyExistException;
+import com.phones.phones.model.Call;
 import com.phones.phones.model.User;
 import com.phones.phones.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,25 +28,20 @@ public class UserController {
 
 
     @PostMapping("/")
-    public void add(@RequestBody @Valid final User user) {
-        try {
-            userService.add(user);
-            //return ResponseEntity.status(HttpStatus.CREATED).body();
-        } catch (UserAlreadyExistException e) {
-            e.printStackTrace();
-        } catch (UsernameAlreadyExistException e) {
-            e.printStackTrace();
-        }
+    public void add(@RequestBody @Valid final User user) throws UsernameAlreadyExistException, UserAlreadyExistException {
+        userService.add(user);
+        //return ResponseEntity.status(HttpStatus.CREATED).body();
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<UserDTO>> getAll() {
-        List<UserDTO> users = userService.getAll();
+    public ResponseEntity<List<User>> getAll() {
+        //List<UserDTO> users = userService.getAll();
+        List<User> users =userService.getAll();
         return (users.size() > 0) ? ResponseEntity.ok(users) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping("/{id}")
-    public UserDTO getById(@PathVariable final Long id) throws UserNotExistException {
+    public User getById(@PathVariable final Long id) throws UserNotExistException {
         return userService.getById(id);
     }
 
@@ -64,10 +60,11 @@ public class UserController {
         return userService.updateById(id);
     }
 
+
     @GetMapping("/{id}/calls")
-    public List<Call> getCallsByUserId(@PathVariable final Long id) {
-        return null;
+    public List<Call> getCallsByUserId(@PathVariable final Long id) throws UserNotExistException {
+        return userService.getCallsByUserId(id);
     }
-    */
+     */
 
 }

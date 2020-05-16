@@ -26,5 +26,8 @@ public class CallService {
         return callRepository.findAll();
     }
 
-
+    /*
+    public List<Call> getAllByUserId(Long id) {
+        return callRepository.
+    }*/
 }

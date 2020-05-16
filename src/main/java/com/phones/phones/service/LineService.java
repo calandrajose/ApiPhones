@@ -1,11 +1,13 @@
 package com.phones.phones.service;
 
+import com.phones.phones.exception.line.LineNumberAlreadyExistException;
 import com.phones.phones.model.Line;
 import com.phones.phones.repository.LineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LineService {
@@ -18,11 +20,21 @@ public class LineService {
     }
 
 
+    public void add(Line newLine) throws LineNumberAlreadyExistException {
+        Optional<Line> line = lineRepository.findByNumber(newLine.getNumber());
+
+        if (line.isPresent()) {
+            throw new LineNumberAlreadyExistException("Line number already exist.");
+        }
+
+        lineRepository.save(newLine);
+    }
+
     public List<Line> getAll() {
         return lineRepository.findAll();
     }
 
-    public void add(Line line) {
-        lineRepository.save(line);
+    public Optional<Line> getById(Long id) {
+        return lineRepository.findById(id);
     }
 }

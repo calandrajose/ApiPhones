@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "user_role")
+@Table(name = "user_roles")
 public class UserRole {
 
     @Id
@@ -20,7 +20,7 @@ public class UserRole {
     private Long id;
 
     @NotNull
-    private String rol;
+    private String role;
 
     @JsonBackReference
     @ManyToMany(mappedBy = "userRoles")

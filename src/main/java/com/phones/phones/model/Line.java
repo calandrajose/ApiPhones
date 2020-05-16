@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "line")
+@Table(name = "`lines`")
 public class Line {
 
     @Id
@@ -27,6 +27,10 @@ public class Line {
 
     @NotNull
     private boolean isActive;
+
+    @NotNull
+    @Enumerated(value = EnumType.STRING)
+    private LineStatus status;
 
     @NotNull
     @JsonBackReference(value = "lineTypeLine")

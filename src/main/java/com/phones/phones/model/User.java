@@ -11,7 +11,7 @@ import java.util.*;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User {
 
     @Id
@@ -33,10 +33,10 @@ public class User {
     @NotNull
     private String password;
 
-    @NotNull
+    @GeneratedValue
     private Date creationDate;
 
-    @NotNull
+    @Column(columnDefinition = "boolean default true")
     private boolean isActive;
 
     @NotNull
@@ -48,9 +48,9 @@ public class User {
     @NotNull
     @ManyToMany()
     @JoinTable(
-            name = "user_x_user_rol",
+            name = "users_x_user_roles",
             joinColumns = @JoinColumn(name = "id_user") ,
-            inverseJoinColumns = @JoinColumn(name = "id_user_rol")
+            inverseJoinColumns = @JoinColumn(name = "id_user_role")
     )
     private List<UserRole> userRoles = new ArrayList<>();
 

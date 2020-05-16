@@ -4,6 +4,7 @@ import com.phones.phones.dto.UserDTO;
 import com.phones.phones.exception.user.UserAlreadyExistException;
 import com.phones.phones.exception.user.UserNotExistException;
 import com.phones.phones.exception.user.UsernameAlreadyExistException;
+import com.phones.phones.model.Call;
 import com.phones.phones.model.City;
 import com.phones.phones.model.Province;
 import com.phones.phones.model.User;
@@ -21,12 +22,14 @@ public class UserService {
     private final UserRepository userRepository;
     private final CityService cityService;
     private final ProvinceService provinceService;
+    private final CallService callService;
 
     @Autowired
-    public UserService(UserRepository userRepository, CityService cityService, ProvinceService provinceService) {
+    public UserService(UserRepository userRepository, CityService cityService, ProvinceService provinceService, CallService callService) {
         this.userRepository = userRepository;
         this.cityService = cityService;
         this.provinceService = provinceService;
+        this.callService = callService;
     }
 
 
@@ -37,15 +40,14 @@ public class UserService {
             throw new UserAlreadyExistException("The dni already exists.");
         }
 
-        u = userRepository.findByUsername(user.getUsername());
-
-        if (u.isPresent()) {
+        if (userRepository.findByUsername(user.getUsername()) > 0) {
             throw new UsernameAlreadyExistException("The username already exists.");
         }
 
         userRepository.save(user);
     }
 
+    /*
     public List<UserDTO> getAll() {
         List<User> users = userRepository.findAll();
 
@@ -54,14 +56,19 @@ public class UserService {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
+    */
 
-    public UserDTO getById(Long id) throws UserNotExistException {
+    public List<User> getAll() {
+        return userRepository.findAll();
+    }
+
+    public User getById(Long id) throws UserNotExistException {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
             throw new UserNotExistException("User does not exist.");
         }
-
-        return convertToDTO(user.get());
+        //return convertToDTO(user.get());
+        return user.get();
     }
 
     public int disableById(Long id) throws UserNotExistException {
@@ -69,7 +76,6 @@ public class UserService {
         if (user.isEmpty()) {
             throw new UserNotExistException("User does not exist.");
         }
-
         return userRepository.disableById(id);
     }
 
@@ -82,7 +88,6 @@ public class UserService {
 
 
     }
-
 
     private UserDTO convertToDTO(User user) {
         Optional<City> city = cityService.getByUserId(user.getId());
@@ -101,4 +106,15 @@ public class UserService {
         return userDTO;
     }
 
+    /*
+    public List<Call> getCallsByUserId(Long id) throws UserNotExistException {
+        Optional<User> user = userRepository.findById(id);
+
+        if (user.isEmpty()) {
+            throw new UserNotExistException("User does not exist.");
+        }
+
+        return callService.getAllByUserId(user.get().getId());
+    }
+     */
 }

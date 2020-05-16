@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "line_type")
+@Table(name = "line_types")
 public class LineType {
 
     @Id
