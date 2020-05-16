@@ -36,9 +36,4 @@ public class CityController {
         return cityService.getById(id);
     }
 
-    @GetMapping("/name/{name}")
-    public Optional<City> getByName(@PathVariable final String name) {
-        return cityService.getByName(name);
-    }
-
 }

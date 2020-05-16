@@ -2,7 +2,19 @@ package com.phones.phones.repository;
 
 import com.phones.phones.model.Province;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.Optional;
 
 public interface ProvinceRepository extends JpaRepository<Province, Long> {
+
+    @Query(
+            value = "SELECT p.* FROM user u " +
+                    "INNER JOIN city c ON u.id_city = c.id " +
+                    "INNER JOIN province p ON c.id_province = p.id " +
+                    "WHERE u.id = ?1",
+            nativeQuery = true
+    )
+    Optional<Province> findByUserId(Long id);
 
 }

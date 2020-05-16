@@ -9,7 +9,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/lines")
+@RequestMapping("/api/lines")
 public class LineController {
 
     private final LineService lineService;

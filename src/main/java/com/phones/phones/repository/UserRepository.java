@@ -2,9 +2,25 @@ package com.phones.phones.repository;
 
 import com.phones.phones.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+
+    @Transactional
+    @Modifying
+    @Query(
+            value = "UPDATE user u SET u.is_active = false WHERE u.id = ?1",
+            nativeQuery = true
+    )
+    int disableById(Long id);
+
+    Optional<User> findByDni(String dni);
+    Optional<User> findByUsername(String username);
 
 }

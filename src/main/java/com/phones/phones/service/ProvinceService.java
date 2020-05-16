@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProvinceService {
@@ -17,12 +18,17 @@ public class ProvinceService {
         this.provinceRepository = provinceRepository;
     }
 
+
     public void add(Province province) {
         provinceRepository.save(province);
     }
 
     public List<Province> getAll() {
         return provinceRepository.findAll();
+    }
+
+    public Optional<Province> getByUserId(Long id) {
+        return provinceRepository.findByUserId(id);
     }
 
 }

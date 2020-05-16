@@ -9,7 +9,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/calls")
+@RequestMapping("/api/calls")
 public class CallController {
 
     private final CallService callService;
