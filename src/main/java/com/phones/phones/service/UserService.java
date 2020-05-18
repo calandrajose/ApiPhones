@@ -4,7 +4,6 @@ import com.phones.phones.dto.UserDTO;
 import com.phones.phones.exception.user.UserAlreadyExistException;
 import com.phones.phones.exception.user.UserNotExistException;
 import com.phones.phones.exception.user.UsernameAlreadyExistException;
-import com.phones.phones.model.Call;
 import com.phones.phones.model.City;
 import com.phones.phones.model.Province;
 import com.phones.phones.model.User;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -22,29 +20,24 @@ public class UserService {
     private final UserRepository userRepository;
     private final CityService cityService;
     private final ProvinceService provinceService;
-    private final CallService callService;
 
     @Autowired
-    public UserService(UserRepository userRepository, CityService cityService, ProvinceService provinceService, CallService callService) {
+    public UserService(UserRepository userRepository, CityService cityService, ProvinceService provinceService) {
         this.userRepository = userRepository;
         this.cityService = cityService;
         this.provinceService = provinceService;
-        this.callService = callService;
     }
 
 
-    public void add(User user) throws UserAlreadyExistException, UsernameAlreadyExistException {
-        Optional<User> u = userRepository.findByDni(user.getDni());
-
-        if (u.isPresent()) {
+    public void add(User newUser) throws UserAlreadyExistException, UsernameAlreadyExistException {
+        Optional<User> user = userRepository.findByDni(newUser.getDni());
+        if (user.isPresent()) {
             throw new UserAlreadyExistException("The dni already exists.");
         }
-
-        if (userRepository.findByUsername(user.getUsername()) > 0) {
+        if (userRepository.findByUsername(newUser.getUsername()) > 0) {
             throw new UsernameAlreadyExistException("The username already exists.");
         }
-
-        userRepository.save(user);
+        userRepository.save(newUser);
     }
 
     /*
@@ -79,16 +72,24 @@ public class UserService {
         return userRepository.disableById(id);
     }
 
-    // testing
-    public void updateById(Long id) throws UserNotExistException {
+    public User updateById(Long id, User updatedUser) throws UserNotExistException {
         Optional<User> user = userRepository.findById(id);
+
         if (user.isEmpty()) {
             throw new UserNotExistException("User does not exist.");
         }
 
+        user.get().setName(updatedUser.getName());
+        user.get().setSurname(updatedUser.getSurname());
+        user.get().setDni(updatedUser.getDni());
+        user.get().setUsername(updatedUser.getUsername());
+        user.get().setPassword(updatedUser.getPassword());
+        user.get().setCity(updatedUser.getCity());
 
+        return userRepository.save(user.get());
     }
 
+    // verify
     private UserDTO convertToDTO(User user) {
         Optional<City> city = cityService.getByUserId(user.getId());
         Optional<Province> province = provinceService.getByUserId(user.getId());
@@ -106,15 +107,4 @@ public class UserService {
         return userDTO;
     }
 
-    /*
-    public List<Call> getCallsByUserId(Long id) throws UserNotExistException {
-        Optional<User> user = userRepository.findById(id);
-
-        if (user.isEmpty()) {
-            throw new UserNotExistException("User does not exist.");
-        }
-
-        return callService.getAllByUserId(user.get().getId());
-    }
-     */
 }

@@ -22,7 +22,7 @@ public class RateController {
 
 
     @GetMapping("/")
-    public List<Rate> getAll() {
+    public List<Rate> getAllRates() {
         return rateService.getAll();
     }
 

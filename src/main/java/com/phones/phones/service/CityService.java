@@ -1,5 +1,7 @@
 package com.phones.phones.service;
 
+import com.phones.phones.exception.city.CityAlreadyExistException;
+import com.phones.phones.exception.city.CityNotExistException;
 import com.phones.phones.model.City;
 import com.phones.phones.repository.CityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +21,24 @@ public class CityService {
     }
 
 
-    public void add(City city) {
-        cityRepository.save(city);
+    public void add(City newCity) throws CityAlreadyExistException {
+        Optional<City> city = cityRepository.findByName(newCity.getName());
+        if (city.isPresent()) {
+            throw new CityAlreadyExistException();
+        }
+        cityRepository.save(newCity);
     }
 
     public List<City> getAll() {
         return cityRepository.findAll();
     }
 
-    public Optional<City> getById(Long id) {
-        return cityRepository.findById(id);
+    public Optional<City> getById(Long id) throws CityNotExistException {
+        Optional<City> city = cityRepository.findById(id);
+        if (city.isEmpty()) {
+            throw new CityNotExistException();
+        }
+        return city;
     }
 
     public Optional<City> getByUserId(Long id) {

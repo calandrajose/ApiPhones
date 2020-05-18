@@ -1,5 +1,7 @@
 package com.phones.phones.controller;
 
+import com.phones.phones.exception.city.CityAlreadyExistException;
+import com.phones.phones.exception.city.CityNotExistException;
 import com.phones.phones.model.City;
 import com.phones.phones.service.CityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +24,21 @@ public class CityController {
 
 
     @PostMapping("/")
-    public void add(@RequestBody @Valid final City city) {
-        cityService.add(city);
+    public void addCity(@RequestBody @Valid final City city) {
+        try {
+            cityService.add(city);
+        } catch (CityAlreadyExistException e) {
+            e.printStackTrace();
+        }
     }
 
     @GetMapping("/")
-    public List<City> getAll() {
+    public List<City> getAllCity() {
         return cityService.getAll();
     }
 
     @GetMapping("/{id}")
-    public Optional<City> getById(@PathVariable final Long id) {
+    public Optional<City> getCityById(@PathVariable final Long id) throws CityNotExistException {
         return cityService.getById(id);
     }
 

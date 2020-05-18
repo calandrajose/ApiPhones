@@ -21,14 +21,17 @@ public class CallController {
 
 
     @PostMapping("/")
-    public void add(@RequestBody @Valid final Call call) {
+    public void addCall(@RequestBody @Valid final Call call) {
         callService.add(call);
     }
 
     @GetMapping("/")
-    public List<Call> getAll() {
+    public List<Call> getAllCalls() {
         return callService.getAll();
     }
 
+    public List<Call> getCallsByUserId(Long id) {
+        return callService.getByUserId(id);
+    }
 
 }

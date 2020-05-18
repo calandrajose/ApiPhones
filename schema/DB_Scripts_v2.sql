@@ -66,7 +66,7 @@ CREATE TABLE `lines` (
     `number` VARCHAR(255) NOT NULL UNIQUE,
     `creation_date` TIMESTAMP NOT NULL,
     `is_active` BOOLEAN DEFAULT TRUE,
-    `status` ENUM('ENABLED', 'DISABLED') NOT NULL,
+    `status` ENUM('ENABLED', 'SUSPENDED') NOT NULL,
     `id_user` INT NOT NULL,
     `id_line_type` INT NOT NULL,
 	CONSTRAINT `Pk_lines` PRIMARY KEY (`id`),
@@ -182,9 +182,7 @@ CREATE TABLE `calls` (
 				('mobile'),
                 ('residential');
                 
-	/* Line */        
-        /*`status` ENUM('enabled', 'disabled') NOT NULL*/
-        
+	/* Line */
         insert into
 			`lines`
 				(number, creation_date, is_active, status, id_user, id_line_type)
@@ -194,7 +192,15 @@ CREATE TABLE `calls` (
 
 /* STORE PROCEDURE */
 
-
+    /* Lines */
+    DROP procedure IF EXISTS `lines_deleteById`;
+    DELIMITER $$
+    CREATE PROCEDURE `lines_deleteById` (IN pId INT)
+    BEGIN
+        UPDATE `lines` l
+        SET l.is_active = false
+        WHERE l.id = pId;
+    END$$
 
 
 

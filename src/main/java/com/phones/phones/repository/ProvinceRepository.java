@@ -17,4 +17,6 @@ public interface ProvinceRepository extends JpaRepository<Province, Long> {
     )
     Optional<Province> findByUserId(Long id);
 
+    Optional<Province> findByName(String name);
+
 }

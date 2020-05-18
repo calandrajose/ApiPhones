@@ -1,7 +1,9 @@
 package com.phones.phones.service;
 
+import com.phones.phones.exception.line.LineNotExistException;
 import com.phones.phones.exception.line.LineNumberAlreadyExistException;
 import com.phones.phones.model.Line;
+import com.phones.phones.model.LineStatus;
 import com.phones.phones.repository.LineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,11 +24,9 @@ public class LineService {
 
     public void add(Line newLine) throws LineNumberAlreadyExistException {
         Optional<Line> line = lineRepository.findByNumber(newLine.getNumber());
-
         if (line.isPresent()) {
             throw new LineNumberAlreadyExistException("Line number already exist.");
         }
-
         lineRepository.save(newLine);
     }
 
@@ -34,7 +34,34 @@ public class LineService {
         return lineRepository.findAll();
     }
 
-    public Optional<Line> getById(Long id) {
+    public Optional<Line> getById(Long id) throws LineNotExistException {
+        Optional<Line> line = lineRepository.findById(id);
+        if (line.isEmpty()) {
+            throw new LineNotExistException();
+        }
         return lineRepository.findById(id);
     }
+
+    public List<Line> getByUserId(Long id) {
+        return lineRepository.findAllByUserId(id);
+    }
+
+    public int disableById(Long id) throws LineNotExistException {
+        Optional<Line> line = lineRepository.findById(id);
+        if (line.isEmpty()) {
+            throw new LineNotExistException();
+        }
+        return lineRepository.disableById(id);
+    }
+
+    /*
+    public Line updateLineStatusByIdLine(LineStatus lineStatus, Long id) throws LineNotExistException {
+        Optional<Line> line = lineRepository.findById(id);
+        if (line.isEmpty()) {
+            throw new LineNotExistException();
+        }
+        return lineRepository.disableById(id);
+    }
+     */
+
 }
