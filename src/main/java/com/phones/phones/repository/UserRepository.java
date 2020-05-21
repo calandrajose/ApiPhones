@@ -28,4 +28,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByDni(String dni);
 
+    Optional<User> findByUsernameAndPassword(String username, String password);
+
 }

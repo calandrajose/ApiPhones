@@ -65,7 +65,6 @@ public class UserService {
         if (existsUsername(updatedUser.getUsername())) {
             throw new UsernameAlreadyExistException("The username already exists.");
         }
-
         user.get().setName(updatedUser.getName());
         user.get().setSurname(updatedUser.getSurname());
         user.get().setDni(updatedUser.getDni());
@@ -78,6 +77,14 @@ public class UserService {
 
     private boolean existsUsername(String username) {
         return userRepository.findByUsername(username) > 0;
+    }
+
+    public Optional<User> login(String username, String password) throws UserNotExistException {
+        Optional<User> user = userRepository.findByUsernameAndPassword(username, password);
+        if (user.isEmpty()) {
+            throw new UserNotExistException("");
+        }
+        return user;
     }
 
 }

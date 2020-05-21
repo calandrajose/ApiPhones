@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 import java.util.List;
 import java.util.Optional;
 
@@ -89,14 +90,20 @@ public class UserController {
 
     /*
     @GetMapping("/me/destination/top")
-
     Usar una projection para este metodo (limit 10)
-
         {
             "ciudad": x,
             "cantidad de veces": x
         }
-
      */
+
+
+    public Optional<User> login(String username, String password) throws UserNotExistException, ValidationException {
+        if ((username != null) && (password != null)) {
+            return userService.login(username, password);
+        } else {
+            throw new ValidationException("Username and password must have a value");
+        }
+    }
 
 }
