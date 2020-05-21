@@ -1,9 +1,11 @@
 package com.phones.phones.controller;
 
+import com.phones.phones.dto.UserDto;
 import com.phones.phones.exception.user.UserAlreadyExistException;
 import com.phones.phones.exception.user.UserNotExistException;
 import com.phones.phones.exception.user.UsernameAlreadyExistException;
 import com.phones.phones.model.Call;
+import com.phones.phones.model.Invoice;
 import com.phones.phones.model.Line;
 import com.phones.phones.model.User;
 import com.phones.phones.service.UserService;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -32,20 +35,18 @@ public class UserController {
 
 
     @PostMapping("/")
-    public void addUser(@RequestBody @Valid final User user) throws UsernameAlreadyExistException, UserAlreadyExistException {
-        userService.add(user);
-        //return ResponseEntity.status(HttpStatus.CREATED).body();
+    public ResponseEntity addUser(@RequestBody @Valid final User user) throws UsernameAlreadyExistException, UserAlreadyExistException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.add(user));
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<User>> getAllUsers() {
-        //List<UserDTO> users = userService.getAll();
-        List<User> users = userService.getAll();
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        List<UserDto> users = userService.getAll();
         return (users.size() > 0) ? ResponseEntity.ok(users) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable final Long id) throws UserNotExistException {
+    public Optional<UserDto> getUserById(@PathVariable final Long id) throws UserNotExistException {
         return userService.getById(id);
     }
 
@@ -55,7 +56,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public User updateUserById(@RequestBody User user, @PathVariable final Long id) throws UserNotExistException {
+    public User updateUserById(@RequestBody User user, @PathVariable final Long id) throws UserNotExistException, UsernameAlreadyExistException {
         return userService.updateById(id, user);
     }
 
@@ -64,9 +65,38 @@ public class UserController {
         return callController.getCallsByUserId(id);
     }
 
+    // between dates
+    @GetMapping("/me/calls")
+    public List<Call> getCallsByUserSession() {
+        return null;
+    }
+
     @GetMapping("/{id}/lines")
     public List<Line> getLinesByUserId(@PathVariable final Long id) {
         return lineController.getLinesByUserId(id);
     }
+
+    @GetMapping("/me/lines")
+    public List<Line> getLinesByUserSession() {
+        return null;
+    }
+
+    // between dates
+    @GetMapping("/me/invoices")
+    public List<Invoice> getInvoicesByUserSession() {
+        return null;
+    }
+
+    /*
+    @GetMapping("/me/destination/top")
+
+    Usar una projection para este metodo (limit 10)
+
+        {
+            "ciudad": x,
+            "cantidad de veces": x
+        }
+
+     */
 
 }

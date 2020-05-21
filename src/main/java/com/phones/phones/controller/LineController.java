@@ -1,9 +1,9 @@
 package com.phones.phones.controller;
 
+import com.phones.phones.dto.LineStatusDto;
 import com.phones.phones.exception.line.LineNotExistException;
 import com.phones.phones.exception.line.LineNumberAlreadyExistException;
 import com.phones.phones.model.Line;
-import com.phones.phones.model.LineStatus;
 import com.phones.phones.service.LineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -44,12 +44,10 @@ public class LineController {
         return lineService.disableById(id);
     }
 
-    /*
     @PutMapping("/{id}")
-    public Line updateLineStatus(@RequestBody @Valid final LineStatus lineStatus, @PathVariable final Long id) {
+    public Optional<Line> updateLineStatusById(@RequestBody @Valid final LineStatusDto lineStatus, @PathVariable final Long id) throws LineNotExistException {
         return lineService.updateLineStatusByIdLine(lineStatus, id);
     }
-     */
 
     public List<Line> getLinesByUserId(Long id) {
         return lineService.getByUserId(id);

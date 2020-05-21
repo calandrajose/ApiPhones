@@ -26,7 +26,6 @@ public class ProvinceService {
         if (province.isPresent()) {
             throw new ProviceAlreadyExistException();
         }
-
         provinceRepository.save(newProvince);
     }
 

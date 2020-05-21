@@ -1,9 +1,9 @@
 package com.phones.phones.service;
 
+import com.phones.phones.dto.LineStatusDto;
 import com.phones.phones.exception.line.LineNotExistException;
 import com.phones.phones.exception.line.LineNumberAlreadyExistException;
 import com.phones.phones.model.Line;
-import com.phones.phones.model.LineStatus;
 import com.phones.phones.repository.LineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,14 +54,13 @@ public class LineService {
         return lineRepository.disableById(id);
     }
 
-    /*
-    public Line updateLineStatusByIdLine(LineStatus lineStatus, Long id) throws LineNotExistException {
+    public Optional<Line> updateLineStatusByIdLine(LineStatusDto lineStatus, Long id) throws LineNotExistException {
         Optional<Line> line = lineRepository.findById(id);
         if (line.isEmpty()) {
             throw new LineNotExistException();
         }
-        return lineRepository.disableById(id);
+        line.get().setStatus(lineStatus.getStatus());
+        return line;
     }
-     */
 
 }
