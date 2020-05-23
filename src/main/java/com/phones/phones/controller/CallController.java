@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -20,18 +21,22 @@ public class CallController {
     }
 
 
-    @PostMapping("/")
+    //@PostMapping("/")
     public void addCall(@RequestBody @Valid final Call call) {
         callService.add(call);
     }
 
-    @GetMapping("/")
+    //@GetMapping("/")
     public List<Call> getAllCalls() {
         return callService.getAll();
     }
 
     public List<Call> getCallsByUserId(Long id) {
         return callService.getByUserId(id);
+    }
+
+    public List<Call> getCallsByUserIdBetweenDates(Long id, Date from, Date to) {
+        return callService.getByUserIdBetweenDates(id, from, to);
     }
 
 }

@@ -54,7 +54,8 @@ public class LineService {
         return lineRepository.disableById(id);
     }
 
-    public Optional<Line> updateLineStatusByIdLine(LineStatusDto lineStatus, Long id) throws LineNotExistException {
+    public Optional<Line> updateLineStatusByIdLine(LineStatusDto lineStatus,
+                                                   Long id) throws LineNotExistException {
         Optional<Line> line = lineRepository.findById(id);
         if (line.isEmpty()) {
             throw new LineNotExistException();

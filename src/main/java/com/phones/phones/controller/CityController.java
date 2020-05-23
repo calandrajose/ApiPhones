@@ -33,7 +33,7 @@ public class CityController {
     }
 
     @GetMapping("/")
-    public List<City> getAllCity() {
+    public List<City> getAllCities() {
         return cityService.getAll();
     }
 

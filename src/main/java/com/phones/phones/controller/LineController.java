@@ -45,7 +45,8 @@ public class LineController {
     }
 
     @PutMapping("/{id}")
-    public Optional<Line> updateLineStatusById(@RequestBody @Valid final LineStatusDto lineStatus, @PathVariable final Long id) throws LineNotExistException {
+    public Optional<Line> updateLineStatusById(@RequestBody @Valid final LineStatusDto lineStatus,
+                                               @PathVariable final Long id) throws LineNotExistException {
         return lineService.updateLineStatusByIdLine(lineStatus, id);
     }
 

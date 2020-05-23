@@ -5,6 +5,7 @@ import com.phones.phones.repository.CallRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -18,8 +19,8 @@ public class CallService {
     }
 
 
-    public void add(Call call) {
-        callRepository.save(call);
+    public void add(Call newCall) {
+        callRepository.save(newCall);
     }
 
     public List<Call> getAll() {
@@ -30,4 +31,7 @@ public class CallService {
         return callRepository.findAllByUserId(id);
     }
 
+    public List<Call> getByUserIdBetweenDates(Long id, Date from, Date to) {
+        return callRepository.findAllByUserIdBetweenDates(id, from, to);
+    }
 }

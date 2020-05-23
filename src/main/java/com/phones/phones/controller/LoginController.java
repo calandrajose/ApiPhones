@@ -28,10 +28,10 @@ public class LoginController {
 
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody UserLoginDto loginRequestDto) throws UserInvalidLoginException, ValidationException {
+    public ResponseEntity login(@RequestBody UserLoginDto userLoginDto) throws UserInvalidLoginException, ValidationException {
         ResponseEntity response;
         try {
-            Optional<User> u = userController.login(loginRequestDto.getUsername(), loginRequestDto.getPassword());
+            Optional<User> u = userController.login(userLoginDto.getUsername(), userLoginDto.getPassword());
 
             // fix
             if (u.isEmpty()) {
@@ -45,7 +45,6 @@ public class LoginController {
         }
         return response;
     }
-
 
     @PostMapping("/logout")
     public ResponseEntity logout(@RequestHeader("Authorization") String token) {

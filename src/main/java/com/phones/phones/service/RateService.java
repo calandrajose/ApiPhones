@@ -1,7 +1,7 @@
 package com.phones.phones.service;
 
-import com.phones.phones.model.Rate;
-import com.phones.phones.repository.RateRepository;
+import com.phones.phones.dto.RateDto;
+import com.phones.phones.repository.dto.RateDtoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,15 +10,16 @@ import java.util.List;
 @Service
 public class RateService {
 
-    private final RateRepository rateRepository;
+    private final RateDtoRepository rateDtoRepository;
 
     @Autowired
-    public RateService(RateRepository rateRepository) {
-        this.rateRepository = rateRepository;
+    public RateService(RateDtoRepository rateDtoRepository) {
+        this.rateDtoRepository = rateDtoRepository;
     }
 
-    public List<Rate> getAll() {
-        return rateRepository.findAll();
+
+    public List<RateDto> getAll() {
+        return rateDtoRepository.findAll();
     }
 
 }

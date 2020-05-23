@@ -1,6 +1,6 @@
 package com.phones.phones.controller;
 
-import com.phones.phones.model.Rate;
+import com.phones.phones.dto.RateDto;
 import com.phones.phones.service.RateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +22,7 @@ public class RateController {
 
 
     @GetMapping("/")
-    public List<Rate> getAllRates() {
+    public List<RateDto> getAllRates() {
         return rateService.getAll();
     }
 

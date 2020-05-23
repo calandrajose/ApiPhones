@@ -18,8 +18,8 @@ public class InvoiceService {
     }
 
 
-    public void add(Invoice invoice) {
-        invoiceRepository.save(invoice);
+    public void add(Invoice newInvoice) {
+        invoiceRepository.save(newInvoice);
     }
 
     public List<Invoice> getAll() {
