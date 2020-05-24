@@ -20,8 +20,8 @@ public class InvoiceController {
     }
 
 
-    @PostMapping("/")
-    public void addInvoice(@RequestBody @Valid final Invoice invoice) {
+    //@PostMapping("/")
+    public void createInvoice(@RequestBody @Valid final Invoice invoice) {
         invoiceService.add(invoice);
     }
 

@@ -23,8 +23,8 @@ public class CityController {
     }
 
 
-    @PostMapping("/")
-    public void addCity(@RequestBody @Valid final City city) {
+    //@PostMapping("/")
+    public void createCity(@RequestBody @Valid final City city) {
         try {
             cityService.add(city);
         } catch (CityAlreadyExistException e) {
@@ -32,12 +32,12 @@ public class CityController {
         }
     }
 
-    @GetMapping("/")
+    //@GetMapping("/")
     public List<City> getAllCities() {
         return cityService.getAll();
     }
 
-    @GetMapping("/{id}")
+    //@GetMapping("/{id}")
     public Optional<City> getCityById(@PathVariable final Long id) throws CityNotExistException {
         return cityService.getById(id);
     }

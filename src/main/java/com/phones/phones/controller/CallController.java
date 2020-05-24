@@ -22,7 +22,7 @@ public class CallController {
 
 
     //@PostMapping("/")
-    public void addCall(@RequestBody @Valid final Call call) {
+    public void createCall(@RequestBody @Valid final Call call) {
         callService.add(call);
     }
 

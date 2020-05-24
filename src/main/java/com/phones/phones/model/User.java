@@ -45,8 +45,9 @@ public class User {
     @JoinColumn(name = "id_city", nullable = false)
     private City city;
 
+
     @NotNull
-    @ManyToMany()
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_x_user_roles",
             joinColumns = @JoinColumn(name = "id_user") ,
@@ -56,5 +57,13 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Line> lines;
+
+    public boolean hasRoleClient() {
+        return userRoles.stream().anyMatch(userRole -> userRole.getRole().contains("Client"));
+    }
+
+    public boolean hasRoleEmployee() {
+        return userRoles.stream().anyMatch(userRole -> userRole.getRole().contains("Employee"));
+    }
 
 }

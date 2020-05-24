@@ -25,11 +25,11 @@ public class LineController {
 
 
     @PostMapping("/")
-    public void addLine(@RequestBody @Valid final Line line) throws LineNumberAlreadyExistException {
+    public void createLine(@RequestBody @Valid final Line line) throws LineNumberAlreadyExistException {
         lineService.add(line);
     }
 
-    @GetMapping("/")
+    //@GetMapping("/")
     public List<Line> getAllLines() {
         return lineService.getAll();
     }

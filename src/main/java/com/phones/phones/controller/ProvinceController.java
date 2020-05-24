@@ -11,8 +11,8 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/api/provinces")
+//@RestController
+//@RequestMapping("/api/provinces")
 public class ProvinceController {
 
     private final ProvinceService provinceService;
@@ -23,8 +23,8 @@ public class ProvinceController {
     }
 
 
-    @PostMapping("/")
-    public void addProvince(@RequestBody @Valid final Province province) {
+    //@PostMapping("/")
+    public void createProvince(@RequestBody @Valid final Province province) {
         try {
             provinceService.add(province);
         } catch (ProviceAlreadyExistException e) {
@@ -32,12 +32,12 @@ public class ProvinceController {
         }
     }
 
-    @GetMapping("/")
+    //@GetMapping("/")
     public List<Province> getAllProvinces() {
         return provinceService.getAll();
     }
 
-    @GetMapping("/{id}")
+    //@GetMapping("/{id}")
     public Optional<Province> getProvinceById(@PathVariable final Long id) throws ProvinceNotExistException {
         return provinceService.getById(id);
     }

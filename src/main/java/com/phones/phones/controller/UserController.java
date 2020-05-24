@@ -45,7 +45,7 @@ public class UserController {
 
 
     @PostMapping("/")
-    public ResponseEntity addUser(@RequestBody @Valid final User user) throws UsernameAlreadyExistException, UserAlreadyExistException {
+    public ResponseEntity createUser(@RequestBody @Valid final User user) throws UsernameAlreadyExistException, UserAlreadyExistException {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.add(user));
     }
 
@@ -56,24 +56,25 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public Optional<UserDto> getUserById(@PathVariable final Long id) throws UserNotExistException {
-        return userService.getById(id);
+    public ResponseEntity<Optional<UserDto>> getUserById(@PathVariable final Long id) throws UserNotExistException {
+        return ResponseEntity.ok(userService.getById(id));
     }
 
     @DeleteMapping("/{id}")
-    public int deleteUserById(@PathVariable final Long id) throws UserNotExistException {
-        return userService.disableById(id);
+    public ResponseEntity<Integer> deleteUserById(@PathVariable final Long id) throws UserNotExistException {
+        return ResponseEntity.ok(userService.disableById(id));
     }
 
     @PutMapping("/{id}")
-    public User updateUserById(@RequestBody User user,
-                               @PathVariable final Long id) throws UserNotExistException, UsernameAlreadyExistException {
-        return userService.updateById(id, user);
+    public ResponseEntity<User> updateUserById(@RequestBody User user,
+                                               @PathVariable final Long id) throws UserNotExistException, UsernameAlreadyExistException {
+        return ResponseEntity.ok(userService.updateById(id, user));
     }
 
     @GetMapping("/{id}/calls")
-    public List<Call> getCallsByUserId(@PathVariable final Long id) throws UserNotExistException {
-        return callController.getCallsByUserId(id);
+    public ResponseEntity<List<Call>> getCallsByUserId(@PathVariable final Long id) throws UserNotExistException {
+        List<Call> calls = callController.getCallsByUserId(id);
+        return (calls.size() > 0) ? ResponseEntity.ok(calls) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping("/me/calls")
@@ -93,18 +94,25 @@ public class UserController {
     }
 
     @GetMapping("/{id}/lines")
-    public List<Line> getLinesByUserId(@PathVariable final Long id) {
-        return lineController.getLinesByUserId(id);
+    public ResponseEntity<List<Line>> getLinesByUserId(@RequestHeader("Authorization") String sessionToken,
+                                                       @PathVariable final Long id) throws UserNotExistException {
+
+        User currentUser = getCurrentUser(sessionToken);
+        if (currentUser.hasRoleEmployee()) {
+            List<Line> lines = lineController.getLinesByUserId(id);
+            return ResponseEntity.ok(lines);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @GetMapping("/me/lines")
-    public List<Line> getLinesByUserSession() {
+    public ResponseEntity<List<Line>> getLinesByUserSession() {
         return null;
     }
 
     // between dates
     @GetMapping("/me/invoices")
-    public List<Invoice> getInvoicesByUserSession() {
+    public ResponseEntity<List<Invoice>> getInvoicesByUserSession() {
         return null;
     }
 
