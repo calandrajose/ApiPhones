@@ -1,12 +1,11 @@
 package com.phones.phones.session;
 
+import com.phones.phones.exception.user.UserNotExistException;
+import com.phones.phones.exception.user.UserSessionNotExistException;
 import com.phones.phones.model.User;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public class SessionManager {
@@ -43,8 +42,9 @@ public class SessionManager {
         }
     }
 
-    public User getCurrentUser(String token) {
-        return getSession(token).getLoggedUser();
+    public User getCurrentUser(String token) throws UserSessionNotExistException {
+        return Optional.ofNullable(getSession(token).getLoggedUser()).orElseThrow(UserSessionNotExistException::new);
+        //return getSession(token).getLoggedUser();
     }
 
 }

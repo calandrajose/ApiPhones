@@ -9,9 +9,9 @@ import java.util.Optional;
 public interface ProvinceRepository extends JpaRepository<Province, Long> {
 
     @Query(
-            value = "SELECT p.* FROM user u " +
-                    "INNER JOIN city c ON u.id_city = c.id " +
-                    "INNER JOIN province p ON c.id_province = p.id " +
+            value = "SELECT p.* FROM users u " +
+                    "INNER JOIN cities c ON u.id_city = c.id " +
+                    "INNER JOIN provinces p ON c.id_province = p.id " +
                     "WHERE u.id = ?1",
             nativeQuery = true
     )

@@ -11,7 +11,9 @@ import java.util.Optional;
 public interface CityRepository extends JpaRepository<City, Long> {
 
     @Query(
-            value = "SELECT c.* FROM user u INNER JOIN city c ON u.id_city = c.id WHERE u.id = ?1",
+            value = "SELECT c.* FROM user u " +
+                    "INNER JOIN cities c ON u.id_city = c.id " +
+                    "WHERE u.id = ?1",
             nativeQuery = true
     )
     Optional<City> findByUserId(Long id);

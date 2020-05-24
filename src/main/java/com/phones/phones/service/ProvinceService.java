@@ -16,7 +16,7 @@ public class ProvinceService {
     private final ProvinceRepository provinceRepository;
 
     @Autowired
-    public ProvinceService(ProvinceRepository provinceRepository) {
+    public ProvinceService(final ProvinceRepository provinceRepository) {
         this.provinceRepository = provinceRepository;
     }
 

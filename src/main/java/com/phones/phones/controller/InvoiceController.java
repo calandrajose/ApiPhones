@@ -15,7 +15,7 @@ public class InvoiceController {
     private final InvoiceService invoiceService;
 
     @Autowired
-    public InvoiceController(InvoiceService invoiceService) {
+    public InvoiceController(final InvoiceService invoiceService) {
         this.invoiceService = invoiceService;
     }
 

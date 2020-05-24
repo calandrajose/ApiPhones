@@ -12,7 +12,8 @@ import java.util.Optional;
 public interface UserDtoRepository extends JpaRepository<UserDto, Long> {
 
     @Query(
-            value = "SELECT u.id, u.name, u.surname, u.dni, u.username, c.name as city, p.name as province FROM users u " +
+            value = "SELECT u.id, u.name, u.surname, u.dni, u.username, c.name as city, p.name as province " +
+                    "FROM users u " +
                     "INNER JOIN cities c ON u.id_city = c.id " +
                     "INNER JOIN provinces p ON p.id = c.id_province",
             nativeQuery = true
@@ -20,7 +21,8 @@ public interface UserDtoRepository extends JpaRepository<UserDto, Long> {
     List<UserDto> findAll();
 
     @Query(
-            value = "SELECT u.id, u.name, u.surname, u.dni, u.username, c.name as city, p.name as province FROM users u " +
+            value = "SELECT u.id, u.name, u.surname, u.dni, u.username, c.name as city, p.name as province " +
+                    "FROM users u " +
                     "INNER JOIN cities c ON u.id_city = c.id " +
                     "INNER JOIN provinces p ON p.id = c.id_province " +
                     "WHERE u.id = ?1",

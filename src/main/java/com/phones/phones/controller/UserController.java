@@ -3,6 +3,7 @@ package com.phones.phones.controller;
 import com.phones.phones.dto.UserDto;
 import com.phones.phones.exception.user.UserAlreadyExistException;
 import com.phones.phones.exception.user.UserNotExistException;
+import com.phones.phones.exception.user.UserSessionNotExistException;
 import com.phones.phones.exception.user.UsernameAlreadyExistException;
 import com.phones.phones.model.Call;
 import com.phones.phones.model.Invoice;
@@ -33,10 +34,10 @@ public class UserController {
     private final SessionManager sessionManager;
 
     @Autowired
-    public UserController(UserService userService,
-                          CallController callController,
-                          LineController lineController,
-                          SessionManager sessionManager) {
+    public UserController(final UserService userService,
+                          final CallController callController,
+                          final LineController lineController,
+                          final SessionManager sessionManager) {
         this.userService = userService;
         this.callController = callController;
         this.lineController = lineController;
@@ -45,48 +46,75 @@ public class UserController {
 
 
     @PostMapping("/")
-    public ResponseEntity createUser(@RequestBody @Valid final User user) throws UsernameAlreadyExistException, UserAlreadyExistException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.add(user));
+    public ResponseEntity createUser(@RequestHeader("Authorization") final String sessionToken,
+                                     @RequestBody @Valid final User user) throws UsernameAlreadyExistException, UserAlreadyExistException, UserNotExistException, UserSessionNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        if (currentUser.hasRoleEmployee()) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(userService.add(user));
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<UserDto>> getAllUsers() {
-        List<UserDto> users = userService.getAll();
-        return (users.size() > 0) ? ResponseEntity.ok(users) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<List<UserDto>> getAllUsers(@RequestHeader("Authorization") final String sessionToken) throws UserNotExistException, UserSessionNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        if (currentUser.hasRoleEmployee()) {
+            List<UserDto> users = userService.getAll();
+            return (users.size() > 0) ? ResponseEntity.ok(users) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<UserDto>> getUserById(@PathVariable final Long id) throws UserNotExistException {
-        return ResponseEntity.ok(userService.getById(id));
+    public ResponseEntity<Optional<UserDto>> getUserById(@RequestHeader("Authorization") final String sessionToken,
+                                                         @PathVariable final Long id) throws UserNotExistException, UserSessionNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        if (currentUser.hasRoleEmployee()) {
+            return ResponseEntity.ok(userService.getById(id));
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Integer> deleteUserById(@PathVariable final Long id) throws UserNotExistException {
-        return ResponseEntity.ok(userService.disableById(id));
+    public ResponseEntity<Integer> deleteUserById(@RequestHeader("Authorization") final String sessionToken,
+                                                  @PathVariable final Long id) throws UserNotExistException, UserSessionNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        if (currentUser.hasRoleEmployee()) {
+            return ResponseEntity.ok(userService.disableById(id));
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUserById(@RequestBody User user,
-                                               @PathVariable final Long id) throws UserNotExistException, UsernameAlreadyExistException {
-        return ResponseEntity.ok(userService.updateById(id, user));
+    public ResponseEntity<User> updateUserById(@RequestHeader("Authorization") final String sessionToken,
+                                               @RequestBody @Valid final User user,
+                                               @PathVariable final Long id) throws UserNotExistException, UsernameAlreadyExistException, UserSessionNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        if (currentUser.hasRoleEmployee()) {
+            return ResponseEntity.ok(userService.updateById(id, user));
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @GetMapping("/{id}/calls")
-    public ResponseEntity<List<Call>> getCallsByUserId(@PathVariable final Long id) throws UserNotExistException {
-        List<Call> calls = callController.getCallsByUserId(id);
-        return (calls.size() > 0) ? ResponseEntity.ok(calls) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<List<Call>> getCallsByUserId(@RequestHeader("Authorization") String sessionToken,
+                                                       @PathVariable final Long id) throws UserNotExistException, UserSessionNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        if (currentUser.hasRoleEmployee()) {
+            List<Call> calls = callController.getCallsByUserId(id);
+            return (calls.size() > 0) ? ResponseEntity.ok(calls) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @GetMapping("/me/calls")
-    public ResponseEntity<List<Call>> getCallsByUserSession(@RequestHeader("Authorization") String sessionToken,
-                                                            @RequestParam(name = "from") String from,
-                                                            @RequestParam(name = "to") String to)
-                                                            throws UserNotExistException, ParseException {
+    public ResponseEntity<List<Call>> getCallsByUserSession(@RequestHeader("Authorization") final String sessionToken,
+                                                            @RequestParam(name = "from") final String from,
+                                                            @RequestParam(name = "to") final String to) throws UserNotExistException, ParseException, UserSessionNotExistException {
         if (from == null || to == null) {
             throw new ValidationException("Date from and date to must have a value");
         }
-
-        User currentUser = getCurrentUser(sessionToken);
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
         Date fromDate = new SimpleDateFormat("dd/MM/yyyy").parse(from);
         Date toDate = new SimpleDateFormat("dd/MM/yyyy").parse(to);
         List<Call> calls = callController.getCallsByUserIdBetweenDates(currentUser.getId(), fromDate, toDate);
@@ -94,16 +122,16 @@ public class UserController {
     }
 
     @GetMapping("/{id}/lines")
-    public ResponseEntity<List<Line>> getLinesByUserId(@RequestHeader("Authorization") String sessionToken,
-                                                       @PathVariable final Long id) throws UserNotExistException {
-
-        User currentUser = getCurrentUser(sessionToken);
+    public ResponseEntity<List<Line>> getLinesByUserId(@RequestHeader("Authorization") final String sessionToken,
+                                                       @PathVariable final Long id) throws UserNotExistException, UserSessionNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             List<Line> lines = lineController.getLinesByUserId(id);
             return ResponseEntity.ok(lines);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+
 
     @GetMapping("/me/lines")
     public ResponseEntity<List<Line>> getLinesByUserSession() {
@@ -125,7 +153,9 @@ public class UserController {
         }
      */
 
-    public Optional<User> login(String username, String password) throws UserNotExistException, ValidationException {
+
+    public Optional<User> login(final String username,
+                                final String password) throws UserNotExistException, ValidationException {
         if ((username != null) && (password != null)) {
             return userService.login(username, password);
         } else {
@@ -133,9 +163,10 @@ public class UserController {
         }
     }
 
-    private User getCurrentUser(String sessionToken) throws UserNotExistException {
+    /*
+    private User getCurrentUser(final String sessionToken) throws UserNotExistException {
         return Optional.ofNullable(sessionManager.getCurrentUser(sessionToken)).orElseThrow(() -> new UserNotExistException(""));
     }
-
+     */
 
 }

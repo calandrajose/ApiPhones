@@ -18,7 +18,7 @@ public class ProvinceController {
     private final ProvinceService provinceService;
 
     @Autowired
-    public ProvinceController(ProvinceService provinceService) {
+    public ProvinceController(final ProvinceService provinceService) {
         this.provinceService = provinceService;
     }
 

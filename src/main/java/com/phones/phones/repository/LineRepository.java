@@ -24,7 +24,9 @@ public interface LineRepository extends JpaRepository<Line, Long> {
     @Transactional
     @Modifying
     @Query(
-            value = "UPDATE `lines` l SET l.is_active = false WHERE l.id = ?1",
+            value = "UPDATE `lines` l " +
+                    "SET l.is_active = false " +
+                    "WHERE l.id = ?1",
             nativeQuery = true
     )
     int disableById(Long id);

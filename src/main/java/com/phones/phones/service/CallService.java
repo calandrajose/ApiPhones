@@ -14,7 +14,7 @@ public class CallService {
     private final CallRepository callRepository;
 
     @Autowired
-    public CallService(CallRepository callRepository) {
+    public CallService(final CallRepository callRepository) {
         this.callRepository = callRepository;
     }
 

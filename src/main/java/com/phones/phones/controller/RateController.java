@@ -18,7 +18,7 @@ public class RateController {
     private final RateService rateService;
 
     @Autowired
-    public RateController(RateService rateService) {
+    public RateController(final RateService rateService) {
         this.rateService = rateService;
     }
 

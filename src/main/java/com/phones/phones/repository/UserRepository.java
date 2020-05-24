@@ -15,13 +15,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Transactional
     @Modifying
     @Query(
-            value = "UPDATE user u SET u.is_active = false WHERE u.id = ?1",
+            value = "UPDATE users u " +
+                    "SET u.is_active = false " +
+                    "WHERE u.id = ?1",
             nativeQuery = true
     )
     int disableById(Long id);
 
     @Query(
-            value = "SELECT count(u.id) FROM user u WHERE u.username = ?1",
+            value = "SELECT count(u.id) " +
+                    "FROM users u " +
+                    "WHERE u.username = ?1",
             nativeQuery = true
     )
     int findByUsername(String username);

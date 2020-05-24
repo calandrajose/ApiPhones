@@ -20,7 +20,7 @@ public class UserService {
     private final UserDtoRepository userDtoRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository, UserDtoRepository userDtoRepository) {
+    public UserService(final UserRepository userRepository, final UserDtoRepository userDtoRepository) {
         this.userRepository = userRepository;
         this.userDtoRepository = userDtoRepository;
     }

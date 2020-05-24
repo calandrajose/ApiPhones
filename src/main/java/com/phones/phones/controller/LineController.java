@@ -19,7 +19,7 @@ public class LineController {
     private final LineService lineService;
 
     @Autowired
-    public LineController(LineService lineService) {
+    public LineController(final LineService lineService) {
         this.lineService = lineService;
     }
 
@@ -50,7 +50,7 @@ public class LineController {
         return lineService.updateLineStatusByIdLine(lineStatus, id);
     }
 
-    public List<Line> getLinesByUserId(Long id) {
+    public List<Line> getLinesByUserId(final Long id) {
         return lineService.getByUserId(id);
     }
 

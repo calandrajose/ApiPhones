@@ -21,12 +21,12 @@ public class CityService {
     }
 
 
-    public void add(City newCity) throws CityAlreadyExistException {
+    public City add(City newCity) throws CityAlreadyExistException {
         Optional<City> city = cityRepository.findByName(newCity.getName());
         if (city.isPresent()) {
             throw new CityAlreadyExistException();
         }
-        cityRepository.save(newCity);
+        return cityRepository.save(newCity);
     }
 
     public List<City> getAll() {

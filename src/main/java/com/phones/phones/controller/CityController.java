@@ -2,9 +2,14 @@ package com.phones.phones.controller;
 
 import com.phones.phones.exception.city.CityAlreadyExistException;
 import com.phones.phones.exception.city.CityNotExistException;
+import com.phones.phones.exception.user.UserSessionNotExistException;
 import com.phones.phones.model.City;
+import com.phones.phones.model.User;
 import com.phones.phones.service.CityService;
+import com.phones.phones.session.SessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -16,30 +21,43 @@ import java.util.Optional;
 public class CityController {
 
     private final CityService cityService;
+    private final SessionManager sessionManager;
 
     @Autowired
-    public CityController(final CityService cityService) {
+    public CityController(final CityService cityService, final SessionManager sessionManager) {
         this.cityService = cityService;
+        this.sessionManager = sessionManager;
     }
 
 
-    //@PostMapping("/")
-    public void createCity(@RequestBody @Valid final City city) {
-        try {
-            cityService.add(city);
-        } catch (CityAlreadyExistException e) {
-            e.printStackTrace();
+    @PostMapping("/")
+    public ResponseEntity createCity(@RequestHeader("Authorization") String sessionToken,
+                                     @RequestBody @Valid final City city) throws CityAlreadyExistException, UserSessionNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        if (currentUser.hasRoleEmployee()) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(cityService.add(city));
         }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    //@GetMapping("/")
-    public List<City> getAllCities() {
-        return cityService.getAll();
+    @GetMapping("/")
+    public ResponseEntity<List<City>> getAllCities(@RequestHeader("Authorization") final String sessionToken) throws UserSessionNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        if (currentUser.hasRoleEmployee()) {
+            List<City> cities = cityService.getAll();
+            return (cities.size() > 0) ? ResponseEntity.ok(cities) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    //@GetMapping("/{id}")
-    public Optional<City> getCityById(@PathVariable final Long id) throws CityNotExistException {
-        return cityService.getById(id);
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<City>> getCityById(@RequestHeader("Authorization") String sessionToken,
+                                      @PathVariable final Long id) throws CityNotExistException, UserSessionNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        if (currentUser.hasRoleEmployee()) {
+            return ResponseEntity.ok(cityService.getById(id));
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
 }

@@ -16,7 +16,7 @@ public class CallController {
     private final CallService callService;
 
     @Autowired
-    public CallController(CallService callService) {
+    public CallController(final CallService callService) {
         this.callService = callService;
     }
 
@@ -31,11 +31,11 @@ public class CallController {
         return callService.getAll();
     }
 
-    public List<Call> getCallsByUserId(Long id) {
+    public List<Call> getCallsByUserId(final Long id) {
         return callService.getByUserId(id);
     }
 
-    public List<Call> getCallsByUserIdBetweenDates(Long id, Date from, Date to) {
+    public List<Call> getCallsByUserIdBetweenDates(final Long id, final Date from, final Date to) {
         return callService.getByUserIdBetweenDates(id, from, to);
     }
 

@@ -17,18 +17,18 @@ import java.util.Optional;
 @RequestMapping("/")
 public class LoginController {
 
-    UserController userController;
-    SessionManager sessionManager;
+    private final UserController userController;
+    private final SessionManager sessionManager;
 
     @Autowired
-    public LoginController(UserController userController, SessionManager sessionManager) {
+    public LoginController(final UserController userController, final SessionManager sessionManager) {
         this.userController = userController;
         this.sessionManager = sessionManager;
     }
 
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody UserLoginDto userLoginDto) throws UserInvalidLoginException, ValidationException {
+    public ResponseEntity login(@RequestBody final UserLoginDto userLoginDto) throws UserInvalidLoginException, ValidationException {
         ResponseEntity response;
         try {
             Optional<User> u = userController.login(userLoginDto.getUsername(), userLoginDto.getPassword());
@@ -47,7 +47,7 @@ public class LoginController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity logout(@RequestHeader("Authorization") String token) {
+    public ResponseEntity logout(@RequestHeader("Authorization") final String token) {
         sessionManager.removeSession(token);
         return ResponseEntity.ok().build();
     }

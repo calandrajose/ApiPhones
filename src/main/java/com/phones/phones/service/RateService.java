@@ -13,7 +13,7 @@ public class RateService {
     private final RateDtoRepository rateDtoRepository;
 
     @Autowired
-    public RateService(RateDtoRepository rateDtoRepository) {
+    public RateService(final RateDtoRepository rateDtoRepository) {
         this.rateDtoRepository = rateDtoRepository;
     }
 
