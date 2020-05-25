@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class UserDto {

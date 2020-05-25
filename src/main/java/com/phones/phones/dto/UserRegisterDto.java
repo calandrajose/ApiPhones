@@ -1,9 +1,15 @@
 package com.phones.phones.dto;
 
 import com.phones.phones.model.City;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserRegisterDto implements Serializable {
 
     private String name;

@@ -24,12 +24,8 @@ public class ProvinceController {
 
 
     //@PostMapping("/")
-    public void createProvince(@RequestBody @Valid final Province province) {
-        try {
-            provinceService.add(province);
-        } catch (ProviceAlreadyExistException e) {
-            e.printStackTrace();
-        }
+    public void createProvince(@RequestBody @Valid final Province province) throws ProviceAlreadyExistException {
+        provinceService.add(province);
     }
 
     //@GetMapping("/")

@@ -47,7 +47,7 @@ public class UserController {
 
     @PostMapping("/")
     public ResponseEntity createUser(@RequestHeader("Authorization") final String sessionToken,
-                                     @RequestBody @Valid final User user) throws UsernameAlreadyExistException, UserAlreadyExistException, UserNotExistException, UserSessionNotExistException {
+                                     @RequestBody @Valid final User user) throws UsernameAlreadyExistException, UserAlreadyExistException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             return ResponseEntity.status(HttpStatus.CREATED).body(userService.add(user));
@@ -56,7 +56,7 @@ public class UserController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<UserDto>> getAllUsers(@RequestHeader("Authorization") final String sessionToken) throws UserNotExistException, UserSessionNotExistException {
+    public ResponseEntity<List<UserDto>> getAllUsers(@RequestHeader("Authorization") final String sessionToken) throws UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             List<UserDto> users = userService.getAll();
@@ -98,7 +98,7 @@ public class UserController {
 
     @GetMapping("/{id}/calls")
     public ResponseEntity<List<Call>> getCallsByUserId(@RequestHeader("Authorization") String sessionToken,
-                                                       @PathVariable final Long id) throws UserNotExistException, UserSessionNotExistException {
+                                                       @PathVariable final Long id) throws UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             List<Call> calls = callController.getCallsByUserId(id);
@@ -110,7 +110,7 @@ public class UserController {
     @GetMapping("/me/calls")
     public ResponseEntity<List<Call>> getCallsByUserSession(@RequestHeader("Authorization") final String sessionToken,
                                                             @RequestParam(name = "from") final String from,
-                                                            @RequestParam(name = "to") final String to) throws UserNotExistException, ParseException, UserSessionNotExistException {
+                                                            @RequestParam(name = "to") final String to) throws ParseException, UserSessionNotExistException {
         if (from == null || to == null) {
             throw new ValidationException("Date from and date to must have a value");
         }
@@ -123,7 +123,7 @@ public class UserController {
 
     @GetMapping("/{id}/lines")
     public ResponseEntity<List<Line>> getLinesByUserId(@RequestHeader("Authorization") final String sessionToken,
-                                                       @PathVariable final Long id) throws UserNotExistException, UserSessionNotExistException {
+                                                       @PathVariable final Long id) throws UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             List<Line> lines = lineController.getLinesByUserId(id);
@@ -162,11 +162,5 @@ public class UserController {
             throw new ValidationException("Username and password must have a value");
         }
     }
-
-    /*
-    private User getCurrentUser(final String sessionToken) throws UserNotExistException {
-        return Optional.ofNullable(sessionManager.getCurrentUser(sessionToken)).orElseThrow(() -> new UserNotExistException(""));
-    }
-     */
 
 }

@@ -28,21 +28,14 @@ public class LoginController {
 
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody final UserLoginDto userLoginDto) throws UserInvalidLoginException, ValidationException {
+    public ResponseEntity login(@RequestBody final UserLoginDto userLoginDto) throws UserInvalidLoginException, ValidationException, UserNotExistException {
         ResponseEntity response;
-        try {
-            Optional<User> u = userController.login(userLoginDto.getUsername(), userLoginDto.getPassword());
-
-            // fix
-            if (u.isEmpty()) {
-                return null;
-            }
-
-            String token = sessionManager.createSession(u.get());
-            response = ResponseEntity.ok().headers(createHeaders(token)).build();
-        } catch (UserNotExistException e) {
+        Optional<User> u = userController.login(userLoginDto.getUsername(), userLoginDto.getPassword());
+        if (u.isEmpty()) {
             throw new UserInvalidLoginException();
         }
+        String token = sessionManager.createSession(u.get());
+        response = ResponseEntity.ok().headers(createHeaders(token)).build();
         return response;
     }
 

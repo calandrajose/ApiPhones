@@ -1,12 +1,110 @@
 package com.phones.phones.controller;
 
+import com.phones.phones.dto.ErrorDto;
+import com.phones.phones.exception.city.CityAlreadyExistException;
+import com.phones.phones.exception.city.CityNotExistException;
+import com.phones.phones.exception.line.LineNotExistException;
+import com.phones.phones.exception.line.LineNumberAlreadyExistException;
+import com.phones.phones.exception.province.ProviceAlreadyExistException;
+import com.phones.phones.exception.province.ProvinceNotExistException;
+import com.phones.phones.exception.user.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-//@RestControllerAdvice
+import javax.validation.ValidationException;
+import java.text.ParseException;
+
+@RestControllerAdvice
 public class ControllerAdvice extends ResponseEntityExceptionHandler {
 
+    /* City exceptions */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CityAlreadyExistException.class)
+    public ErrorDto handleCityAlreadyExistException(CityAlreadyExistException e) {
+        return new ErrorDto(1, "City name already exists");
+    }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CityAlreadyExistException.class)
+    public ErrorDto handleCityNotExistException(CityNotExistException e) {
+        return new ErrorDto(1, "City id do not exists");
+    }
+
+
+    /* Line exceptions */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CityAlreadyExistException.class)
+    public ErrorDto handleLineNumberAlreadyExistException(LineNumberAlreadyExistException e) {
+        return new ErrorDto(1, "Line number already exists");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CityAlreadyExistException.class)
+    public ErrorDto handleLineNotExistException(LineNotExistException e) {
+        return new ErrorDto(1, "Line id do not exists");
+    }
+
+
+    /* Province exceptions */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ProviceAlreadyExistException.class)
+    public ErrorDto handleProviceAlreadyExistException(ProviceAlreadyExistException e) {
+        return new ErrorDto(1, "Province name already exists");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ProvinceNotExistException.class)
+    public ErrorDto handleProvinceNotExistException(ProvinceNotExistException e) {
+        return new ErrorDto(1, "Province id do not exists");
+    }
+
+
+    /* User exceptions */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UsernameAlreadyExistException.class)
+    public ErrorDto handleUsernameAlreadyExistException(UsernameAlreadyExistException e) {
+        return new ErrorDto(1, "Username already exists");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UserAlreadyExistException.class)
+    public ErrorDto handleUsernameAlreadyExistException(UserAlreadyExistException e) {
+        return new ErrorDto(1, "User name already exists");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UserNotExistException.class)
+    public ErrorDto handleUserNotExistException(UserNotExistException e) {
+        return new ErrorDto(1, "User id do not exists");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ParseException.class)
+    public ErrorDto handleParseException() {
+        return new ErrorDto(4, "Not valid dates");
+    }
+
+    /* User Login exceptions */
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(UserInvalidLoginException.class)
+    public ErrorDto handleLoginException(UserInvalidLoginException e) {
+        return new ErrorDto(1, "Invalid login");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ValidationException.class)
+    public ErrorDto handleValidationException(ValidationException e) {
+        return new ErrorDto(2, e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(UserSessionNotExistException.class)
+    public ErrorDto handleUserSessionNotExistException(UserSessionNotExistException e) {
+        return new ErrorDto(2, "Token has expired");
+    }
 
 
 }
