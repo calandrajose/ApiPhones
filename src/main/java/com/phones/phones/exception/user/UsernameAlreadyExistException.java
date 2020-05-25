@@ -1,9 +1,9 @@
 package com.phones.phones.exception.user;
 
-public class UsernameAlreadyExistException extends Exception {
+public class UsernameAlreadyExistException extends Throwable {
 
-    public UsernameAlreadyExistException(String errMsg) {
-        super(errMsg);
+    public UsernameAlreadyExistException() {
+        super();
     }
 
 }

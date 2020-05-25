@@ -1,9 +1,9 @@
 package com.phones.phones.exception.line;
 
-public class LineNumberAlreadyExistException extends Exception {
+public class LineNumberAlreadyExistException extends Throwable {
 
-    public LineNumberAlreadyExistException(String errMsg) {
-        super(errMsg);
+    public LineNumberAlreadyExistException() {
+        super();
     }
 
 }

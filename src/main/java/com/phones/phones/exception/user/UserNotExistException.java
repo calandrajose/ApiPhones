@@ -1,8 +1,9 @@
 package com.phones.phones.exception.user;
 
-public class UserNotExistException extends Exception {
+public class UserNotExistException extends Throwable {
 
-    public UserNotExistException(String errMsg) {
-        super(errMsg);
+    public UserNotExistException() {
+        super();
     }
+
 }

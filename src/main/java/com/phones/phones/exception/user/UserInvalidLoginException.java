@@ -1,6 +1,6 @@
 package com.phones.phones.exception.user;
 
-public class UserInvalidLoginException extends Exception {
+public class UserInvalidLoginException extends Throwable {
 
     public UserInvalidLoginException() {
         super();

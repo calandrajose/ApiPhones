@@ -112,7 +112,7 @@ public class UserController {
                                                             @RequestParam(name = "from") final String from,
                                                             @RequestParam(name = "to") final String to) throws ParseException, UserSessionNotExistException {
         if (from == null || to == null) {
-            throw new ValidationException("Date from and date to must have a value");
+            throw new ValidationException("Date 'from' and date 'to' must have a value");
         }
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         Date fromDate = new SimpleDateFormat("dd/MM/yyyy").parse(from);
