@@ -22,19 +22,19 @@ public class LineService {
     }
 
 
-    public void add(Line newLine) throws LineNumberAlreadyExistException {
+    public void create(Line newLine) throws LineNumberAlreadyExistException {
         Optional<Line> line = lineRepository.findByNumber(newLine.getNumber());
         if (line.isPresent()) {
-            throw new LineNumberAlreadyExistException("Line number already exist.");
+            throw new LineNumberAlreadyExistException();
         }
         lineRepository.save(newLine);
     }
 
-    public List<Line> getAll() {
+    public List<Line> findAll() {
         return lineRepository.findAll();
     }
 
-    public Optional<Line> getById(Long id) throws LineNotExistException {
+    public Optional<Line> findById(Long id) throws LineNotExistException {
         Optional<Line> line = lineRepository.findById(id);
         if (line.isEmpty()) {
             throw new LineNotExistException();
@@ -42,7 +42,7 @@ public class LineService {
         return lineRepository.findById(id);
     }
 
-    public List<Line> getByUserId(Long id) {
+    public List<Line> findByUserId(Long id) {
         return lineRepository.findAllByUserId(id);
     }
 

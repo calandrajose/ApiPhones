@@ -1,5 +1,6 @@
 package com.phones.phones.service;
 
+import com.phones.phones.dto.UserDto;
 import com.phones.phones.exception.user.UserAlreadyExistException;
 import com.phones.phones.exception.user.UserNotExistException;
 import com.phones.phones.exception.user.UsernameAlreadyExistException;
@@ -10,6 +11,8 @@ import com.phones.phones.repository.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+
+import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
 import static org.junit.Assert.*;
@@ -45,7 +48,6 @@ public class UserServiceTest {
     public void testGetAllOk() {
     }
 
-    /*
     @Test
     public void testGetByIdOk() throws UserNotExistException {
         User userGetById = User
@@ -61,11 +63,12 @@ public class UserServiceTest {
 
         when(userRepository.findById(1L)).thenReturn(ofNullable(userGetById));
 
-        User returnedUser = userService.getById(1L);
+        Optional<UserDto> returnedUser = userService.findById(1L);
 
-        assertEquals(userGetById.getId(), returnedUser.getId());
+        assertEquals(userGetById.getId(), returnedUser.get().getId());
     }
 
+    /*
     @Test(expected = UserNotExistException.class)
     public void testGetByIdUserNotExist() {
     }

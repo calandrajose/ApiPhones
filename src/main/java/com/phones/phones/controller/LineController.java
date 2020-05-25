@@ -26,17 +26,17 @@ public class LineController {
 
     @PostMapping("/")
     public void createLine(@RequestBody @Valid final Line line) throws LineNumberAlreadyExistException {
-        lineService.add(line);
+        lineService.create(line);
     }
 
     //@GetMapping("/")
-    public List<Line> getAllLines() {
-        return lineService.getAll();
+    public List<Line> findAllLines() {
+        return lineService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Optional<Line> getLineById(@PathVariable final Long id) throws LineNotExistException {
-        return lineService.getById(id);
+    public Optional<Line> findLineById(@PathVariable final Long id) throws LineNotExistException {
+        return lineService.findById(id);
     }
 
     @DeleteMapping("/{id}")
@@ -50,8 +50,8 @@ public class LineController {
         return lineService.updateLineStatusByIdLine(lineStatus, id);
     }
 
-    public List<Line> getLinesByUserId(final Long id) {
-        return lineService.getByUserId(id);
+    public List<Line> findLinesByUserId(final Long id) {
+        return lineService.findByUserId(id);
     }
 
 }

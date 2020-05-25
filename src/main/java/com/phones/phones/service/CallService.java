@@ -19,19 +19,19 @@ public class CallService {
     }
 
 
-    public void add(Call newCall) {
+    public void create(Call newCall) {
         callRepository.save(newCall);
     }
 
-    public List<Call> getAll() {
+    public List<Call> findAll() {
         return callRepository.findAll();
     }
 
-    public List<Call> getByUserId(Long id) {
+    public List<Call> findByUserId(Long id) {
         return callRepository.findAllByUserId(id);
     }
 
-    public List<Call> getByUserIdBetweenDates(Long id, Date from, Date to) {
+    public List<Call> findByUserIdBetweenDates(Long id, Date from, Date to) {
         return callRepository.findAllByUserIdBetweenDates(id, from, to);
     }
 }

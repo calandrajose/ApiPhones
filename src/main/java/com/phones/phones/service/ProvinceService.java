@@ -21,7 +21,7 @@ public class ProvinceService {
     }
 
 
-    public void add(Province newProvince) throws ProviceAlreadyExistException {
+    public void create(Province newProvince) throws ProviceAlreadyExistException {
         Optional<Province> province = provinceRepository.findByName(newProvince.getName());
         if (province.isPresent()) {
             throw new ProviceAlreadyExistException();
@@ -29,11 +29,11 @@ public class ProvinceService {
         provinceRepository.save(newProvince);
     }
 
-    public List<Province> getAll() {
+    public List<Province> findAll() {
         return provinceRepository.findAll();
     }
 
-    public Optional<Province> getById(Long id) throws ProvinceNotExistException {
+    public Optional<Province> findById(Long id) throws ProvinceNotExistException {
         Optional<Province> province = provinceRepository.findById(id);
         if (province.isEmpty()) {
             throw new ProvinceNotExistException();
@@ -41,7 +41,7 @@ public class ProvinceService {
         return province;
     }
 
-    public Optional<Province> getByUserId(Long id) {
+    public Optional<Province> findByUserId(Long id) {
         return provinceRepository.findByUserId(id);
     }
 

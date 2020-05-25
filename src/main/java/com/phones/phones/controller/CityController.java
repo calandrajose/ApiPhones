@@ -35,29 +35,29 @@ public class CityController {
                                      @RequestBody @Valid final City city) throws CityAlreadyExistException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(cityService.add(city));
+            return ResponseEntity.status(HttpStatus.CREATED).body(cityService.create(city));
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<City>> getAllCities(@RequestHeader("Authorization") final String sessionToken) throws UserSessionNotExistException {
+    public ResponseEntity<List<City>> findAllCities(@RequestHeader("Authorization") final String sessionToken) throws UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
-            List<City> cities = cityService.getAll();
+            List<City> cities = cityService.findAll();
             return (cities.size() > 0) ? ResponseEntity.ok(cities) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<City>> getCityById(@RequestHeader("Authorization") String sessionToken,
+    public ResponseEntity<Optional<City>> findCityById(@RequestHeader("Authorization") String sessionToken,
                                       @PathVariable final Long id) throws CityNotExistException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
-            return ResponseEntity.ok(cityService.getById(id));
+            return ResponseEntity.ok(cityService.findById(id));
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
 }

@@ -23,20 +23,20 @@ public class CallController {
 
     //@PostMapping("/")
     public void createCall(@RequestBody @Valid final Call call) {
-        callService.add(call);
+        callService.create(call);
     }
 
     //@GetMapping("/")
-    public List<Call> getAllCalls() {
-        return callService.getAll();
+    public List<Call> findAllCalls() {
+        return callService.findAll();
     }
 
-    public List<Call> getCallsByUserId(final Long id) {
-        return callService.getByUserId(id);
+    public List<Call> findCallsByUserId(final Long id) {
+        return callService.findByUserId(id);
     }
 
-    public List<Call> getCallsByUserIdBetweenDates(final Long id, final Date from, final Date to) {
-        return callService.getByUserIdBetweenDates(id, from, to);
+    public List<Call> findCallsByUserIdBetweenDates(final Long id, final Date from, final Date to) {
+        return callService.findByUserIdBetweenDates(id, from, to);
     }
 
 }

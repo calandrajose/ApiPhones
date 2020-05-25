@@ -22,12 +22,12 @@ public class InvoiceController {
 
     //@PostMapping("/")
     public void createInvoice(@RequestBody @Valid final Invoice invoice) {
-        invoiceService.add(invoice);
+        invoiceService.create(invoice);
     }
 
     @GetMapping("/")
-    public List<Invoice> getAllInvoices() {
-        return invoiceService.getAll();
+    public List<Invoice> findAllInvoices() {
+        return invoiceService.findAll();
     }
 
 }

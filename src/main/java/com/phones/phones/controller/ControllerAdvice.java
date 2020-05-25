@@ -28,23 +28,23 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(CityAlreadyExistException.class)
+    @ExceptionHandler(CityNotExistException.class)
     public ErrorDto handleCityNotExistException(CityNotExistException e) {
-        return new ErrorDto(1, "City id do not exists");
+        return new ErrorDto(2, "City id do not exists");
     }
 
 
     /* Line exceptions */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(CityAlreadyExistException.class)
+    @ExceptionHandler(LineNumberAlreadyExistException.class)
     public ErrorDto handleLineNumberAlreadyExistException(LineNumberAlreadyExistException e) {
-        return new ErrorDto(1, "Line number already exists");
+        return new ErrorDto(3, "Line number already exists");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(CityAlreadyExistException.class)
+    @ExceptionHandler(LineNotExistException.class)
     public ErrorDto handleLineNotExistException(LineNotExistException e) {
-        return new ErrorDto(1, "Line id do not exists");
+        return new ErrorDto(4, "Line id do not exists");
     }
 
 
@@ -52,13 +52,13 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ProviceAlreadyExistException.class)
     public ErrorDto handleProviceAlreadyExistException(ProviceAlreadyExistException e) {
-        return new ErrorDto(1, "Province name already exists");
+        return new ErrorDto(5, "Province name already exists");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ProvinceNotExistException.class)
     public ErrorDto handleProvinceNotExistException(ProvinceNotExistException e) {
-        return new ErrorDto(1, "Province id do not exists");
+        return new ErrorDto(6, "Province id do not exists");
     }
 
 
@@ -66,44 +66,44 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UsernameAlreadyExistException.class)
     public ErrorDto handleUsernameAlreadyExistException(UsernameAlreadyExistException e) {
-        return new ErrorDto(1, "Username already exists");
+        return new ErrorDto(7, "Username already exists");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserAlreadyExistException.class)
     public ErrorDto handleUsernameAlreadyExistException(UserAlreadyExistException e) {
-        return new ErrorDto(1, "User name already exists");
+        return new ErrorDto(8, "User dni already exists");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserNotExistException.class)
     public ErrorDto handleUserNotExistException(UserNotExistException e) {
-        return new ErrorDto(1, "User id do not exists");
+        return new ErrorDto(9, "User id do not exists");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ParseException.class)
     public ErrorDto handleParseException() {
-        return new ErrorDto(4, "Not valid dates");
+        return new ErrorDto(10, "Not valid dates");
     }
 
     /* User Login exceptions */
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UserInvalidLoginException.class)
     public ErrorDto handleLoginException(UserInvalidLoginException e) {
-        return new ErrorDto(1, "Invalid login");
+        return new ErrorDto(11, "Invalid login");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ValidationException.class)
     public ErrorDto handleValidationException(ValidationException e) {
-        return new ErrorDto(2, e.getMessage());
+        return new ErrorDto(12, e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(UserSessionNotExistException.class)
     public ErrorDto handleUserSessionNotExistException(UserSessionNotExistException e) {
-        return new ErrorDto(2, "Token has expired");
+        return new ErrorDto(13, "Token has expired");
     }
 
 

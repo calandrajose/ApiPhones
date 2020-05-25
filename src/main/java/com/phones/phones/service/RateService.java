@@ -18,7 +18,7 @@ public class RateService {
     }
 
 
-    public List<RateDto> getAll() {
+    public List<RateDto> findAll() {
         return rateDtoRepository.findAll();
     }
 

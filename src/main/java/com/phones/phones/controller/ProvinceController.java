@@ -25,17 +25,17 @@ public class ProvinceController {
 
     //@PostMapping("/")
     public void createProvince(@RequestBody @Valid final Province province) throws ProviceAlreadyExistException {
-        provinceService.add(province);
+        provinceService.create(province);
     }
 
     //@GetMapping("/")
-    public List<Province> getAllProvinces() {
-        return provinceService.getAll();
+    public List<Province> findAllProvinces() {
+        return provinceService.findAll();
     }
 
     //@GetMapping("/{id}")
-    public Optional<Province> getProvinceById(@PathVariable final Long id) throws ProvinceNotExistException {
-        return provinceService.getById(id);
+    public Optional<Province> findProvinceById(@PathVariable final Long id) throws ProvinceNotExistException {
+        return provinceService.findById(id);
     }
 
 }

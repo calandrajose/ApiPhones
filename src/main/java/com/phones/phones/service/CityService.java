@@ -21,7 +21,7 @@ public class CityService {
     }
 
 
-    public City add(City newCity) throws CityAlreadyExistException {
+    public City create(City newCity) throws CityAlreadyExistException {
         Optional<City> city = cityRepository.findByName(newCity.getName());
         if (city.isPresent()) {
             throw new CityAlreadyExistException();
@@ -29,11 +29,11 @@ public class CityService {
         return cityRepository.save(newCity);
     }
 
-    public List<City> getAll() {
+    public List<City> findAll() {
         return cityRepository.findAll();
     }
 
-    public Optional<City> getById(Long id) throws CityNotExistException {
+    public Optional<City> findById(Long id) throws CityNotExistException {
         Optional<City> city = cityRepository.findById(id);
         if (city.isEmpty()) {
             throw new CityNotExistException();
@@ -41,7 +41,7 @@ public class CityService {
         return city;
     }
 
-    public Optional<City> getByUserId(Long id) {
+    public Optional<City> findByUserId(Long id) {
         return cityRepository.findByUserId(id);
     }
 

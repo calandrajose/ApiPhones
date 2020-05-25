@@ -24,8 +24,8 @@ public class RateController {
 
 
     @GetMapping("/")
-    public ResponseEntity<List<RateDto>> getAllRates() {
-        List<RateDto> rates = rateService.getAll();
+    public ResponseEntity<List<RateDto>> findAllRates() {
+        List<RateDto> rates = rateService.findAll();
         return (rates.size() > 0) ? ResponseEntity.ok(rates) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
