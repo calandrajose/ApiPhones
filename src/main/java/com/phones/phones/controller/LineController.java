@@ -3,12 +3,20 @@ package com.phones.phones.controller;
 import com.phones.phones.dto.LineStatusDto;
 import com.phones.phones.exception.line.LineNotExistException;
 import com.phones.phones.exception.line.LineNumberAlreadyExistException;
+import com.phones.phones.exception.user.UserNotExistException;
+import com.phones.phones.exception.user.UserSessionNotExistException;
 import com.phones.phones.model.Line;
+import com.phones.phones.model.User;
 import com.phones.phones.service.LineService;
+import com.phones.phones.session.SessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,41 +25,84 @@ import java.util.Optional;
 public class LineController {
 
     private final LineService lineService;
+    private final SessionManager sessionManager;
 
     @Autowired
-    public LineController(final LineService lineService) {
+    public LineController(final LineService lineService, final SessionManager sessionManager) {
         this.lineService = lineService;
+        this.sessionManager = sessionManager;
     }
 
 
     @PostMapping("/")
-    public void createLine(@RequestBody @Valid final Line line) throws LineNumberAlreadyExistException {
-        lineService.create(line);
+    public ResponseEntity createLine(@RequestHeader("Authorization") String sessionToken,
+                                     @RequestBody @Valid final Line line) throws LineNumberAlreadyExistException, UserSessionNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        if (currentUser.hasRoleEmployee()) {
+            Line newLine = lineService.create(line);
+            return ResponseEntity.created(getLocation(newLine)).build();
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    //@GetMapping("/")
-    public List<Line> findAllLines() {
-        return lineService.findAll();
+    @GetMapping("/")
+    public ResponseEntity<List<Line>> findAllLines(@RequestHeader("Authorization") String sessionToken) throws UserSessionNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        if (currentUser.hasRoleEmployee()) {
+            List<Line> lines = lineService.findAll();
+            return (lines.size() > 0) ? ResponseEntity.ok(lines) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @GetMapping("/{id}")
-    public Optional<Line> findLineById(@PathVariable final Long id) throws LineNotExistException {
-        return lineService.findById(id);
+    public ResponseEntity<Optional<Line>> findLineById(@RequestHeader("Authorization") String sessionToken,
+                                                       @PathVariable final Long id) throws LineNotExistException, UserSessionNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        if (currentUser.hasRoleEmployee()) {
+            return ResponseEntity.ok(lineService.findById(id));
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @DeleteMapping("/{id}")
-    public int deleteLineById(@PathVariable final Long id) throws LineNotExistException {
-        return lineService.disableById(id);
+    public ResponseEntity deleteLineById(@RequestHeader("Authorization") final String sessionToken,
+                                         @PathVariable final Long id) throws LineNotExistException, UserSessionNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        if (currentUser.hasRoleEmployee()) {
+            lineService.disableById(id);
+            return ResponseEntity.ok("Line deleted");
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @PutMapping("/{id}")
-    public Optional<Line> updateLineStatusById(@RequestBody @Valid final LineStatusDto lineStatus,
-                                               @PathVariable final Long id) throws LineNotExistException {
-        return lineService.updateLineStatusByIdLine(lineStatus, id);
+    public ResponseEntity updateLineStatusById(@RequestHeader("Authorization") final String sessionToken,
+                                               @RequestBody @Valid final LineStatusDto lineStatus,
+                                               @PathVariable final Long id) throws LineNotExistException, UserSessionNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        if (currentUser.hasRoleEmployee()) {
+            lineService.updateLineStatusByIdLine(id, lineStatus);
+            return ResponseEntity.ok("Line updated");
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    public List<Line> findLinesByUserId(final Long id) {
-        return lineService.findByUserId(id);
+    public ResponseEntity<List<Line>> findLinesByUserId(@RequestHeader("Authorization") final String sessionToken,
+                                                        final Long id) throws UserSessionNotExistException, UserNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        if (currentUser.hasRoleEmployee()) {
+            return ResponseEntity.ok(lineService.findByUserId(id));
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+
+    private URI getLocation(Line line) {
+        return ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(line.getId())
+                .toUri();
     }
 
 }

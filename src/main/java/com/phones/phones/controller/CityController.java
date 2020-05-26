@@ -11,11 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+// probar y comentar
 @RestController
 @RequestMapping("/api/cities")
 public class CityController {
@@ -35,7 +38,8 @@ public class CityController {
                                      @RequestBody @Valid final City city) throws CityAlreadyExistException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(cityService.create(city));
+            City newCity = cityService.create(city);
+            return ResponseEntity.created(getLocation(newCity)).build();
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
@@ -52,12 +56,20 @@ public class CityController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Optional<City>> findCityById(@RequestHeader("Authorization") String sessionToken,
-                                      @PathVariable final Long id) throws CityNotExistException, UserSessionNotExistException {
+                                                       @PathVariable final Long id) throws CityNotExistException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             return ResponseEntity.ok(cityService.findById(id));
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+
+    private URI getLocation(City city) {
+        return ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(city.getId())
+                .toUri();
     }
 
 }
