@@ -1,6 +1,7 @@
 package com.phones.phones.service;
 
 import com.phones.phones.dto.UserDto;
+import com.phones.phones.exception.user.UserAlreadyDisableException;
 import com.phones.phones.exception.user.UserAlreadyExistException;
 import com.phones.phones.exception.user.UserNotExistException;
 import com.phones.phones.exception.user.UsernameAlreadyExistException;
@@ -49,10 +50,13 @@ public class UserService {
         return userDtoRepository.findById(id);
     }
 
-    public int disableById(Long id) throws UserNotExistException {
+    public int disableById(Long id) throws UserNotExistException, UserAlreadyDisableException {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
             throw new UserNotExistException();
+        }
+        if (!user.get().isActive()) {
+            throw new UserAlreadyDisableException();
         }
         return userRepository.disableById(id);
     }

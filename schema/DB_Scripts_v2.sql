@@ -31,7 +31,10 @@ CREATE TABLE `users` (
     `dni` VARCHAR(255) NOT NULL UNIQUE,
 	`username` VARCHAR(255) NOT NULL UNIQUE,
     `password` VARCHAR(255) NOT NULL,
-    `creation_date` TIMESTAMP NOT NULL,
+
+    /* Si hay error, usar DATETIME en vez de TIMESTAMP */
+    `creation_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
     `is_active` BOOLEAN DEFAULT TRUE,
     `id_city` INT NOT NULL,    
     CONSTRAINT `Pk_users` PRIMARY KEY (`id`),
@@ -64,9 +67,10 @@ CREATE TABLE `line_types` (
 CREATE TABLE `lines` (
 	`id` INT AUTO_INCREMENT NOT NULL,
     `number` VARCHAR(255) NOT NULL UNIQUE,
-    `creation_date` TIMESTAMP NOT NULL,
-    `is_active` BOOLEAN DEFAULT TRUE,
-    `status` ENUM('ENABLED', 'SUSPENDED') NOT NULL,
+
+    `creation_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    `status` ENUM('ENABLED', 'DISABLED', 'SUSPENDED') NOT NULL,
     `id_user` INT NOT NULL,
     `id_line_type` INT NOT NULL,
 	CONSTRAINT `Pk_lines` PRIMARY KEY (`id`),
@@ -91,13 +95,15 @@ CREATE TABLE `rates` (
 SET SQL_MODE='ALLOW_INVALID_DATES';
 CREATE TABLE `invoices` (
 	`id` INT AUTO_INCREMENT NOT NULL,
-    `number_calls` INT NOT NULL DEFAULT 0,
+    `number_calls` INT DEFAULT 0,
     `cost_price` FLOAT NOT NULL,
     `total_price` FLOAT NOT NULL,
-    `creation_date` TIMESTAMP NOT NULL,
-    `due_date` TIMESTAMP NOT NULL,
-    `is_paid` BOOLEAN DEFAULT FALSE,
     `id_line` INT NOT NULL,
+
+    `creation_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    `due_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `is_paid` BOOLEAN DEFAULT FALSE,
     CONSTRAINT `Pk_invoices` PRIMARY KEY (`id`),
     CONSTRAINT `Fk_invoices_line` FOREIGN KEY(`id_line`) REFERENCES `lines`(`id`)
 );
@@ -107,11 +113,13 @@ CREATE TABLE `calls` (
 	`id` INT AUTO_INCREMENT NOT NULL,
     `duration` INT NOT NULL,
     `total_price` FLOAT NOT NULL,
-    `creation_date` TIMESTAMP NOT NULL,
+
+    `creation_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
     `id_origin_line` INT NOT NULL,       
     `id_destination_line` INT NOT NULL,
     `id_rate` INT NOT NULL,
-    `id_invoice` INT NOT NULL,
+    `id_invoice` INT,
     CONSTRAINT `Pk_calls` PRIMARY KEY (`id`),
     CONSTRAINT `Fk_calls_origin_line` FOREIGN KEY(`id_origin_line`) REFERENCES `lines`(`id`),
     CONSTRAINT `Fk_calls_destination_line` FOREIGN KEY(`id_destination_line`) REFERENCES `lines`(`id`),
@@ -124,7 +132,8 @@ CREATE TABLE `calls` (
 
 	/* Provinces */
     insert into `provinces`(name) values ('Buenos Aires');
-    
+
+
     /* Cities */
     insert into 
 		`cities`
@@ -137,6 +146,7 @@ CREATE TABLE `calls` (
             ('Bahia Blanca', '291', 1),
             ('Azul', '2281', 1),
             ('Maipu', '2268', 1);
+
 
 	/* Rates */
     insert into
@@ -151,6 +161,7 @@ CREATE TABLE `calls` (
             (15, 5, 1, 6),		/* Mdp to Azul */
             (14, 5, 1, 7);		/* Mdp to Maipu */
 
+
 	/* User Role */
     insert into
 		`user_roles`
@@ -159,12 +170,14 @@ CREATE TABLE `calls` (
 			('Employee'),
             ('Client');
 
+
 	/* User */
 	insert into
 		`users`
 			(name, surname, dni, username, password, creation_date, is_active, id_city)
 		values
 			('Rodrigo', 'Leon', '404040', 'Rl97', '1234', now(), 1, 1);
+
 
 	/* Users x User_Roles */
     insert into
@@ -174,38 +187,22 @@ CREATE TABLE `calls` (
 			(1, 1),
             (1, 2);
 
+
 	/* Line Type */
     insert into
 		`line_types`
 			(type)
 			values
-				('mobile'),
-                ('residential');
-                
+				('Mobile'),
+                ('Residential');
+
+
 	/* Line */
         insert into
 			`lines`
-				(number, creation_date, is_active, status, id_user, id_line_type)
+				(number, creation_date, status, id_user, id_line_type)
 			values				
-				('2235245050', now(), 1, 'ENABLED',1, 1);
+				('2235245050', now(), 'ENABLED',1, 1);
 
 
 /* STORE PROCEDURE */
-
-    /* Lines */
-    DROP procedure IF EXISTS `lines_deleteById`;
-    DELIMITER $$
-    CREATE PROCEDURE `lines_deleteById` (IN pId INT)
-    BEGIN
-        UPDATE `lines` l
-        SET l.is_active = false
-        WHERE l.id = pId;
-    END$$
-
-
-
-
-
-
-
-

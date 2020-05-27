@@ -1,10 +1,7 @@
 package com.phones.phones.controller;
 
 import com.phones.phones.dto.UserDto;
-import com.phones.phones.exception.user.UserAlreadyExistException;
-import com.phones.phones.exception.user.UserNotExistException;
-import com.phones.phones.exception.user.UserSessionNotExistException;
-import com.phones.phones.exception.user.UsernameAlreadyExistException;
+import com.phones.phones.exception.user.*;
 import com.phones.phones.model.Call;
 import com.phones.phones.model.Invoice;
 import com.phones.phones.model.Line;
@@ -86,29 +83,32 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Integer> deleteUserById(@RequestHeader("Authorization") final String sessionToken,
-                                                  @PathVariable final Long id) throws UserNotExistException, UserSessionNotExistException {
+    public ResponseEntity deleteUserById(@RequestHeader("Authorization") final String sessionToken,
+                                         @PathVariable final Long id) throws UserNotExistException, UserAlreadyDisableException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
-            return ResponseEntity.ok(userService.disableById(id));
+            int deleted = userService.disableById(id);
+            return (deleted > 0) ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
+    // testear
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUserById(@RequestHeader("Authorization") final String sessionToken,
-                                               @RequestBody @Valid final User user,
-                                               @PathVariable final Long id) throws UserNotExistException, UsernameAlreadyExistException, UserSessionNotExistException {
+    public ResponseEntity updateUserById(@RequestHeader("Authorization") final String sessionToken,
+                                         @RequestBody @Valid final User user,
+                                         @PathVariable final Long id) throws UserNotExistException, UsernameAlreadyExistException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
-            return ResponseEntity.ok(userService.updateById(id, user));
+            User updatedUser = userService.updateById(id, user);
+            return ResponseEntity.ok().build();
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @GetMapping("/{id}/calls")
     public ResponseEntity<List<Call>> findCallsByUserId(@RequestHeader("Authorization") String sessionToken,
-                                                        @PathVariable final Long id) throws UserSessionNotExistException, UserNotExistException {
+                                                        @PathVariable final Long id) throws UserNotExistException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             List<Call> calls = callService.findByUserId(id);
@@ -120,7 +120,7 @@ public class UserController {
     @GetMapping("/me/calls")
     public ResponseEntity<List<Call>> findCallsByUserSession(@RequestHeader("Authorization") final String sessionToken,
                                                              @RequestParam(name = "from") final String from,
-                                                             @RequestParam(name = "to") final String to) throws ParseException, UserSessionNotExistException, UserNotExistException {
+                                                             @RequestParam(name = "to") final String to) throws ParseException, UserNotExistException, UserSessionNotExistException {
         if (from == null || to == null) {
             throw new ValidationException("Date 'from' and date 'to' must have a value");
         }
@@ -133,28 +133,28 @@ public class UserController {
 
     @GetMapping("/{id}/lines")
     public ResponseEntity<List<Line>> findLinesByUserId(@RequestHeader("Authorization") final String sessionToken,
-                                                        @PathVariable final Long id) throws UserSessionNotExistException, UserNotExistException {
+                                                        @PathVariable final Long id) throws UserNotExistException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             List<Line> lines = lineService.findByUserId(id);
-            return ResponseEntity.ok(lines);
+            return (lines.size() > 0) ? ResponseEntity.ok(lines) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-
-    /************/
     @GetMapping("/me/lines")
-    public ResponseEntity<List<Line>> findLinesByUserSession() {
-        return null;
+    public ResponseEntity<List<Line>> findLinesByUserSession(@RequestHeader("Authorization") final String sessionToken) throws UserNotExistException, UserSessionNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        List<Line> lines = lineService.findByUserId(currentUser.getId());
+        return (lines.size() > 0) ? ResponseEntity.ok(lines) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    /************/
     // between dates
     @GetMapping("/me/invoices")
     public ResponseEntity<List<Invoice>> findInvoicesByUserSession() {
         return null;
     }
-
     /*
     @GetMapping("/me/cities?top")
     Usar una projection para este metodo (limit 10)
@@ -164,7 +164,6 @@ public class UserController {
         }
      */
     /**********/
-
 
     public Optional<User> login(final String username,
                                 final String password) throws UserNotExistException, ValidationException {

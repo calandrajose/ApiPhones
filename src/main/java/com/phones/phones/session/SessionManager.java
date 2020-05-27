@@ -1,6 +1,5 @@
 package com.phones.phones.session;
 
-import com.phones.phones.exception.user.UserNotExistException;
 import com.phones.phones.exception.user.UserSessionNotExistException;
 import com.phones.phones.model.User;
 import org.springframework.stereotype.Component;

@@ -41,10 +41,4 @@ public class ProvinceService {
         return province;
     }
 
-    /*
-    public Optional<Province> findByUserId(Long id) {
-        return provinceRepository.findByUserId(id);
-    }
-     */
-
 }

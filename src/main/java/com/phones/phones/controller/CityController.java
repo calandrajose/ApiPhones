@@ -10,6 +10,7 @@ import com.phones.phones.session.SessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -18,9 +19,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
-// probar y comentar
-@RestController
-@RequestMapping("/api/cities")
+@Controller
 public class CityController {
 
     private final CityService cityService;
@@ -33,7 +32,6 @@ public class CityController {
     }
 
 
-    @PostMapping("/")
     public ResponseEntity createCity(@RequestHeader("Authorization") String sessionToken,
                                      @RequestBody @Valid final City city) throws CityAlreadyExistException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
@@ -44,7 +42,6 @@ public class CityController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    @GetMapping("/")
     public ResponseEntity<List<City>> findAllCities(@RequestHeader("Authorization") final String sessionToken) throws UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
@@ -54,7 +51,6 @@ public class CityController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    @GetMapping("/{id}")
     public ResponseEntity<Optional<City>> findCityById(@RequestHeader("Authorization") String sessionToken,
                                                        @PathVariable final Long id) throws CityNotExistException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);

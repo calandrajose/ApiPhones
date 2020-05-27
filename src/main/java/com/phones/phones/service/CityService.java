@@ -41,10 +41,4 @@ public class CityService {
         return city;
     }
 
-    /*
-    public Optional<City> findByUserId(Long id) {
-        return cityRepository.findByUserId(id);
-    }
-     */
-
 }

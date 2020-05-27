@@ -1,6 +1,7 @@
 package com.phones.phones.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -37,10 +38,11 @@ public class User {
     @NotNull
     private String password;
 
-    @GeneratedValue
+    // testear
+    @JsonIgnore
     private Date creationDate;
 
-    @Column(columnDefinition = "boolean default true")
+    // testear nulo o no nulo
     private boolean isActive;
 
     @NotNull
@@ -60,6 +62,7 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Line> lines;
+
 
     public boolean hasRoleClient() {
         return userRoles

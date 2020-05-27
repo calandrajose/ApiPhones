@@ -1,5 +1,5 @@
 package com.phones.phones.model;
 
 public enum LineStatus {
-    ENABLED, SUSPENDED;
+    ENABLED, DISABLED, SUSPENDED;
 }

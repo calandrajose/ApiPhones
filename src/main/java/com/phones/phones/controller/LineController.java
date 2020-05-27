@@ -70,8 +70,8 @@ public class LineController {
                                          @PathVariable final Long id) throws LineNotExistException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
-            lineService.disableById(id);
-            return ResponseEntity.ok("Line deleted");
+            int deleted = lineService.disableById(id);
+            return (deleted > 0) ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
@@ -82,8 +82,8 @@ public class LineController {
                                                @PathVariable final Long id) throws LineNotExistException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
-            lineService.updateLineStatusByIdLine(id, lineStatus);
-            return ResponseEntity.ok("Line updated");
+            Line line = lineService.updateLineStatusByIdLine(id, lineStatus);
+            return ResponseEntity.ok().build();
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
@@ -92,7 +92,8 @@ public class LineController {
                                                         final Long id) throws UserSessionNotExistException, UserNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
-            return ResponseEntity.ok(lineService.findByUserId(id));
+            List<Line> lines = lineService.findByUserId(id);
+            return (lines.size() > 0) ? ResponseEntity.ok(lines) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }

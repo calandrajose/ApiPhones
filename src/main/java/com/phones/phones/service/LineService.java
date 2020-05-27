@@ -63,14 +63,14 @@ public class LineService {
         return lineRepository.disableById(id);
     }
 
-    public Optional<Line> updateLineStatusByIdLine(Long id,
-                                                   LineStatusDto lineStatus) throws LineNotExistException {
+    public Line updateLineStatusByIdLine(Long id,
+                                         LineStatusDto lineStatus) throws LineNotExistException {
         Optional<Line> line = lineRepository.findById(id);
         if (line.isEmpty()) {
             throw new LineNotExistException();
         }
         line.get().setStatus(lineStatus.getStatus());
-        return line;
+        return lineRepository.save(line.get());
     }
 
 }
