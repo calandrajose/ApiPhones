@@ -22,16 +22,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
     )
     int disableById(Long id);
 
+
     @Query(
             value = "SELECT count(u.id) " +
                     "FROM users u " +
                     "WHERE u.username = ?1",
             nativeQuery = true
     )
-    int findByUsername(String username);
+    int findByUsernameBoolean(String username);
 
     Optional<User> findByDni(String dni);
 
-    Optional<User> findByUsernameAndPassword(String username, String password);
+    Optional<User> findByUsername(String username);
 
 }

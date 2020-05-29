@@ -26,7 +26,8 @@ public class CityController {
     private final SessionManager sessionManager;
 
     @Autowired
-    public CityController(final CityService cityService, final SessionManager sessionManager) {
+    public CityController(final CityService cityService,
+                          final SessionManager sessionManager) {
         this.cityService = cityService;
         this.sessionManager = sessionManager;
     }

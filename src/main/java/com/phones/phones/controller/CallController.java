@@ -37,7 +37,9 @@ public class CallController {
         return callService.findByUserId(id);
     }
 
-    public List<Call> findCallsByUserIdBetweenDates(final Long id, final Date from, final Date to) throws UserNotExistException {
+    public List<Call> findCallsByUserIdBetweenDates(final Long id,
+                                                    final Date from,
+                                                    final Date to) throws UserNotExistException {
         return callService.findByUserIdBetweenDates(id, from, to);
     }
 

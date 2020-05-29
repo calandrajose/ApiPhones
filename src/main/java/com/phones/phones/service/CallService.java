@@ -19,7 +19,8 @@ public class CallService {
     private final UserRepository userRepository;
 
     @Autowired
-    public CallService(final CallRepository callRepository, final UserRepository userRepository) {
+    public CallService(final CallRepository callRepository,
+                       final UserRepository userRepository) {
         this.callRepository = callRepository;
         this.userRepository = userRepository;
     }
@@ -41,7 +42,9 @@ public class CallService {
         return callRepository.findAllByUserId(id);
     }
 
-    public List<Call> findByUserIdBetweenDates(Long id, Date from, Date to) throws UserNotExistException {
+    public List<Call> findByUserIdBetweenDates(Long id,
+                                               Date from,
+                                               Date to) throws UserNotExistException {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
             throw new UserNotExistException();

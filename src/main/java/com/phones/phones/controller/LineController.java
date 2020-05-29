@@ -28,7 +28,8 @@ public class LineController {
     private final SessionManager sessionManager;
 
     @Autowired
-    public LineController(final LineService lineService, final SessionManager sessionManager) {
+    public LineController(final LineService lineService,
+                          final SessionManager sessionManager) {
         this.lineService = lineService;
         this.sessionManager = sessionManager;
     }
@@ -76,6 +77,7 @@ public class LineController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
+    // cambiar el lineStatusDto a dto completo de line
     @PutMapping("/{id}")
     public ResponseEntity updateLineStatusById(@RequestHeader("Authorization") final String sessionToken,
                                                @RequestBody @Valid final LineStatusDto lineStatus,
