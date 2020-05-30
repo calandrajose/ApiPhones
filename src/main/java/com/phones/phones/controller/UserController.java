@@ -90,7 +90,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    // testear
+    // testear - baja logica
     @PutMapping("/{id}")
     public ResponseEntity updateUserById(@RequestHeader("Authorization") final String sessionToken,
                                          @RequestBody @Valid final User user,
@@ -149,9 +149,11 @@ public class UserController {
     @GetMapping("/me/invoices")
     public ResponseEntity<List<Invoice>> findInvoicesByUserSession(@RequestHeader("Authorization") final String sessionToken,
                                                                    @RequestParam(name = "from") final String from,
-                                                                   @RequestParam(name = "to") final String to) throws UserNotExistException, UserSessionNotExistException {
+                                                                   @RequestParam(name = "to") final String to) throws ParseException, UserNotExistException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        List<Invoice> invoices = invoiceService.findByUserId(currentUser.getId());
+        Date fromDate = new SimpleDateFormat("dd/MM/yyyy").parse(from);
+        Date toDate = new SimpleDateFormat("dd/MM/yyyy").parse(to);
+        List<Invoice> invoices = invoiceService.findByUserIdBetweenDates(currentUser.getId(), fromDate, toDate);
         return (invoices.size() > 0) ? ResponseEntity.ok(invoices) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

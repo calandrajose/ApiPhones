@@ -1,6 +1,7 @@
 package com.phones.phones.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,10 +31,10 @@ public class Invoice {
     @NotNull
     private Float totalPrice;
 
-    @NotNull
+    @JsonIgnore
     private Date creationDate;
 
-    @NotNull
+    @JsonIgnore
     private Date dueDate;
 
     @NotNull

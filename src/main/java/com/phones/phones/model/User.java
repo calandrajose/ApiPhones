@@ -38,11 +38,9 @@ public class User {
     @NotNull
     private String password;
 
-    // testear
     @JsonIgnore
     private Date creationDate;
 
-    // testear nulo o no nulo
     private boolean isActive;
 
     @NotNull

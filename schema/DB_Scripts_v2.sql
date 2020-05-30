@@ -92,7 +92,6 @@ CREATE TABLE `rates` (
 );
 
 
-SET SQL_MODE='ALLOW_INVALID_DATES';
 CREATE TABLE `invoices` (
 	`id` INT AUTO_INCREMENT NOT NULL,
     `number_calls` INT DEFAULT 0,
@@ -176,7 +175,7 @@ CREATE TABLE `calls` (
 		`users`
 			(name, surname, dni, username, password, creation_date, is_active, id_city)
 		values
-			('Rodrigo', 'Leon', '404040', 'Rl97', '1234', now(), 1, 1);
+			('Rodrigo', 'Leon', '404040', 'Rl97', '$2a$04$a3gVk/wqNx9hvoFRjyr5aefKMVpo.23HSOlxePz4pqKLiQAppm4de', now(), 1, 1);
 
 
 	/* Users x User_Roles */
@@ -205,4 +204,75 @@ CREATE TABLE `calls` (
 				('2235245050', now(), 'ENABLED',1, 1);
 
 
-/* STORE PROCEDURE */
+
+/* FUNCTIONS */
+DELIMITER $$
+CREATE FUNCTION `find_city_by_call_number`(number VARCHAR(255)) RETURNS INT DETERMINISTIC
+BEGIN
+	DECLARE id INT DEFAULT -1;
+    SELECT c.id INTO id FROM cities c WHERE number LIKE CONCAT(c.prefix, '%') ORDER BY length(c.prefix) DESC LIMIT 1;
+    RETURN id;
+END $$
+
+
+INSERT INTO
+    calls(duration, total_price, creation_date, id_origin_line, id_destination_line, id_rate)
+    values()
+
+
+/* TRIGGERS */
+DROP TRIGGER IF EXISTS `tbi_calls_new`;
+DELIMITER $$
+CREATE TRIGGER `tbi_calls_new` BEFORE INSERT ON `calls`
+	FOR EACH ROW BEGIN
+
+        DECLARE idRate INT DEFAULT -1;
+        DECLARE originCity INT DEFAULT -1;
+        DECLARE destinationCity INT DEFAULT -1;
+
+        /* VER LA FORMA DE ENVIAR LOS CAMPOS SIN TENER QUE AGREGARLOS A LA DB */
+        SET originCity = find_city_by_call_number("");
+        SET destinationCity = find_city_by_call_number("");
+
+        IF (originCity > 0 AND destinationCity > 0) THEN
+
+			SET idRate = (SELECT r.id INTO idRate FROM `rates` r WHERE r.id_city_origin = originCity AND r.id_city_destination = destinationCity);
+
+            IF (idRate > 0) THEN
+				INSERT INTO `calls`(duration, creation_date, id_origin_line, id_destination_line, id_rate) values ();
+			ELSE
+				SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'Could not be found rate for calls';
+            END IF;
+
+        ELSE
+			SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'The numbers are invalid';
+        END IF;
+
+END $$
+
+
+
+/* USUARIOS */
+-- BACKOFFICE ( USUARIOS, LINEAS Y TARIFAS )
+-- CLIENTES ( CONSULTA LLAMADAS Y FACTURACION )
+-- INFRAESTRUCTURA ( INFORMACION DE LA LLAMDA A LA DB )
+-- FACTURACION ( PROCESO AUTOMATICO )
+
+
+
+/* VISTAS */
+-- USAR UNA VISTA PARA EL REPORTE???? (PUNTO 4)
+    -- CONSULTA DE LLAMADAS POR USUARIO Y FECHA
+          -- i) Número de origen
+          -- ii) Ciudad de origen
+          -- iii) Número de destino
+          -- iv) Ciudad de destino
+          -- v) Precio total
+          -- vi) Duración
+          -- vii) Fecha y hora de llamada
+
+
+
+/* NOSQL */

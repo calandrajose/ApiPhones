@@ -8,6 +8,7 @@ import com.phones.phones.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,4 +41,15 @@ public class InvoiceService {
         }
         return invoiceRepository.findByUserId(id);
     }
+
+    public List<Invoice> findByUserIdBetweenDates(Long id,
+                                                  Date from,
+                                                  Date to) throws UserNotExistException {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isEmpty()) {
+            throw new UserNotExistException();
+        }
+        return invoiceRepository.findByUserIdBetweenDates(id, from, to);
+    }
+
 }

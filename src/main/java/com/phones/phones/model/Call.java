@@ -27,7 +27,6 @@ public class Call {
     @NotNull
     private Float totalPrice;
 
-    // testear
     @JsonIgnore
     private Date creationDate;
 
@@ -49,7 +48,6 @@ public class Call {
     @JoinColumn(name = "id_rate", nullable = false)
     private Rate rate;
 
-    @NotNull
     @JsonBackReference(value = "invoiceCall")
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_invoice", nullable = false)

@@ -25,7 +25,6 @@ public class Line {
     @NotNull
     private String number;
 
-    // testear
     @JsonIgnore
     private Date creationDate;
 

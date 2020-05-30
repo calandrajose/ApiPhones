@@ -79,8 +79,8 @@ public class UserService {
         user.get().setDni(updatedUser.getDni());
         user.get().setUsername(updatedUser.getUsername());
 
-        //hash new pass
-        user.get().setPassword(updatedUser.getPassword());
+        String passwordHashed = passwordEncoder.encode(updatedUser.getPassword());
+        user.get().setPassword(passwordHashed);
 
         user.get().setCity(updatedUser.getCity());
         return userRepository.save(user.get());
