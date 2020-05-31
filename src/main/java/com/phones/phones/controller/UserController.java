@@ -1,5 +1,6 @@
 package com.phones.phones.controller;
 
+import com.phones.phones.dto.MostCalledDto;
 import com.phones.phones.dto.UserDto;
 import com.phones.phones.exception.user.*;
 import com.phones.phones.model.Call;
@@ -53,10 +54,10 @@ public class UserController {
         if (currentUser.hasRoleEmployee()) {
             User newUser = userService.create(user);
             URI location = ServletUriComponentsBuilder
-                            .fromCurrentRequest()
-                            .path("/{id}")
-                            .buildAndExpand(user.getId())
-                            .toUri();
+                    .fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(user.getId())
+                    .toUri();
             return ResponseEntity.created(location).build();
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -163,6 +164,7 @@ public class UserController {
             "cantidad de veces": x
         }
      */
+
     /**********/
 
     public Optional<User> login(final String username,
@@ -174,4 +176,20 @@ public class UserController {
         }
     }
 
-}
+    @GetMapping("/{id}/maxCalled")
+    public ResponseEntity<MostCalledDto> findMostCalledById(@PathVariable final Long id) throws UserNotExistException {
+
+        Optional<UserDto> currentUser = userService.findById(id);
+        MostCalledDto prueba = new MostCalledDto();
+        if (currentUser != null) {
+            String mostCalled = callService.findMostCalledByOriginId(currentUser.get().getId());
+
+            prueba.setCallerName(currentUser.get().getName());
+            prueba.setCallerSurname(currentUser.get().getSurname());
+            prueba.setMostCalled(mostCalled);
+        }
+        return (prueba != null) ? ResponseEntity.ok(prueba) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+
+    }

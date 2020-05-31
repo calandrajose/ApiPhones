@@ -48,4 +48,8 @@ public class CallService {
         }
         return callRepository.findAllByUserIdBetweenDates(id, from, to);
     }
+
+    public String findMostCalledByOriginId(Long id){
+        return  callRepository.findMostCalledByOriginId(id);
+    }
 }
