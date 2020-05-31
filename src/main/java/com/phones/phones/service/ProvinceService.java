@@ -21,12 +21,12 @@ public class ProvinceService {
     }
 
 
-    public void create(Province newProvince) throws ProviceAlreadyExistException {
+    public Province create(Province newProvince) throws ProviceAlreadyExistException {
         Optional<Province> province = provinceRepository.findByName(newProvince.getName());
         if (province.isPresent()) {
             throw new ProviceAlreadyExistException();
         }
-        provinceRepository.save(newProvince);
+        return provinceRepository.save(newProvince);
     }
 
     public List<Province> findAll() {

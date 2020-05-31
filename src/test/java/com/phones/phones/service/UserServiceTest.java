@@ -21,6 +21,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class UserServiceTest {
 
+    @Mock
     UserService userService;
 
     @Mock
@@ -58,14 +59,18 @@ public class UserServiceTest {
                             .dni("404040")
                             .username("rl")
                             .password("123")
-                            //.city(City.builder().id(1L).name("Mdp").prefix("223").build())
+                            .isActive(true)
+                            .city(new City())
                             .build();
 
-        when(userRepository.findById(1L)).thenReturn(ofNullable(userGetById));
+        when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(userGetById));
 
-        Optional<UserDto> returnedUser = userService.findById(1L);
+        UserDto returnedUser = userService.findById(1L).get();
 
-        assertEquals(userGetById.getId(), returnedUser.get().getId());
+        //System.out.println(userGetById);
+        System.out.println(returnedUser);
+
+        assertEquals(userGetById.getId(), returnedUser.getId());
     }
 
     /*

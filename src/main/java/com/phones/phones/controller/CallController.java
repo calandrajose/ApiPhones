@@ -1,12 +1,16 @@
 package com.phones.phones.controller;
 
 import com.phones.phones.exception.user.UserNotExistException;
+import com.phones.phones.exception.user.UserSessionNotExistException;
 import com.phones.phones.model.Call;
+import com.phones.phones.model.User;
 import com.phones.phones.service.CallService;
+import com.phones.phones.session.SessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 
@@ -15,29 +19,41 @@ import java.util.List;
 public class CallController {
 
     private final CallService callService;
+    private final SessionManager sessionManager;
 
     @Autowired
-    public CallController(final CallService callService) {
+    public CallController(final CallService callService,
+                          final SessionManager sessionManager) {
         this.callService = callService;
+        this.sessionManager = sessionManager;
     }
 
 
-    //@PostMapping("/")
-    public void createCall(@RequestBody @Valid final Call call) {
-        callService.create(call);
+    @GetMapping("/")
+    public ResponseEntity<List<Call>> findAllCalls(@RequestHeader("Authorization") String sessionToken) throws UserSessionNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        if (currentUser.hasRoleEmployee()) {
+            List<Call> calls = callService.findAll();
+            return (calls.size() > 0) ? ResponseEntity.ok(calls) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    //@GetMapping("/")
-    public List<Call> findAllCalls() {
-        return callService.findAll();
+    @GetMapping("/{id}")
+    public ResponseEntity<List<Call>> findCallsByUserId(@RequestHeader("Authorization") String sessionToken,
+                                                        @PathVariable final Long id) throws UserNotExistException, UserSessionNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        if (currentUser.hasRoleEmployee()) {
+            List<Call> calls = callService.findByUserId(id);
+            return (calls.size() > 0) ? ResponseEntity.ok(calls) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    // verificar - el empleado puede ver las llamadas de todos y los clientes solo sus llamdas (por id)
-    public List<Call> findCallsByUserId(final Long id) throws UserNotExistException {
-        return callService.findByUserId(id);
-    }
 
-    public List<Call> findCallsByUserIdBetweenDates(final Long id, final Date from, final Date to) throws UserNotExistException {
+    public List<Call> findCallsByUserIdBetweenDates(final Long id,
+                                                    final Date from,
+                                                    final Date to) throws UserNotExistException {
         return callService.findByUserIdBetweenDates(id, from, to);
     }
 

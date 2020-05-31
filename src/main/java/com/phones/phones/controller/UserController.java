@@ -3,13 +3,9 @@ package com.phones.phones.controller;
 import com.phones.phones.dto.MostCalledDto;
 import com.phones.phones.dto.UserDto;
 import com.phones.phones.exception.user.*;
-import com.phones.phones.model.Call;
-import com.phones.phones.model.Invoice;
-import com.phones.phones.model.Line;
-import com.phones.phones.model.User;
-import com.phones.phones.service.CallService;
-import com.phones.phones.service.LineService;
-import com.phones.phones.service.UserService;
+import com.phones.phones.model.*;
+import com.phones.phones.projection.CityTop;
+import com.phones.phones.service.*;
 import com.phones.phones.session.SessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,16 +29,22 @@ public class UserController {
     private final UserService userService;
     private final CallService callService;
     private final LineService lineService;
+    private final CityService cityService;
+    private final InvoiceService invoiceService;
     private final SessionManager sessionManager;
 
     @Autowired
     public UserController(final UserService userService,
                           final CallService callService,
                           final LineService lineService,
+                          final CityService cityService,
+                          final InvoiceService invoiceService,
                           final SessionManager sessionManager) {
         this.userService = userService;
         this.callService = callService;
         this.lineService = lineService;
+        this.cityService = cityService;
+        this.invoiceService = invoiceService;
         this.sessionManager = sessionManager;
     }
 
@@ -53,12 +55,7 @@ public class UserController {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             User newUser = userService.create(user);
-            URI location = ServletUriComponentsBuilder
-                    .fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(user.getId())
-                    .toUri();
-            return ResponseEntity.created(location).build();
+            return ResponseEntity.created(getLocation(newUser)).build();
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
@@ -94,7 +91,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    // testear
+    // testear - baja logica
     @PutMapping("/{id}")
     public ResponseEntity updateUserById(@RequestHeader("Authorization") final String sessionToken,
                                          @RequestBody @Valid final User user,
@@ -150,25 +147,26 @@ public class UserController {
         return (lines.size() > 0) ? ResponseEntity.ok(lines) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    /************/
-    // between dates
     @GetMapping("/me/invoices")
-    public ResponseEntity<List<Invoice>> findInvoicesByUserSession() {
-        return null;
+    public ResponseEntity<List<Invoice>> findInvoicesByUserSession(@RequestHeader("Authorization") final String sessionToken,
+                                                                   @RequestParam(name = "from") final String from,
+                                                                   @RequestParam(name = "to") final String to) throws ParseException, UserNotExistException, UserSessionNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        Date fromDate = new SimpleDateFormat("dd/MM/yyyy").parse(from);
+        Date toDate = new SimpleDateFormat("dd/MM/yyyy").parse(to);
+        List<Invoice> invoices = invoiceService.findByUserIdBetweenDates(currentUser.getId(), fromDate, toDate);
+        return (invoices.size() > 0) ? ResponseEntity.ok(invoices) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-    /*
-    @GetMapping("/me/cities?top")
-    Usar una projection para este metodo (limit 10)
-        {
-            "ciudad": x,
-            "cantidad de veces": x
-        }
-     */
 
-    /**********/
+    @GetMapping("/me/cities/top")
+    public ResponseEntity<List<CityTop>> findTopCitiesCallsByUserSession(@RequestHeader("Authorization") final String sessionToken) throws UserNotExistException, UserSessionNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        List<CityTop> citiesTops = cityService.findTopCitiesCallsByUserId(currentUser.getId());
+        return (citiesTops.size() > 0) ? ResponseEntity.ok(citiesTops) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 
     public Optional<User> login(final String username,
-                                final String password) throws UserNotExistException, ValidationException {
+                                final String password) throws ValidationException, UserInvalidLoginException {
         if ((username != null) && (password != null)) {
             return userService.login(username, password);
         } else {
@@ -193,3 +191,12 @@ public class UserController {
 
 
     }
+    private URI getLocation(User user) {
+        return ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(user.getId())
+                .toUri();
+    }
+
+}

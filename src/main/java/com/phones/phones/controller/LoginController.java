@@ -21,7 +21,8 @@ public class LoginController {
     private final SessionManager sessionManager;
 
     @Autowired
-    public LoginController(final UserController userController, final SessionManager sessionManager) {
+    public LoginController(final UserController userController,
+                           final SessionManager sessionManager) {
         this.userController = userController;
         this.sessionManager = sessionManager;
     }
