@@ -27,7 +27,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
         return new ErrorDto(1, "City name already exists");
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(CityNotExistException.class)
     public ErrorDto handleCityNotExistException(CityNotExistException e) {
         return new ErrorDto(2, "City id do not exists");
@@ -41,7 +41,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
         return new ErrorDto(3, "Line number already exists");
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(LineNotExistException.class)
     public ErrorDto handleLineNotExistException(LineNotExistException e) {
         return new ErrorDto(4, "Line id do not exists");
@@ -55,7 +55,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
         return new ErrorDto(5, "Province name already exists");
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ProvinceNotExistException.class)
     public ErrorDto handleProvinceNotExistException(ProvinceNotExistException e) {
         return new ErrorDto(6, "Province id do not exists");
@@ -81,7 +81,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
         return new ErrorDto(9, "User is already delete");
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(UserNotExistException.class)
     public ErrorDto handleUserNotExistException(UserNotExistException e) {
         return new ErrorDto(10, "User id do not exists");

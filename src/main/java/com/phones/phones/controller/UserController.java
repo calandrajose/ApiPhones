@@ -75,7 +75,12 @@ public class UserController {
                                                           @PathVariable final Long id) throws UserNotExistException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
-            return ResponseEntity.ok(userService.findById(id));
+            // ver si esta bien el DTO
+            Optional<UserDto> user = userService.findById(id);
+            if (user.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            return ResponseEntity.ok(user);
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
@@ -91,7 +96,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    // testear - baja logica
+    // testear
     @PutMapping("/{id}")
     public ResponseEntity updateUserById(@RequestHeader("Authorization") final String sessionToken,
                                          @RequestBody @Valid final User user,
@@ -104,6 +109,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
+    /*
+        Ver si pasa lo mismo que el metodo de abajo
+     */
     @GetMapping("/{id}/calls")
     public ResponseEntity<List<Call>> findCallsByUserId(@RequestHeader("Authorization") String sessionToken,
                                                         @PathVariable final Long id) throws UserNotExistException, UserSessionNotExistException {
@@ -115,6 +123,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
+    /*
+        Solo trae las llamadas que pertenecen a una de sus lineas.
+        Traer todas las llamadas de todas las lineas?????
+     */
     @GetMapping("/me/calls")
     public ResponseEntity<List<Call>> findCallsByUserSession(@RequestHeader("Authorization") final String sessionToken,
                                                              @RequestParam(name = "from") final String from,
@@ -189,8 +201,6 @@ public class UserController {
         return (prueba != null) ? ResponseEntity.ok(prueba) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-
-    }
     private URI getLocation(User user) {
         return ServletUriComponentsBuilder
                 .fromCurrentRequest()

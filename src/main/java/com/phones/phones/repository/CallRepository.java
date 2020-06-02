@@ -37,7 +37,7 @@ public interface CallRepository extends JpaRepository<Call, Long> {
                     "GROUP BY calls.id_destination_line" +
                     "ORDER BY desc" +
                     "LIMIT 1) as mostCalled" +
-                   "ON l.id = mostCalled.destination_id",
+                    "ON l.id = mostCalled.destination_id",
             nativeQuery = true
     )
     String findMostCalledByOriginId(Long id);
