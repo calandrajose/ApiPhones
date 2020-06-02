@@ -177,21 +177,6 @@ public class UserController {
         return (citiesTops.size() > 0) ? ResponseEntity.ok(citiesTops) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @GetMapping("/{id}/maxCalled")
-    public ResponseEntity<MostCalledDto> findMostCalledById(@PathVariable final Long id) throws UserNotExistException {
-
-        Optional<UserDto> currentUser = userService.findById(id);
-        MostCalledDto prueba = new MostCalledDto();
-        if (currentUser.isPresent()) {
-            String mostCalled = callService.findMostCalledByOriginId(currentUser.get().getId());
-
-            prueba.setCallerName(currentUser.get().getName());
-            prueba.setCallerSurname(currentUser.get().getSurname());
-            prueba.setMostCalled(mostCalled);
-        }
-        return (prueba != null) ? ResponseEntity.ok(prueba) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
-
     public Optional<User> login(final String username,
                                 final String password) throws ValidationException, UserInvalidLoginException {
         if ((username != null) && (password != null)) {
@@ -199,6 +184,21 @@ public class UserController {
         } else {
             throw new ValidationException("Username and password must have a value");
         }
+    }
+
+    @GetMapping("/{id}/maxCalled")
+    public ResponseEntity<MostCalledDto> findMostCalledById(@PathVariable final Long id) throws UserNotExistException {
+
+        Optional<UserDto> currentUser = userService.findById(id);
+        MostCalledDto prueba = new MostCalledDto();
+        if (currentUser != null) {
+            String mostCalled = callService.findMostCalledByOriginId(currentUser.get().getId());
+
+            prueba.setCallerName(currentUser.get().getName());
+            prueba.setCallerSurname(currentUser.get().getSurname());
+            prueba.setMostCalled(mostCalled);
+        }
+        return (prueba != null) ? ResponseEntity.ok(prueba) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     private URI getLocation(User user) {
