@@ -30,4 +30,17 @@ public interface CallRepository extends JpaRepository<Call, Long> {
     )
     List<Call> findAllByUserIdBetweenDates(Long id, Date from, Date to);
 
+    @Query(
+            value = "SELECT l.number FROM `lines` l " +
+                    "INNER JOIN (SELECT calls.id_destination_line as 'destination_id', count(id_destination_line) FROM calls c " +
+                    "WHERE (calls.id_origin_line = ?1)" +
+                    "GROUP BY calls.id_destination_line" +
+                    "ORDER BY desc" +
+                    "LIMIT 1) as mostCalled" +
+                    "ON l.id = mostCalled.destination_id",
+            nativeQuery = true
+    )
+    String findMostCalledByOriginId(Long id);
+
+
 }

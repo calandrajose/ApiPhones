@@ -3,7 +3,6 @@ package com.phones.phones.controller;
 import com.phones.phones.dto.LineStatusDto;
 import com.phones.phones.exception.line.LineNotExistException;
 import com.phones.phones.exception.line.LineNumberAlreadyExistException;
-import com.phones.phones.exception.user.UserNotExistException;
 import com.phones.phones.exception.user.UserSessionNotExistException;
 import com.phones.phones.model.Line;
 import com.phones.phones.model.User;
@@ -61,7 +60,11 @@ public class LineController {
                                                        @PathVariable final Long id) throws LineNotExistException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
-            return ResponseEntity.ok(lineService.findById(id));
+            Optional<Line> line = lineService.findById(id);
+            if (line.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            return ResponseEntity.ok(line);
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
@@ -86,16 +89,6 @@ public class LineController {
         if (currentUser.hasRoleEmployee()) {
             Line line = lineService.updateLineStatusByIdLine(id, lineStatus);
             return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-    }
-
-    public ResponseEntity<List<Line>> findLinesByUserId(@RequestHeader("Authorization") final String sessionToken,
-                                                        final Long id) throws UserSessionNotExistException, UserNotExistException {
-        User currentUser = sessionManager.getCurrentUser(sessionToken);
-        if (currentUser.hasRoleEmployee()) {
-            List<Line> lines = lineService.findByUserId(id);
-            return (lines.size() > 0) ? ResponseEntity.ok(lines) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }

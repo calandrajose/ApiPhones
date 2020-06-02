@@ -56,7 +56,11 @@ public class ProvinceController {
                                                                @PathVariable final Long id) throws ProvinceNotExistException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
-            return ResponseEntity.ok(provinceService.findById(id));
+            Optional<Province> province = provinceService.findById(id);
+            if (province.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            return ResponseEntity.ok(province);
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }

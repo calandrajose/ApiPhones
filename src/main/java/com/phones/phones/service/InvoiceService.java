@@ -34,6 +34,10 @@ public class InvoiceService {
         return invoiceRepository.findAll();
     }
 
+    public Optional<Invoice> findById(Long id) {
+        return invoiceRepository.findById(id);
+    }
+
     public List<Invoice> findByUserId(Long id) throws UserNotExistException {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {

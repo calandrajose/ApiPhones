@@ -56,7 +56,11 @@ public class CityController {
                                                        @PathVariable final Long id) throws CityNotExistException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
-            return ResponseEntity.ok(cityService.findById(id));
+            Optional<City> city = cityService.findById(id);
+            if (city.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            return ResponseEntity.ok(city);
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }

@@ -1,5 +1,6 @@
 package com.phones.phones.controller;
 
+import com.phones.phones.dto.MostCalledDto;
 import com.phones.phones.dto.UserDto;
 import com.phones.phones.exception.user.*;
 import com.phones.phones.model.*;
@@ -74,7 +75,12 @@ public class UserController {
                                                           @PathVariable final Long id) throws UserNotExistException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
-            return ResponseEntity.ok(userService.findById(id));
+            // ver si esta bien el DTO
+            Optional<UserDto> user = userService.findById(id);
+            if (user.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            return ResponseEntity.ok(user);
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
@@ -90,7 +96,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    // testear - baja logica
+    // testear
     @PutMapping("/{id}")
     public ResponseEntity updateUserById(@RequestHeader("Authorization") final String sessionToken,
                                          @RequestBody @Valid final User user,
@@ -103,6 +109,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
+    /*
+        Ver si pasa lo mismo que el metodo de abajo
+     */
     @GetMapping("/{id}/calls")
     public ResponseEntity<List<Call>> findCallsByUserId(@RequestHeader("Authorization") String sessionToken,
                                                         @PathVariable final Long id) throws UserNotExistException, UserSessionNotExistException {
@@ -114,6 +123,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
+    /*
+        Solo trae las llamadas que pertenecen a una de sus lineas.
+        Traer todas las llamadas de todas las lineas?????
+     */
     @GetMapping("/me/calls")
     public ResponseEntity<List<Call>> findCallsByUserSession(@RequestHeader("Authorization") final String sessionToken,
                                                              @RequestParam(name = "from") final String from,
@@ -162,6 +175,21 @@ public class UserController {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         List<CityTop> citiesTops = cityService.findTopCitiesCallsByUserId(currentUser.getId());
         return (citiesTops.size() > 0) ? ResponseEntity.ok(citiesTops) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("/{id}/maxCalled")
+    public ResponseEntity<MostCalledDto> findMostCalledById(@PathVariable final Long id) throws UserNotExistException {
+
+        Optional<UserDto> currentUser = userService.findById(id);
+        MostCalledDto prueba = new MostCalledDto();
+        if (currentUser.isPresent()) {
+            String mostCalled = callService.findMostCalledByOriginId(currentUser.get().getId());
+
+            prueba.setCallerName(currentUser.get().getName());
+            prueba.setCallerSurname(currentUser.get().getSurname());
+            prueba.setMostCalled(mostCalled);
+        }
+        return (prueba != null) ? ResponseEntity.ok(prueba) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     public Optional<User> login(final String username,

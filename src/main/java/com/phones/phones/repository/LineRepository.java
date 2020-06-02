@@ -31,4 +31,12 @@ public interface LineRepository extends JpaRepository<Line, Long> {
     )
     int disableById(Long id);
 
+    @Query(
+            value = "SELECT l.number from `lines` l " +
+                    "INNER JOIN users u ON u.id = l.id_user " +
+                    "WHERE u.id = ?1",
+            nativeQuery = true
+    )
+    List<Line> findNumberByUserId(Long id);
+
 }

@@ -1,33 +1,55 @@
 package com.phones.phones.controller;
 
+import com.phones.phones.exception.user.UserSessionNotExistException;
 import com.phones.phones.model.Invoice;
+import com.phones.phones.model.User;
 import com.phones.phones.service.InvoiceService;
+import com.phones.phones.session.SessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/invoices")
 public class InvoiceController {
 
     private final InvoiceService invoiceService;
+    private final SessionManager sessionManager;
 
     @Autowired
-    public InvoiceController(final InvoiceService invoiceService) {
+    public InvoiceController(final InvoiceService invoiceService,
+                             final SessionManager sessionManager) {
         this.invoiceService = invoiceService;
+        this.sessionManager = sessionManager;
     }
 
-
-    //@PostMapping("/")
-    public void createInvoice(@RequestBody @Valid final Invoice invoice) {
-        invoiceService.create(invoice);
-    }
 
     @GetMapping("/")
-    public List<Invoice> findAllInvoices() {
-        return invoiceService.findAll();
+    public ResponseEntity<List<Invoice>> findAllInvoices(@RequestHeader("Authorization") final String sessionToken) throws UserSessionNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        if (currentUser.hasRoleEmployee()) {
+            List<Invoice> invoices = invoiceService.findAll();;
+            return (invoices.size() > 0) ? ResponseEntity.ok(invoices) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<Invoice>> findInvoiceById(@RequestHeader("Authorization") final String sessionToken,
+                                                             @PathVariable final Long id) throws UserSessionNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        if (currentUser.hasRoleEmployee()) {
+            Optional<Invoice> invoice = invoiceService.findById(id);
+            if (invoice.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            return ResponseEntity.ok(invoice);
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
 }
