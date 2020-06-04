@@ -47,6 +47,16 @@ public class UserController {
         this.invoiceService = invoiceService;
         this.sessionManager = sessionManager;
     }
+    @Autowired
+    public UserController(final UserService userService) {
+        this.userService = userService;
+        this.callService = null;
+        this.lineService = null;
+        this.cityService = null;
+        this.invoiceService = null;
+        this.sessionManager = null;
+    }
+
 
 
     @PostMapping("/")
