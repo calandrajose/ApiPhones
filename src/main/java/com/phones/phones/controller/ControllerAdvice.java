@@ -1,8 +1,10 @@
 package com.phones.phones.controller;
 
 import com.phones.phones.dto.ErrorDto;
+import com.phones.phones.exception.call.CallNotExistException;
 import com.phones.phones.exception.city.CityAlreadyExistException;
 import com.phones.phones.exception.city.CityNotExistException;
+import com.phones.phones.exception.invoice.InvoiceNotExistException;
 import com.phones.phones.exception.line.LineNotExistException;
 import com.phones.phones.exception.line.LineNumberAlreadyExistException;
 import com.phones.phones.exception.province.ProviceAlreadyExistException;
@@ -51,7 +53,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
     /* Province exceptions */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ProviceAlreadyExistException.class)
-    public ErrorDto handleProviceAlreadyExistException(ProviceAlreadyExistException e) {
+    public ErrorDto handleProvinceAlreadyExistException(ProviceAlreadyExistException e) {
         return new ErrorDto(5, "Province name already exists");
     }
 
@@ -110,6 +112,22 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(UserSessionNotExistException.class)
     public ErrorDto handleUserSessionNotExistException(UserSessionNotExistException e) {
         return new ErrorDto(14, "Token has expired");
+    }
+
+
+    /* Call exceptions */
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(CallNotExistException.class)
+    public ErrorDto handleCallNotExistException(CallNotExistException e) {
+        return new ErrorDto(15, "Call id do not exists");
+    }
+
+
+    /* Invoice exceptions */
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(InvoiceNotExistException.class)
+    public ErrorDto handleInvoiceNotExistException(InvoiceNotExistException e) {
+        return new ErrorDto(16, "Invoice id do not exists");
     }
 
 

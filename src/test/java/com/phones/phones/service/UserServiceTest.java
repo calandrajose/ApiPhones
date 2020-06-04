@@ -65,7 +65,7 @@ public class UserServiceTest {
 
         when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(userGetById));
 
-        UserDto returnedUser = userService.findById(1L).get();
+        User returnedUser = userService.findById(1L);
 
         //System.out.println(userGetById);
         System.out.println(returnedUser);

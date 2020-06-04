@@ -1,7 +1,5 @@
 package com.phones.phones.controller;
 
-import com.phones.phones.dto.MostCalledDto;
-import com.phones.phones.dto.UserDto;
 import com.phones.phones.exception.user.*;
 import com.phones.phones.model.*;
 import com.phones.phones.projection.CityTop;
@@ -47,7 +45,7 @@ public class UserController {
         this.invoiceService = invoiceService;
         this.sessionManager = sessionManager;
     }
-    @Autowired
+
     public UserController(final UserService userService) {
         this.userService = userService;
         this.callService = null;
@@ -56,7 +54,6 @@ public class UserController {
         this.invoiceService = null;
         this.sessionManager = null;
     }
-
 
 
     @PostMapping("/")
@@ -71,42 +68,40 @@ public class UserController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<UserDto>> findAllUsers(@RequestHeader("Authorization") final String sessionToken) throws UserSessionNotExistException {
+    public ResponseEntity<List<User>> findAllUsers(@RequestHeader("Authorization") final String sessionToken) throws UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
-            List<UserDto> users = userService.findAll();
+            List<User> users = userService.findAll();
             return (users.size() > 0) ? ResponseEntity.ok(users) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<UserDto>> findUserById(@RequestHeader("Authorization") final String sessionToken,
-                                                          @PathVariable final Long id) throws UserNotExistException, UserSessionNotExistException {
+    public ResponseEntity<User> findUserById(@RequestHeader("Authorization") final String sessionToken,
+                                             @PathVariable final Long id) throws UserNotExistException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             // ver si esta bien el DTO
-            Optional<UserDto> user = userService.findById(id);
-            if (user.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
+            User user = userService.findById(id);
             return ResponseEntity.ok(user);
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
+    // TESTEAR
     @DeleteMapping("/{id}")
     public ResponseEntity deleteUserById(@RequestHeader("Authorization") final String sessionToken,
                                          @PathVariable final Long id) throws UserNotExistException, UserAlreadyDisableException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
-            int deleted = userService.disableById(id);
-            return (deleted > 0) ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            boolean deleted = userService.disableById(id);
+            return deleted ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    // testear
+    // TESTEAR
     @PutMapping("/{id}")
     public ResponseEntity updateUserById(@RequestHeader("Authorization") final String sessionToken,
                                          @RequestBody @Valid final User user,
@@ -119,9 +114,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    /*
-        Ver si pasa lo mismo que el metodo de abajo
-     */
     @GetMapping("/{id}/calls")
     public ResponseEntity<List<Call>> findCallsByUserId(@RequestHeader("Authorization") String sessionToken,
                                                         @PathVariable final Long id) throws UserNotExistException, UserSessionNotExistException {
@@ -133,14 +125,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    /*
-        Solo trae las llamadas que pertenecen a una de sus lineas.
-        Traer todas las llamadas de todas las lineas?????
-     */
     @GetMapping("/me/calls")
-    public ResponseEntity<List<Call>> findCallsByUserSession(@RequestHeader("Authorization") final String sessionToken,
-                                                             @RequestParam(name = "from") final String from,
-                                                             @RequestParam(name = "to") final String to) throws ParseException, UserNotExistException, UserSessionNotExistException {
+    public ResponseEntity<List<Call>> findCallsByUserSessionBetweenDates(@RequestHeader("Authorization") final String sessionToken,
+                                                                         @RequestParam(name = "from") final String from,
+                                                                         @RequestParam(name = "to") final String to) throws ParseException, UserNotExistException, UserSessionNotExistException {
         if (from == null || to == null) {
             throw new ValidationException("Date 'from' and date 'to' must have a value");
         }
@@ -170,9 +158,9 @@ public class UserController {
     }
 
     @GetMapping("/me/invoices")
-    public ResponseEntity<List<Invoice>> findInvoicesByUserSession(@RequestHeader("Authorization") final String sessionToken,
-                                                                   @RequestParam(name = "from") final String from,
-                                                                   @RequestParam(name = "to") final String to) throws ParseException, UserNotExistException, UserSessionNotExistException {
+    public ResponseEntity<List<Invoice>> findInvoicesByUserSessionBetweenDates(@RequestHeader("Authorization") final String sessionToken,
+                                                                               @RequestParam(name = "from") final String from,
+                                                                               @RequestParam(name = "to") final String to) throws ParseException, UserNotExistException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         Date fromDate = new SimpleDateFormat("dd/MM/yyyy").parse(from);
         Date toDate = new SimpleDateFormat("dd/MM/yyyy").parse(to);
@@ -196,20 +184,22 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{id}/maxCalled")
-    public ResponseEntity<MostCalledDto> findMostCalledById(@PathVariable final Long id) throws UserNotExistException {
+    /*
+        @GetMapping("/{id}/maxCalled")
+        public ResponseEntity<MostCalledDto> findMostCalledById(@PathVariable final Long id) throws UserNotExistException {
 
-        Optional<UserDto> currentUser = userService.findById(id);
-        MostCalledDto prueba = new MostCalledDto();
-        if (currentUser != null) {
-            String mostCalled = callService.findMostCalledByOriginId(currentUser.get().getId());
+            Optional<UserDto> currentUser = userService.findById(id);
+            MostCalledDto prueba = new MostCalledDto();
+            if (currentUser != null) {
+                String mostCalled = callService.findMostCalledByOriginId(currentUser.get().getId());
 
-            prueba.setCallerName(currentUser.get().getName());
-            prueba.setCallerSurname(currentUser.get().getSurname());
-            prueba.setMostCalled(mostCalled);
+                prueba.setCallerName(currentUser.get().getName());
+                prueba.setCallerSurname(currentUser.get().getSurname());
+                prueba.setMostCalled(mostCalled);
+            }
+            return (prueba != null) ? ResponseEntity.ok(prueba) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
-        return (prueba != null) ? ResponseEntity.ok(prueba) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
+     */
 
     private URI getLocation(User user) {
         return ServletUriComponentsBuilder

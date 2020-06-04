@@ -1,5 +1,6 @@
 package com.phones.phones.service;
 
+import com.phones.phones.exception.invoice.InvoiceNotExistException;
 import com.phones.phones.exception.user.UserNotExistException;
 import com.phones.phones.model.Invoice;
 import com.phones.phones.model.User;
@@ -34,8 +35,12 @@ public class InvoiceService {
         return invoiceRepository.findAll();
     }
 
-    public Optional<Invoice> findById(Long id) {
-        return invoiceRepository.findById(id);
+    public Invoice findById(Long id) throws InvoiceNotExistException {
+        Optional<Invoice> invoice = invoiceRepository.findById(id);
+        if (invoice.isEmpty()) {
+            throw new InvoiceNotExistException();
+        }
+        return invoice.get();
     }
 
     public List<Invoice> findByUserId(Long id) throws UserNotExistException {

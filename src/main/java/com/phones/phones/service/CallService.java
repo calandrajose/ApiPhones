@@ -1,5 +1,6 @@
 package com.phones.phones.service;
 
+import com.phones.phones.exception.call.CallNotExistException;
 import com.phones.phones.exception.user.UserNotExistException;
 import com.phones.phones.model.Call;
 import com.phones.phones.model.User;
@@ -34,6 +35,14 @@ public class CallService {
         return callRepository.findAll();
     }
 
+    public Call findById(Long id) throws CallNotExistException {
+        Optional<Call> call = callRepository.findById(id);
+        if (call.isEmpty()) {
+            throw new CallNotExistException();
+        }
+        return call.get();
+    }
+
     public List<Call> findByUserId(Long id) throws UserNotExistException {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
@@ -52,8 +61,10 @@ public class CallService {
         return callRepository.findAllByUserIdBetweenDates(id, from, to);
     }
 
-    public String findMostCalledByOriginId(Long id){
-        return  callRepository.findMostCalledByOriginId(id);
-    }
+    /*
+        public String findMostCalledByOriginId(Long id){
+            return callRepository.findMostCalledByOriginId(id);
+        }
+     */
 
 }

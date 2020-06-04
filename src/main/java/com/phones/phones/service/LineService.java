@@ -40,12 +40,12 @@ public class LineService {
         return lineRepository.findAll();
     }
 
-    public Optional<Line> findById(Long id) throws LineNotExistException {
+    public Line findById(Long id) throws LineNotExistException {
         Optional<Line> line = lineRepository.findById(id);
         if (line.isEmpty()) {
             throw new LineNotExistException();
         }
-        return lineRepository.findById(id);
+        return line.get();
     }
 
     public List<Line> findByUserId(Long id) throws UserNotExistException {

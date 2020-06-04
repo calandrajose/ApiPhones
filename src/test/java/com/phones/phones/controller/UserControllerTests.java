@@ -1,6 +1,7 @@
 package com.phones.phones.controller;
 
 import com.phones.phones.exception.user.UserNotExistException;
+import com.phones.phones.exception.user.UserSessionNotExistException;
 import com.phones.phones.model.City;
 import com.phones.phones.model.User;
 import com.phones.phones.service.UserService;
@@ -30,13 +31,13 @@ public class UserControllerTests {
 
     //no se como pasar token
     @Test(expected = UserNotExistException.class)
-    public void testGetClientByIdNotFound() throws UserNotExistException {
+    public void testGetClientByIdNotFound() throws UserNotExistException, UserSessionNotExistException {
         when(userService.findById((long) 15)).thenThrow(new UserNotExistException());
-        userController.findUserById(, 15);
+        userController.findUserById("", (long) 15);
     }
 
     @Test
-    public void testGetClientByOk() throws UserNotExistException {
+    public void testGetClientByOk() throws UserNotExistException, UserSessionNotExistException {
         User existingUser = User.builder().id((long) 6).name("").surname("")
                 .city(new City()).userRoles(new ArrayList<>())
                 .dni("").username("")
@@ -45,7 +46,7 @@ public class UserControllerTests {
 
         when(userService.findById((long) 6)).thenReturn(existingUser);
 
-        User clientTest = userController.findUserById(null, (long) 6).getBody();
+        User clientTest = userController.findUserById("", (long) 6).getBody();
 
 
         Assert.assertEquals(existingUser.getUsername(), clientTest.getUsername());

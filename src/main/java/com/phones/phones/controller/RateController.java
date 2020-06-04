@@ -3,7 +3,6 @@ package com.phones.phones.controller;
 import com.phones.phones.dto.RateDto;
 import com.phones.phones.exception.user.UserSessionNotExistException;
 import com.phones.phones.model.User;
-import com.phones.phones.projection.RateByCity;
 import com.phones.phones.service.RateService;
 import com.phones.phones.session.SessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +37,12 @@ public class RateController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    @GetMapping("/test")
-    public RateByCity getRateByCities(@RequestParam(name = "cityFrom") Integer idCityFrom,
-                                      @RequestParam(name = "cityTo") Integer idCityTo){
-        return this.rateService.getRateByCities(idCityFrom, idCityTo);
-    }
+    /*
+        @GetMapping("/test")
+        public RateByCity getRateByCities(@RequestParam(name = "cityFrom") Integer idCityFrom,
+                                          @RequestParam(name = "cityTo") Integer idCityTo){
+            return this.rateService.getRateByCities(idCityFrom, idCityTo);
+        }
+     */
 
 }

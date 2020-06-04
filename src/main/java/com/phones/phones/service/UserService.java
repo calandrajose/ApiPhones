@@ -1,6 +1,5 @@
 package com.phones.phones.service;
 
-import com.phones.phones.dto.UserDto;
 import com.phones.phones.exception.user.*;
 import com.phones.phones.model.User;
 import com.phones.phones.repository.dto.UserDtoRepository;
@@ -42,19 +41,19 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
-    public List<UserDto> findAll() {
-        return userDtoRepository.findAll();
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 
-    public Optional<UserDto> findById(Long id) throws UserNotExistException {
+    public User findById(Long id) throws UserNotExistException {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
             throw new UserNotExistException();
         }
-        return userDtoRepository.findById(id);
+        return user.get();
     }
 
-    public int disableById(Long id) throws UserNotExistException, UserAlreadyDisableException {
+    public boolean disableById(Long id) throws UserNotExistException, UserAlreadyDisableException {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
             throw new UserNotExistException();
@@ -62,7 +61,7 @@ public class UserService {
         if (!user.get().isActive()) {
             throw new UserAlreadyDisableException();
         }
-        return userRepository.disableById(id);
+        return (userRepository.disableById(id) > 0);
     }
 
     public User updateById(Long id,
@@ -83,6 +82,9 @@ public class UserService {
         user.get().setPassword(passwordHashed);
 
         user.get().setCity(updatedUser.getCity());
+
+        // Setear roles tambien
+
         return userRepository.save(user.get());
     }
 
