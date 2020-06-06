@@ -1,15 +1,12 @@
 package com.phones.phones.repository;
 
-import com.phones.phones.dto.InfrastructureCallDto;
 import com.phones.phones.model.Call;
 import com.phones.phones.projection.CallsBetweenDates;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 
@@ -77,19 +74,5 @@ public interface CallRepository extends JpaRepository<Call, Long> {
             nativeQuery = true
     )
     List<Call> findAllByLineId(Long id);
-
-
-    @Modifying
-    @Transactional
-    @Query(
-            value = "INSERT INTO " +
-                    "`calls` (duration, total_price, creation_date, id_origin_line, id_destination_line, id_rate, origin_number, destination_number) " +
-                    "VALUES(:duration, null, :creationDate, null, null, null, :originLine, :destinationLine)",
-            nativeQuery = true
-    )
-    Integer save(@Param("duration") int duration,
-              @Param("creationDate") Date creation_date,
-              @Param("originLine") String originLine,
-              @Param("destinationLine") String destinationLine);
 
 }

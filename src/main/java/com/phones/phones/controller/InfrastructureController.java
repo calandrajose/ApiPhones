@@ -1,6 +1,7 @@
 package com.phones.phones.controller;
 
 import com.phones.phones.dto.InfrastructureCallDto;
+import com.phones.phones.exception.line.LineCannotMakeCallsException;
 import com.phones.phones.exception.line.LineNumberNotExistException;
 import com.phones.phones.exception.user.UserInvalidLoginException;
 import com.phones.phones.model.Call;
@@ -35,23 +36,23 @@ public class InfrastructureController {
      */
 
     @PostMapping("/call")
-    public ResponseEntity createCall(@RequestBody @Valid final InfrastructureCallDto infrastructureCallDto) throws LineNumberNotExistException, UserInvalidLoginException {
+    public ResponseEntity createCall(@RequestBody @Valid final InfrastructureCallDto infrastructureCallDto) throws LineNumberNotExistException, LineCannotMakeCallsException, UserInvalidLoginException {
         if (!login(infrastructureCallDto.getUser(), infrastructureCallDto.getPassword())) {
             throw new UserInvalidLoginException();
         }
-        callService.create(infrastructureCallDto);
-        //return ResponseEntity.created(getLocation(newCall)).build();
-        return ResponseEntity.ok().build();
+        Call newCall = callService.create(infrastructureCallDto);
+        return ResponseEntity.created(getLocation(newCall)).build();
     }
 
     private boolean login(String username, String password) {
         return (this.username.equals(username) && this.password.equals(password));
     }
 
-    // Ver como meter esto
+    // arreglar esto, uri incorrecta
     private URI getLocation(Call call) {
+        String template = "/api/calls";
         return ServletUriComponentsBuilder
-                .fromCurrentRequest()
+                .fromUriString(template)
                 .path("/{id}")
                 .buildAndExpand(call.getId())
                 .toUri();

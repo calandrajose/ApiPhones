@@ -48,14 +48,14 @@ public class UserController {
     }
 
     /*
-        public UserController(final UserService userService) {
-            this.userService = userService;
-            this.callService = null;
-            this.lineService = null;
-            this.cityService = null;
-            this.invoiceService = null;
-            this.sessionManager = null;
-        }
+    public UserController(final UserService userService) {
+        this.userService = userService;
+        this.callService = null;
+        this.lineService = null;
+        this.cityService = null;
+        this.invoiceService = null;
+        this.sessionManager = null;
+    }
      */
 
 

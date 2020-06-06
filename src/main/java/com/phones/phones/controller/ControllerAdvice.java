@@ -5,6 +5,7 @@ import com.phones.phones.exception.call.CallNotExistException;
 import com.phones.phones.exception.city.CityAlreadyExistException;
 import com.phones.phones.exception.city.CityNotExistException;
 import com.phones.phones.exception.invoice.InvoiceNotExistException;
+import com.phones.phones.exception.line.LineCannotMakeCallsException;
 import com.phones.phones.exception.line.LineNotExistException;
 import com.phones.phones.exception.line.LineNumberAlreadyExistException;
 import com.phones.phones.exception.line.LineNumberNotExistException;
@@ -54,6 +55,12 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(LineNumberNotExistException.class)
     public ErrorDto handleLineNumberNotExistException(LineNumberNotExistException e) {
         return new ErrorDto(4, "Line number do not exists");
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(LineCannotMakeCallsException.class)
+    public ErrorDto handleLineCannotMakeCallsException(LineCannotMakeCallsException e) {
+        return new ErrorDto(4, "Line is disabled or suspended, cannot make calls");
     }
 
 

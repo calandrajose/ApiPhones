@@ -2,6 +2,7 @@ package com.phones.phones.service;
 
 import com.phones.phones.dto.InfrastructureCallDto;
 import com.phones.phones.exception.call.CallNotExistException;
+import com.phones.phones.exception.line.LineCannotMakeCallsException;
 import com.phones.phones.exception.line.LineNotExistException;
 import com.phones.phones.exception.line.LineNumberNotExistException;
 import com.phones.phones.exception.user.UserNotExistException;
@@ -39,7 +40,7 @@ public class CallService {
         callRepository.save(newCall);
     }
 
-    public void create(InfrastructureCallDto infrastructureCallDto) throws LineNumberNotExistException {
+    public Call create(InfrastructureCallDto infrastructureCallDto) throws LineNumberNotExistException, LineCannotMakeCallsException {
         Optional<Line> originLine = lineRepository.findByNumber(infrastructureCallDto.getOriginNumber());
         Optional<Line> destinationLine = lineRepository.findByNumber(infrastructureCallDto.getDestinationNumber());
 
@@ -47,10 +48,21 @@ public class CallService {
             throw new LineNumberNotExistException();
         }
 
-        callRepository.save(infrastructureCallDto.getDuration(),
-                infrastructureCallDto.getCreationDate(),
-                infrastructureCallDto.getOriginNumber(),
-                infrastructureCallDto.getDestinationNumber());
+        if (originLine.get().isDisabled() ||
+                originLine.get().isSuspended() ||
+                destinationLine.get().isDisabled() ||
+                destinationLine.get().isSuspended()) {
+            throw new LineCannotMakeCallsException();
+        }
+
+        Call newCall = Call
+                        .builder()
+                        .duration(infrastructureCallDto.getDuration())
+                        .creationDate(infrastructureCallDto.getCreationDate())
+                        .originNumber(infrastructureCallDto.getOriginNumber())
+                        .destinationNumber(infrastructureCallDto.getDestinationNumber())
+                        .build();
+        return callRepository.save(newCall);
     }
 
     public List<Call> findAll() {
