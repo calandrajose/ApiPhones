@@ -52,6 +52,7 @@ CREATE TABLE `user_roles` (
 CREATE TABLE `users_x_user_roles` (
 	`id_user` INT NOT NULL,
     `id_user_role` INT NOT NULL,
+    CONSTRAINT `Pk_users_x_user_roles` PRIMARY KEY (`id_user`, `id_user_role`),
     CONSTRAINT `Fk_users_x_user_roles__user` FOREIGN KEY(`id_user`) REFERENCES `users`(`id`),
     CONSTRAINT `Fk_users_x_user_roles__user_rol` FOREIGN KEY(`id_user_role`) REFERENCES `user_roles`(`id`)
 );

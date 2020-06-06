@@ -1,5 +1,6 @@
 package com.phones.phones.controller;
 
+import com.phones.phones.dto.UserDto;
 import com.phones.phones.exception.user.*;
 import com.phones.phones.model.*;
 import com.phones.phones.projection.CityTop;
@@ -46,14 +47,16 @@ public class UserController {
         this.sessionManager = sessionManager;
     }
 
-    public UserController(final UserService userService) {
-        this.userService = userService;
-        this.callService = null;
-        this.lineService = null;
-        this.cityService = null;
-        this.invoiceService = null;
-        this.sessionManager = null;
-    }
+    /*
+        public UserController(final UserService userService) {
+            this.userService = userService;
+            this.callService = null;
+            this.lineService = null;
+            this.cityService = null;
+            this.invoiceService = null;
+            this.sessionManager = null;
+        }
+     */
 
 
     @PostMapping("/")
@@ -82,14 +85,12 @@ public class UserController {
                                              @PathVariable final Long id) throws UserNotExistException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
-            // ver si esta bien el DTO
             User user = userService.findById(id);
             return ResponseEntity.ok(user);
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    // TESTEAR
     @DeleteMapping("/{id}")
     public ResponseEntity deleteUserById(@RequestHeader("Authorization") final String sessionToken,
                                          @PathVariable final Long id) throws UserNotExistException, UserAlreadyDisableException, UserSessionNotExistException {
@@ -101,14 +102,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    // TESTEAR
     @PutMapping("/{id}")
     public ResponseEntity updateUserById(@RequestHeader("Authorization") final String sessionToken,
-                                         @RequestBody @Valid final User user,
+                                         @RequestBody @Valid final UserDto updatedUser,
                                          @PathVariable final Long id) throws UserNotExistException, UsernameAlreadyExistException, UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
-            User updatedUser = userService.updateById(id, user);
+            User updated = userService.updateById(id, updatedUser);
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

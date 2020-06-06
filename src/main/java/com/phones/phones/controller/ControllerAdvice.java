@@ -95,6 +95,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
         return new ErrorDto(11, "Not valid dates");
     }
 
+
     /* User Login exceptions */
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UserInvalidLoginException.class)

@@ -1,6 +1,6 @@
 package com.phones.phones.service;
 
-import com.phones.phones.dto.LineStatusDto;
+import com.phones.phones.dto.LineDto;
 import com.phones.phones.exception.line.LineNotExistException;
 import com.phones.phones.exception.line.LineNumberAlreadyExistException;
 import com.phones.phones.exception.user.UserNotExistException;
@@ -64,14 +64,21 @@ public class LineService {
         return lineRepository.disableById(id);
     }
 
-    public Line updateLineStatusByIdLine(Long id,
-                                         LineStatusDto lineStatus) throws LineNotExistException {
+    public boolean updateLineByIdLine(Long id,
+                                      LineDto updatedLine) throws LineNotExistException {
         Optional<Line> line = lineRepository.findById(id);
         if (line.isEmpty()) {
             throw new LineNotExistException();
         }
-        line.get().setStatus(lineStatus.getStatus());
-        return lineRepository.save(line.get());
+        line.get().setNumber(updatedLine.getNumber());
+        line.get().setStatus(updatedLine.getStatus());
+        line.get().setLineType(updatedLine.getLineType());
+
+        int updated = lineRepository.updateById(id,
+                line.get().getNumber(),
+                String.valueOf(line.get().getStatus()),
+                line.get().getLineType().getId());
+        return (updated > 0);
     }
 
 }

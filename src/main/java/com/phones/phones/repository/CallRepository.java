@@ -14,13 +14,14 @@ import java.util.List;
 public interface CallRepository extends JpaRepository<Call, Long> {
 
     @Query(
-            value = "SELECT c.* from `lines` l " +
+            value = "SELECT c.* from `calls` c " +
+                    "INNER JOIN `lines` l  ON c.id_origin_line = l.id " +
                     "INNER JOIN users u ON u.id = l.id_user " +
-                    "INNER JOIN calls c ON c.id_origin_line = l.id " +
                     "WHERE u.id = ?1",
             nativeQuery = true
     )
     List<Call> findAllByUserId(Long id);
+
 
     @Query(
             value = "SELECT c.* FROM calls c " +
@@ -30,6 +31,7 @@ public interface CallRepository extends JpaRepository<Call, Long> {
             nativeQuery = true
     )
     List<Call> findAllByUserIdBetweenDates(Long id, Date from, Date to);
+
 
     @Query(
             value = "SELECT l.number FROM `lines` l " +
@@ -45,7 +47,6 @@ public interface CallRepository extends JpaRepository<Call, Long> {
 
 
     /*Trae todas las llamadas ocurridas entre fechas*/
-
     @Query(value = "select\n" +
             "            from.number as 'From',\n" +
             "            to.number as 'To',\n" +
@@ -64,4 +65,14 @@ public interface CallRepository extends JpaRepository<Call, Long> {
             "        order by\n" +
             "            c.number;", nativeQuery = true)
     List<CallsBetweenDates> findByDates(@Param("userId")Integer clientId, @Param("fromDate") Date from, @Param("toDate") Date to);
+
+
+    @Query(
+            value = "SELECT c.* from `calls` c " +
+                    "INNER JOIN `lines` l ON c.id_origin_line = l.id " +
+                    "WHERE l.id = ?1",
+            nativeQuery = true
+    )
+    List<Call> findAllByLineId(Long id);
+
 }

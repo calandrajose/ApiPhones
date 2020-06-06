@@ -30,14 +30,28 @@ public interface LineRepository extends JpaRepository<Line, Long> {
     )
     List<Line> findAllByUserId(Long id);
 
+
     @Transactional
     @Modifying
     @Query(
             value = "UPDATE `lines` l " +
-                    "SET l.is_active = false " +
+                    "SET l.status = 'DISABLED' " +
                     "WHERE l.id = ?1",
             nativeQuery = true
     )
     int disableById(Long id);
+
+
+    @Transactional
+    @Modifying
+    @Query(
+            value = "UPDATE `lines` l " +
+                    "SET l.number =  ?2, " +
+                    "l.status = ?3, " +
+                    "l.id_line_type = ?4 " +
+                    "WHERE l.id = ?1",
+            nativeQuery = true
+    )
+    int updateById(Long id, String number, String status, Long lineType);
 
 }

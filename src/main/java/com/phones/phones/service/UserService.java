@@ -1,8 +1,8 @@
 package com.phones.phones.service;
 
+import com.phones.phones.dto.UserDto;
 import com.phones.phones.exception.user.*;
 import com.phones.phones.model.User;
-import com.phones.phones.repository.dto.UserDtoRepository;
 import com.phones.phones.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,15 +15,12 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final UserDtoRepository userDtoRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserService(final UserRepository userRepository,
-                       final UserDtoRepository userDtoRepository,
                        final PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.userDtoRepository = userDtoRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -65,11 +62,12 @@ public class UserService {
     }
 
     public User updateById(Long id,
-                           User updatedUser) throws UserNotExistException, UsernameAlreadyExistException {
+                           UserDto updatedUser) throws UserNotExistException, UsernameAlreadyExistException {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
             throw new UserNotExistException();
         }
+        // Checkear, si el usuario pone su propio username, salta la excepcion...
         if (existsUsername(updatedUser.getUsername())) {
             throw new UsernameAlreadyExistException();
         }
@@ -82,8 +80,7 @@ public class UserService {
         user.get().setPassword(passwordHashed);
 
         user.get().setCity(updatedUser.getCity());
-
-        // Setear roles tambien
+        user.get().setUserRoles(updatedUser.getUserRoles());
 
         return userRepository.save(user.get());
     }

@@ -41,7 +41,8 @@ public class User {
     @JsonIgnore
     private Date creationDate;
 
-    private boolean isActive;
+    @JsonIgnore
+    private boolean isActive = true;
 
     @NotNull
     @JsonBackReference(value = "cityUser")
@@ -53,10 +54,10 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_x_user_roles",
-            joinColumns = @JoinColumn(name = "id_user") ,
+            joinColumns = @JoinColumn(name = "id_user"),
             inverseJoinColumns = @JoinColumn(name = "id_user_role")
     )
-    private List<UserRole> userRoles = new ArrayList<>();
+    private Set<UserRole> userRoles;
 
     @OneToMany(mappedBy = "user")
     private List<Line> lines;

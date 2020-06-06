@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class UserControllerTests {
-
+/*
     UserController userController;
 
     @Mock
@@ -52,4 +52,6 @@ public class UserControllerTests {
         Assert.assertEquals(existingUser.getUsername(), clientTest.getUsername());
         Assert.assertEquals(existingUser.getPassword(), clientTest.getPassword());
     }
+ */
+
 }
