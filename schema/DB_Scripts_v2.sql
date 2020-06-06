@@ -111,15 +111,15 @@ CREATE TABLE `invoices` (
 
 CREATE TABLE `calls` (
 	`id` INT AUTO_INCREMENT NOT NULL,
-    `duration` INT NOT NULL,
-    `total_price` FLOAT NOT NULL,
-
+    `duration` INT,
+    `total_price` FLOAT,
     `creation_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-    `id_origin_line` INT NOT NULL,       
-    `id_destination_line` INT NOT NULL,
-    `id_rate` INT NOT NULL,
+    `id_origin_line` INT,
+    `id_destination_line` INT,
+    `id_rate` INT,
     `id_invoice` INT,
+    `origin_number` VARCHAR(255),
+    `destination_number` VARCHAR(255),
     CONSTRAINT `Pk_calls` PRIMARY KEY (`id`),
     CONSTRAINT `Fk_calls_origin_line` FOREIGN KEY(`id_origin_line`) REFERENCES `lines`(`id`),
     CONSTRAINT `Fk_calls_destination_line` FOREIGN KEY(`id_destination_line`) REFERENCES `lines`(`id`),
@@ -216,31 +216,35 @@ BEGIN
 END $$
 
 
-INSERT INTO
-    calls(duration, total_price, creation_date, id_origin_line, id_destination_line, id_rate)
-    values()
-
-
 /* TRIGGERS */
 DROP TRIGGER IF EXISTS `tbi_calls_new`;
 DELIMITER $$
 CREATE TRIGGER `tbi_calls_new` BEFORE INSERT ON `calls`
 	FOR EACH ROW BEGIN
 
+        DECLARE idOriginLine INT DEFAULT -1;
+        DECLARE idDestinationLine INT DEFAULT -1;
+        DECLARE idOriginCity INT DEFAULT -1;
+        DECLARE idDestinationCity INT DEFAULT -1;
         DECLARE idRate INT DEFAULT -1;
-        DECLARE originCity INT DEFAULT -1;
-        DECLARE destinationCity INT DEFAULT -1;
+        DECLARE priceRate INT DEFAULT -1;
 
-        /* VER LA FORMA DE ENVIAR LOS CAMPOS SIN TENER QUE AGREGARLOS A LA DB */
-        SET originCity = find_city_by_call_number("");
-        SET destinationCity = find_city_by_call_number("");
+        SELECT l.id INTO idOriginLine FROM `lines` l WHERE l.number = NEW.origin_number;
+        SELECT l.id INTO idDestinationLine FROM `lines` l WHERE l.number = NEW.destination_number;
 
-        IF (originCity > 0 AND destinationCity > 0) THEN
+        SET idOriginCity = find_city_by_call_number(NEW.origin_number);
+        SET idDestinationCity = find_city_by_call_number(NEW.destination_number);
 
-			SET idRate = (SELECT r.id INTO idRate FROM `rates` r WHERE r.id_city_origin = originCity AND r.id_city_destination = destinationCity);
+        IF (idOriginCity > 0 AND idDestinationCity > 0) THEN
+
+            SET NEW.id_origin_line = idOriginLine;
+            SET NEW.id_destination_line = idDestinationLine;
+
+			SELECT r.id, r.price_minute INTO idRate, priceRate FROM `rates` r WHERE r.id_city_origin = idOriginCity AND r.id_city_destination = idDestinationCity;
 
             IF (idRate > 0) THEN
-				INSERT INTO `calls`(duration, creation_date, id_origin_line, id_destination_line, id_rate) values ();
+                SET NEW.total_price = ((NEW.duration / 60) * priceRate);
+                SET NEW.id_rate = idRate;
 			ELSE
 				SIGNAL SQLSTATE '45000'
 				SET MESSAGE_TEXT = 'Could not be found rate for calls';
@@ -250,7 +254,6 @@ CREATE TRIGGER `tbi_calls_new` BEFORE INSERT ON `calls`
 			SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'The numbers are invalid';
         END IF;
-
 END $$
 
 

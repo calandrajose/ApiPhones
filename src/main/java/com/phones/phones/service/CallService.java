@@ -1,7 +1,9 @@
 package com.phones.phones.service;
 
+import com.phones.phones.dto.InfrastructureCallDto;
 import com.phones.phones.exception.call.CallNotExistException;
 import com.phones.phones.exception.line.LineNotExistException;
+import com.phones.phones.exception.line.LineNumberNotExistException;
 import com.phones.phones.exception.user.UserNotExistException;
 import com.phones.phones.model.Call;
 import com.phones.phones.model.Line;
@@ -35,6 +37,20 @@ public class CallService {
 
     public void create(Call newCall) {
         callRepository.save(newCall);
+    }
+
+    public void create(InfrastructureCallDto infrastructureCallDto) throws LineNumberNotExistException {
+        Optional<Line> originLine = lineRepository.findByNumber(infrastructureCallDto.getOriginNumber());
+        Optional<Line> destinationLine = lineRepository.findByNumber(infrastructureCallDto.getDestinationNumber());
+
+        if (originLine.isEmpty() || destinationLine.isEmpty()) {
+            throw new LineNumberNotExistException();
+        }
+
+        callRepository.save(infrastructureCallDto.getDuration(),
+                infrastructureCallDto.getCreationDate(),
+                infrastructureCallDto.getOriginNumber(),
+                infrastructureCallDto.getDestinationNumber());
     }
 
     public List<Call> findAll() {
