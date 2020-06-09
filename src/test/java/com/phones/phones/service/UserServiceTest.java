@@ -1,56 +1,82 @@
 package com.phones.phones.service;
 
-import com.phones.phones.dto.UserDto;
-import com.phones.phones.exception.user.UserAlreadyExistException;
-import com.phones.phones.exception.user.UserNotExistException;
-import com.phones.phones.exception.user.UsernameAlreadyExistException;
+import com.phones.phones.TestObjects;
+import com.phones.phones.exception.user.*;
 import com.phones.phones.model.City;
-import com.phones.phones.model.Province;
 import com.phones.phones.model.User;
 import com.phones.phones.repository.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-import static java.util.Optional.ofNullable;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class UserServiceTest {
 
-    @Mock
     UserService userService;
 
     @Mock
     UserRepository userRepository;
 
+    @Mock
+    PasswordEncoder passwordEncoder;
+
     @Before
     public void setUp() {
         initMocks(this);
+        this.userService = new UserService(userRepository, passwordEncoder);
     }
 
 
     @Test
-    public void testAddOk() {
+    public void testAddOk() throws UsernameAlreadyExistException, UserAlreadyExistException {
+        User newUser = TestObjects.testUser();
+
+        when(userRepository.save(newUser)).thenReturn(newUser);
+
+        User returnedUser = this.userService.create(newUser);
+
+        assertEquals(newUser.getId(), returnedUser.getId());
+        assertEquals(newUser.getName(), returnedUser.getName());
     }
 
     @Test(expected = UserAlreadyExistException.class)
-    public void testAddUserAlreadyExist() {
-    }
+    public void testAddExistingUser() throws UsernameAlreadyExistException, UserAlreadyExistException {
 
-    @Test(expected = UsernameAlreadyExistException.class)
-    public void testAddUsernameAlreadyExist(){
-    }
-
-    @Test
-    public void testGetAllOk() {
+        User newUser = TestObjects.testUser();
+        when(this.userRepository.findByDni(newUser.getDni())).thenReturn(Optional.ofNullable(newUser));
+        userService.create(newUser);
     }
 
     @Test
-    public void testGetByIdOk() throws UserNotExistException {
+    public void testFindAllOk() {
+        List<User> allUsers = TestObjects.testListOfUsers();
+        when(userRepository.findAll()).thenReturn(allUsers);
+
+        List<User> returnedUsers = userService.findAll();
+
+        assertEquals(returnedUsers.size(), allUsers.size());
+        assertEquals(returnedUsers.get(0).getId(), allUsers.get(0).getId());
+    }
+
+    @Test
+    public void testFindAllEmpty() {
+       List<User> emptyList = new ArrayList<>();
+        when(userRepository.findAll()).thenReturn(emptyList);
+
+        List<User> returnedUsers = userService.findAll();
+        assertEquals(returnedUsers.size(), 0);
+    }
+
+    @Test
+    public void testFindByIdOk() throws UserNotExistException {
         User userGetById = User
                             .builder()
                             .id(1L)
@@ -65,25 +91,71 @@ public class UserServiceTest {
 
         when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(userGetById));
 
-        User returnedUser = userService.findById(1L);
-
-        //System.out.println(userGetById);
-        System.out.println(returnedUser);
+        User returnedUser = this.userService.findById(1L);
 
         assertEquals(userGetById.getId(), returnedUser.getId());
     }
 
-    /*
+
     @Test(expected = UserNotExistException.class)
-    public void testGetByIdUserNotExist() {
+    public void testFindByIdUserNotExist() throws UserNotExistException {
+        when(userRepository.findById(2L)).thenReturn(Optional.empty());
+        this.userService.findById(2L);
     }
 
+
+    /***
+     * Returns True if disabled
+     * @throws UserNotExistException
+     * @throws UserAlreadyDisableException
+     */
     @Test
-    public void testDisableByIdOk() {
+    public void testDisableByIdOk() throws UserNotExistException, UserAlreadyDisableException {
+        User disabledUser = TestObjects.testUser();
+        when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(disabledUser));
+        when(userRepository.disableById(1L)).thenReturn(1);
+        boolean desableDTrue = userService.disableById(disabledUser.getId());
+        assertEquals(true, desableDTrue);
     }
 
+
     @Test(expected = UserNotExistException.class)
-    public void testDisableByIdUserNotExist() {
+    public void testDisableByIdUserNotExist() throws UserNotExistException, UserAlreadyDisableException {
+
+        when(userRepository.findById(2L)).thenReturn(Optional.empty());
+        this.userService.disableById(2L);
+    }
+
+    @Test(expected = UserAlreadyDisableException.class)
+    public void testDisableByIdUserIsNotActive() throws UserNotExistException, UserAlreadyDisableException {
+        User disabledUser = TestObjects.testDisabledUser();
+
+        when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(disabledUser));
+        this.userService.disableById(1L);
+    }
+
+
+
+
+
+/*
+    @Test
+    public void testLoginOk() throws UserInvalidLoginException {
+        User loggedUser = TestObjects.testUser();
+        when(userRepository.findByUsername(loggedUser.getSurname())).thenReturn(Optional.ofNullable(loggedUser));
+        Optional<User> returnedUser = userService.login("rl","123");
+        assertEquals(loggedUser.getId(), returnedUser.get().getId());
+        assertEquals(loggedUser.getUsername(), returnedUser.get().getUsername());
+        verify(userRepository, times(1)).findByUsername("rl");
+    }
+
+
+    @Test(expected = UserNotexistException.class)
+    public void testLoginUserNotFound() throws UserNotexistException {
+        when(dao.getByUsername("user","pwd")).thenReturn(null);
+        service.login("user", "pwd");
+    }
+
     }
 
     @Test
