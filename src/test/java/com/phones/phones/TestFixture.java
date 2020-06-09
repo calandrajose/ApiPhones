@@ -6,7 +6,7 @@ import com.phones.phones.model.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestObjects {
+public class TestFixture {
 
 
 public static User testUser(){

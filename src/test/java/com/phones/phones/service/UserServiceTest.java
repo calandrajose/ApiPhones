@@ -1,6 +1,6 @@
 package com.phones.phones.service;
 
-import com.phones.phones.TestObjects;
+import com.phones.phones.TestFixture;
 import com.phones.phones.exception.user.*;
 import com.phones.phones.model.City;
 import com.phones.phones.model.User;
@@ -37,7 +37,7 @@ public class UserServiceTest {
 
     @Test
     public void testAddOk() throws UsernameAlreadyExistException, UserAlreadyExistException {
-        User newUser = TestObjects.testUser();
+        User newUser = TestFixture.testUser();
 
         when(userRepository.save(newUser)).thenReturn(newUser);
 
@@ -50,14 +50,14 @@ public class UserServiceTest {
     @Test(expected = UserAlreadyExistException.class)
     public void testAddExistingUser() throws UsernameAlreadyExistException, UserAlreadyExistException {
 
-        User newUser = TestObjects.testUser();
+        User newUser = TestFixture.testUser();
         when(this.userRepository.findByDni(newUser.getDni())).thenReturn(Optional.ofNullable(newUser));
         userService.create(newUser);
     }
 
     @Test
     public void testFindAllOk() {
-        List<User> allUsers = TestObjects.testListOfUsers();
+        List<User> allUsers = TestFixture.testListOfUsers();
         when(userRepository.findAll()).thenReturn(allUsers);
 
         List<User> returnedUsers = userService.findAll();
@@ -111,7 +111,7 @@ public class UserServiceTest {
      */
     @Test
     public void testDisableByIdOk() throws UserNotExistException, UserAlreadyDisableException {
-        User disabledUser = TestObjects.testUser();
+        User disabledUser = TestFixture.testUser();
         when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(disabledUser));
         when(userRepository.disableById(1L)).thenReturn(1);
         boolean desableDTrue = userService.disableById(disabledUser.getId());
@@ -128,26 +128,28 @@ public class UserServiceTest {
 
     @Test(expected = UserAlreadyDisableException.class)
     public void testDisableByIdUserIsNotActive() throws UserNotExistException, UserAlreadyDisableException {
-        User disabledUser = TestObjects.testDisabledUser();
+        User disabledUser = TestFixture.testDisabledUser();
 
         when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(disabledUser));
         this.userService.disableById(1L);
     }
 
-
-
-
-
-/*
     @Test
     public void testLoginOk() throws UserInvalidLoginException {
-        User loggedUser = TestObjects.testUser();
-        when(userRepository.findByUsername(loggedUser.getSurname())).thenReturn(Optional.ofNullable(loggedUser));
+        User loggedUser = TestFixture.testUser();
+        when(userRepository.findByUsername("rl")).thenReturn(Optional.ofNullable(loggedUser));
+        when(passwordEncoder.matches("123", loggedUser.getPassword())).thenReturn(true);
         Optional<User> returnedUser = userService.login("rl","123");
+
         assertEquals(loggedUser.getId(), returnedUser.get().getId());
         assertEquals(loggedUser.getUsername(), returnedUser.get().getUsername());
         verify(userRepository, times(1)).findByUsername("rl");
     }
+
+
+
+/*
+
 
 
     @Test(expected = UserNotexistException.class)
