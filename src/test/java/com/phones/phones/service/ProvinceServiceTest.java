@@ -1,56 +1,50 @@
 package com.phones.phones.service;
 
 import com.phones.phones.TestFixture;
-import com.phones.phones.exception.user.*;
-import com.phones.phones.model.User;
-import com.phones.phones.repository.UserRepository;
+import com.phones.phones.exception.province.ProviceAlreadyExistException;
+import com.phones.phones.exception.user.UserAlreadyDisableException;
+import com.phones.phones.exception.user.UserNotExistException;
+import com.phones.phones.model.Province;
+import com.phones.phones.repository.ProvinceRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class UserServiceTest {
+public class ProvinceServiceTest {
 
-    UserService userService;
-
-    @Mock
-    UserRepository userRepository;
+    ProvinceService provinceService;
 
     @Mock
-    PasswordEncoder passwordEncoder;
+    ProvinceRepository provinceRepository;
 
     @Before
     public void setUp() {
         initMocks(this);
-        this.userService = new UserService(userRepository, passwordEncoder);
+        this.provinceService = new ProvinceService(provinceRepository);
     }
-
 
     @Test
-    public void testAddOk() throws UsernameAlreadyExistException, UserAlreadyExistException {
-        User newUser = TestFixture.testUser();
+    public void testCreateOk() throws ProviceAlreadyExistException {
+        Province newProvince = TestFixture.testProvince();
 
-        when(userRepository.save(newUser)).thenReturn(newUser);
+        when(provinceRepository.findByName(newProvince.getName())).thenReturn(null);
 
-        User returnedUser = this.userService.create(newUser);
+        Province returnedProvince = this.provinceService.create(newProvince);
+        System.out.println(returnedProvince);
 
-        assertEquals(newUser.getId(), returnedUser.getId());
-        assertEquals(newUser.getName(), returnedUser.getName());
+        assertEquals(newProvince.getId(), returnedProvince.getId());
+        assertEquals(newProvince.getName(), returnedProvince.getName());
     }
-
+/*
     @Test(expected = UserAlreadyExistException.class)
     public void testAddExistingUser() throws UsernameAlreadyExistException, UserAlreadyExistException {
 
         User newUser = TestFixture.testUser();
-        when(this.userRepository.findByDni(newUser.getDni())).thenReturn(Optional.ofNullable(newUser));
+        when(provinceRepository.findByName(newProvince.getName())).thenReturn(Optional.ofNullable(newProvince)
         userService.create(newUser);
     }
 
@@ -67,7 +61,7 @@ public class UserServiceTest {
 
     @Test
     public void testFindAllEmpty() {
-       List<User> emptyList = new ArrayList<>();
+        List<User> emptyList = new ArrayList<>();
         when(userRepository.findAll()).thenReturn(emptyList);
 
         List<User> returnedUsers = userService.findAll();
@@ -76,7 +70,17 @@ public class UserServiceTest {
 
     @Test
     public void testFindByIdOk() throws UserNotExistException {
-        User userGetById = TestFixture.testUser();
+        User userGetById = User
+                .builder()
+                .id(1L)
+                .name("Rodrigo")
+                .surname("Leon")
+                .dni("404040")
+                .username("rl")
+                .password("123")
+                .isActive(true)
+                .city(new City())
+                .build();
 
         when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(userGetById));
 
@@ -92,12 +96,12 @@ public class UserServiceTest {
         this.userService.findById(2L);
     }
 
-
+*/
     /***
      * Returns True if disabled
      * @throws UserNotExistException
      * @throws UserAlreadyDisableException
-     */
+     *//*
     @Test
     public void testDisableByIdOk() throws UserNotExistException, UserAlreadyDisableException {
         User disabledUser = TestFixture.testUser();
@@ -134,31 +138,5 @@ public class UserServiceTest {
         assertEquals(loggedUser.getUsername(), returnedUser.get().getUsername());
         verify(userRepository, times(1)).findByUsername("rl");
     }
-
-
-
-/*
-
-
-
-    @Test(expected = UserNotexistException.class)
-    public void testLoginUserNotFound() throws UserNotexistException {
-        when(dao.getByUsername("user","pwd")).thenReturn(null);
-        service.login("user", "pwd");
-    }
-
-    }
-
-    @Test
-    public void testUpdateByIdOk() {
-    }
-
-    @Test(expected = UserNotExistException.class)
-    public void testUpdateByIdUserNotExist() {
-    }
-
-    @Test
-    public void testConverterToDtoOk() {
-    }*/
-
+    */
 }
