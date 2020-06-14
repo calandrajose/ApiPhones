@@ -62,12 +62,16 @@ public class CallService {
                         .originNumber(infrastructureCallDto.getOriginNumber())
                         .destinationNumber(infrastructureCallDto.getDestinationNumber())
                         .build();
+
         return callRepository.save(newCall);
     }
+
+
 
     public List<Call> findAll() {
         return callRepository.findAll();
     }
+
 
     public Call findById(Long id) throws CallNotExistException {
         Optional<Call> call = callRepository.findById(id);
