@@ -1,9 +1,9 @@
 package com.phones.phones.service;
 
 import com.phones.phones.TestFixture;
-import com.phones.phones.exception.call.CallNotExistException;
-import com.phones.phones.exception.line.LineNotExistException;
-import com.phones.phones.exception.user.UserNotExistException;
+import com.phones.phones.exception.call.CallDoesNotExistException;
+import com.phones.phones.exception.line.LineDoesNotExistException;
+import com.phones.phones.exception.user.UserDoesNotExistException;
 import com.phones.phones.model.Call;
 import com.phones.phones.model.Line;
 import com.phones.phones.model.User;
@@ -94,7 +94,7 @@ public class CallServiceTest {
     }
 
     @Test
-    public void testFindByIdOk() throws CallNotExistException {
+    public void testFindByIdOk() throws CallDoesNotExistException {
         Call callGetById = TestFixture.testCall();
 
         when(callRepository.findById(1L)).thenReturn(Optional.ofNullable(callGetById));
@@ -104,15 +104,15 @@ public class CallServiceTest {
         assertEquals(callGetById.getId(), returnedCall.getId());
     }
 
-    @Test(expected = CallNotExistException.class)
-    public void testFindByUserIdCallNotExist() throws CallNotExistException {
+    @Test(expected = CallDoesNotExistException.class)
+    public void testFindByUserIdCallNotExist() throws CallDoesNotExistException {
         when(callRepository.findById(2L)).thenReturn(Optional.empty());
         this.callService.findById(2L);
     }
 
 
     @Test
-    public void testFindByUserIdOk() throws UserNotExistException {
+    public void testFindByUserIdOk() throws UserDoesNotExistException {
         User userGetById = TestFixture.testUser();
         List<Call> calls = TestFixture.testListOfCalls();
 
@@ -124,14 +124,14 @@ public class CallServiceTest {
     }
 
 
-    @Test(expected = UserNotExistException.class)
-    public void testFindByUserIdUserNotExist() throws UserNotExistException {
+    @Test(expected = UserDoesNotExistException.class)
+    public void testFindByUserIdUserNotExist() throws UserDoesNotExistException {
         when(userRepository.findById(2L)).thenReturn(Optional.empty());
         List<Call> returnedCalls = this.callService.findByUserId(2L);
     }
 
     @Test
-    public void testFindByLineIdOk() throws LineNotExistException {
+    public void testFindByLineIdOk() throws LineDoesNotExistException {
         Line lineGetById = TestFixture.testLine("2235472861");
         List<Call> calls = TestFixture.testListOfCalls();
 
@@ -143,14 +143,14 @@ public class CallServiceTest {
     }
 
 
-    @Test(expected = UserNotExistException.class)
-    public void testFindByLineIdLineNotExist() throws UserNotExistException {
+    @Test(expected = UserDoesNotExistException.class)
+    public void testFindByLineIdLineNotExist() throws UserDoesNotExistException {
         when(userRepository.findById(2L)).thenReturn(Optional.empty());
         List<Call> returnedCalls = this.callService.findByUserId(2L);
     }
 
     @Test
-    public void testFindByUserIdBetweenDatesOk() throws UserNotExistException {
+    public void testFindByUserIdBetweenDatesOk() throws UserDoesNotExistException {
         User userGetById = TestFixture.testUser();
         List<Call> calls = TestFixture.testListOfCalls();
         Date from = new Date(2020,06,10);
@@ -168,8 +168,8 @@ public class CallServiceTest {
     }
 
 
-    @Test(expected = UserNotExistException.class)
-    public void testFindByUserIdBetweenDatesUserNotExist() throws UserNotExistException {
+    @Test(expected = UserDoesNotExistException.class)
+    public void testFindByUserIdBetweenDatesUserNotExist() throws UserDoesNotExistException {
         Date from = new Date(2020,06,10);
         Date to = new Date(2020,06,14);
         when(userRepository.findById(2L)).thenReturn(Optional.empty());

@@ -1,9 +1,10 @@
 package com.phones.phones.service;
 
 import com.phones.phones.dto.LineDto;
-import com.phones.phones.exception.line.LineNotExistException;
+import com.phones.phones.exception.line.LineAlreadyDisabledException;
+import com.phones.phones.exception.line.LineDoesNotExistException;
 import com.phones.phones.exception.line.LineNumberAlreadyExistException;
-import com.phones.phones.exception.user.UserNotExistException;
+import com.phones.phones.exception.user.UserDoesNotExistException;
 import com.phones.phones.model.Line;
 import com.phones.phones.model.User;
 import com.phones.phones.repository.LineRepository;
@@ -40,35 +41,38 @@ public class LineService {
         return lineRepository.findAll();
     }
 
-    public Line findById(Long id) throws LineNotExistException {
+    public Line findById(Long id) throws LineDoesNotExistException {
         Optional<Line> line = lineRepository.findById(id);
         if (line.isEmpty()) {
-            throw new LineNotExistException();
+            throw new LineDoesNotExistException();
         }
         return line.get();
     }
 
-    public List<Line> findByUserId(Long id) throws UserNotExistException {
+    public List<Line> findByUserId(Long id) throws UserDoesNotExistException {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
-            throw new UserNotExistException();
+            throw new UserDoesNotExistException();
         }
         return lineRepository.findAllByUserId(id);
     }
 
-    public int disableById(Long id) throws LineNotExistException {
+    public int disableById(Long id) throws LineDoesNotExistException, LineAlreadyDisabledException {
         Optional<Line> line = lineRepository.findById(id);
         if (line.isEmpty()) {
-            throw new LineNotExistException();
+            throw new LineDoesNotExistException();
+        }
+        if (line.get().isDisabled()) {
+            throw new LineAlreadyDisabledException();
         }
         return lineRepository.disableById(id);
     }
 
     public boolean updateLineByIdLine(Long id,
-                                      LineDto updatedLine) throws LineNotExistException {
+                                      LineDto updatedLine) throws LineDoesNotExistException {
         Optional<Line> line = lineRepository.findById(id);
         if (line.isEmpty()) {
-            throw new LineNotExistException();
+            throw new LineDoesNotExistException();
         }
         line.get().setNumber(updatedLine.getNumber());
         line.get().setStatus(updatedLine.getStatus());

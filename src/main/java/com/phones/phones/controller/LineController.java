@@ -1,9 +1,10 @@
 package com.phones.phones.controller;
 
 import com.phones.phones.dto.LineDto;
-import com.phones.phones.exception.line.LineNotExistException;
+import com.phones.phones.exception.line.LineAlreadyDisabledException;
+import com.phones.phones.exception.line.LineDoesNotExistException;
 import com.phones.phones.exception.line.LineNumberAlreadyExistException;
-import com.phones.phones.exception.user.UserSessionNotExistException;
+import com.phones.phones.exception.user.UserSessionDoesNotExistException;
 import com.phones.phones.model.Call;
 import com.phones.phones.model.Line;
 import com.phones.phones.model.User;
@@ -40,7 +41,7 @@ public class LineController {
 
     @PostMapping("/")
     public ResponseEntity createLine(@RequestHeader("Authorization") String sessionToken,
-                                     @RequestBody @Valid final Line line) throws LineNumberAlreadyExistException, UserSessionNotExistException {
+                                     @RequestBody @Valid final Line line) throws LineNumberAlreadyExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             Line newLine = lineService.create(line);
@@ -50,7 +51,7 @@ public class LineController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<Line>> findAllLines(@RequestHeader("Authorization") String sessionToken) throws UserSessionNotExistException {
+    public ResponseEntity<List<Line>> findAllLines(@RequestHeader("Authorization") String sessionToken) throws UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             List<Line> lines = lineService.findAll();
@@ -61,7 +62,7 @@ public class LineController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Line> findLineById(@RequestHeader("Authorization") String sessionToken,
-                                             @PathVariable final Long id) throws LineNotExistException, UserSessionNotExistException {
+                                             @PathVariable final Long id) throws LineDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             Line line = lineService.findById(id);
@@ -72,7 +73,7 @@ public class LineController {
 
     @GetMapping("/calls/{id}")
     public ResponseEntity<List<Call>> findCallsByLineId(@RequestHeader("Authorization") String sessionToken,
-                                                        @PathVariable final Long id) throws LineNotExistException, UserSessionNotExistException {
+                                                        @PathVariable final Long id) throws LineDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             List<Call> calls = callService.findByLineId(id);
@@ -83,7 +84,7 @@ public class LineController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity deleteLineById(@RequestHeader("Authorization") final String sessionToken,
-                                         @PathVariable final Long id) throws LineNotExistException, UserSessionNotExistException {
+                                         @PathVariable final Long id) throws LineDoesNotExistException, UserSessionDoesNotExistException, LineAlreadyDisabledException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             int deleted = lineService.disableById(id);
@@ -95,7 +96,7 @@ public class LineController {
     @PutMapping("/{id}")
     public ResponseEntity updateLineByIdLine(@RequestHeader("Authorization") final String sessionToken,
                                              @RequestBody @Valid final LineDto updatedLine,
-                                             @PathVariable final Long id) throws LineNotExistException, UserSessionNotExistException {
+                                             @PathVariable final Long id) throws LineDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             boolean line = lineService.updateLineByIdLine(id, updatedLine);

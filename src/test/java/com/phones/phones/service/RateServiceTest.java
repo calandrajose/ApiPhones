@@ -29,7 +29,7 @@ public class RateServiceTest {
 
     @Test
     public void testFindAllOk() {
-        List<RateDto> rates = TestFixture.testListOfRates();
+        List<RateDto> rates = TestFixture.testListOfRatesDto();
         when(rateDtoRepository.findAll()).thenReturn(rates);
 
         List<RateDto> returnedRates = rateService.findAll();

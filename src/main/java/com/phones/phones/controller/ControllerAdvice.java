@@ -1,16 +1,16 @@
 package com.phones.phones.controller;
 
 import com.phones.phones.dto.ErrorDto;
-import com.phones.phones.exception.call.CallNotExistException;
+import com.phones.phones.exception.call.CallDoesNotExistException;
 import com.phones.phones.exception.city.CityAlreadyExistException;
-import com.phones.phones.exception.city.CityNotExistException;
-import com.phones.phones.exception.invoice.InvoiceNotExistException;
+import com.phones.phones.exception.city.CityDoesNotExistException;
+import com.phones.phones.exception.invoice.InvoiceDoesNotExistException;
 import com.phones.phones.exception.line.LineCannotMakeCallsException;
-import com.phones.phones.exception.line.LineNotExistException;
+import com.phones.phones.exception.line.LineDoesNotExistException;
 import com.phones.phones.exception.line.LineNumberAlreadyExistException;
-import com.phones.phones.exception.line.LineNumberNotExistException;
+import com.phones.phones.exception.line.LineNumberDoesNotExistException;
 import com.phones.phones.exception.province.ProviceAlreadyExistException;
-import com.phones.phones.exception.province.ProvinceNotExistException;
+import com.phones.phones.exception.province.ProvinceDoesNotExistException;
 import com.phones.phones.exception.user.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,8 +32,8 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(CityNotExistException.class)
-    public ErrorDto handleCityNotExistException(CityNotExistException e) {
+    @ExceptionHandler(CityDoesNotExistException.class)
+    public ErrorDto handleCityNotExistException(CityDoesNotExistException e) {
         return new ErrorDto(2, "City id do not exists");
     }
 
@@ -46,14 +46,14 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(LineNotExistException.class)
-    public ErrorDto handleLineNotExistException(LineNotExistException e) {
+    @ExceptionHandler(LineDoesNotExistException.class)
+    public ErrorDto handleLineNotExistException(LineDoesNotExistException e) {
         return new ErrorDto(4, "Line id do not exists");
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(LineNumberNotExistException.class)
-    public ErrorDto handleLineNumberNotExistException(LineNumberNotExistException e) {
+    @ExceptionHandler(LineNumberDoesNotExistException.class)
+    public ErrorDto handleLineNumberNotExistException(LineNumberDoesNotExistException e) {
         return new ErrorDto(4, "Line number do not exists");
     }
 
@@ -72,8 +72,8 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(ProvinceNotExistException.class)
-    public ErrorDto handleProvinceNotExistException(ProvinceNotExistException e) {
+    @ExceptionHandler(ProvinceDoesNotExistException.class)
+    public ErrorDto handleProvinceNotExistException(ProvinceDoesNotExistException e) {
         return new ErrorDto(6, "Province id do not exists");
     }
 
@@ -98,8 +98,8 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(UserNotExistException.class)
-    public ErrorDto handleUserNotExistException(UserNotExistException e) {
+    @ExceptionHandler(UserDoesNotExistException.class)
+    public ErrorDto handleUserNotExistException(UserDoesNotExistException e) {
         return new ErrorDto(10, "User id do not exists");
     }
 
@@ -124,24 +124,24 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    @ExceptionHandler(UserSessionNotExistException.class)
-    public ErrorDto handleUserSessionNotExistException(UserSessionNotExistException e) {
+    @ExceptionHandler(UserSessionDoesNotExistException.class)
+    public ErrorDto handleUserSessionNotExistException(UserSessionDoesNotExistException e) {
         return new ErrorDto(14, "Token has expired");
     }
 
 
     /* Call exceptions */
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(CallNotExistException.class)
-    public ErrorDto handleCallNotExistException(CallNotExistException e) {
+    @ExceptionHandler(CallDoesNotExistException.class)
+    public ErrorDto handleCallNotExistException(CallDoesNotExistException e) {
         return new ErrorDto(15, "Call id do not exists");
     }
 
 
     /* Invoice exceptions */
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(InvoiceNotExistException.class)
-    public ErrorDto handleInvoiceNotExistException(InvoiceNotExistException e) {
+    @ExceptionHandler(InvoiceDoesNotExistException.class)
+    public ErrorDto handleInvoiceNotExistException(InvoiceDoesNotExistException e) {
         return new ErrorDto(16, "Invoice id do not exists");
     }
 

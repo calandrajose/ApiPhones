@@ -61,7 +61,7 @@ public class UserController {
 
     @PostMapping("/")
     public ResponseEntity createUser(@RequestHeader("Authorization") final String sessionToken,
-                                     @RequestBody @Valid final User user) throws UsernameAlreadyExistException, UserAlreadyExistException, UserSessionNotExistException {
+                                     @RequestBody @Valid final User user) throws UsernameAlreadyExistException, UserAlreadyExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             User newUser = userService.create(user);
@@ -71,7 +71,7 @@ public class UserController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<User>> findAllUsers(@RequestHeader("Authorization") final String sessionToken) throws UserSessionNotExistException {
+    public ResponseEntity<List<User>> findAllUsers(@RequestHeader("Authorization") final String sessionToken) throws UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             List<User> users = userService.findAll();
@@ -82,7 +82,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<User> findUserById(@RequestHeader("Authorization") final String sessionToken,
-                                             @PathVariable final Long id) throws UserNotExistException, UserSessionNotExistException {
+                                             @PathVariable final Long id) throws UserDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             User user = userService.findById(id);
@@ -93,7 +93,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity deleteUserById(@RequestHeader("Authorization") final String sessionToken,
-                                         @PathVariable final Long id) throws UserNotExistException, UserAlreadyDisableException, UserSessionNotExistException {
+                                         @PathVariable final Long id) throws UserDoesNotExistException, UserAlreadyDisableException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             boolean deleted = userService.disableById(id);
@@ -105,7 +105,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity updateUserById(@RequestHeader("Authorization") final String sessionToken,
                                          @RequestBody @Valid final UserDto updatedUser,
-                                         @PathVariable final Long id) throws UserNotExistException, UsernameAlreadyExistException, UserSessionNotExistException {
+                                         @PathVariable final Long id) throws UserDoesNotExistException, UsernameAlreadyExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             User updated = userService.updateById(id, updatedUser);
@@ -116,7 +116,7 @@ public class UserController {
 
     @GetMapping("/{id}/calls")
     public ResponseEntity<List<Call>> findCallsByUserId(@RequestHeader("Authorization") String sessionToken,
-                                                        @PathVariable final Long id) throws UserNotExistException, UserSessionNotExistException {
+                                                        @PathVariable final Long id) throws UserDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             List<Call> calls = callService.findByUserId(id);
@@ -128,7 +128,7 @@ public class UserController {
     @GetMapping("/me/calls")
     public ResponseEntity<List<Call>> findCallsByUserSessionBetweenDates(@RequestHeader("Authorization") final String sessionToken,
                                                                          @RequestParam(name = "from") final String from,
-                                                                         @RequestParam(name = "to") final String to) throws ParseException, UserNotExistException, UserSessionNotExistException {
+                                                                         @RequestParam(name = "to") final String to) throws ParseException, UserDoesNotExistException, UserSessionDoesNotExistException {
         if (from == null || to == null) {
             throw new ValidationException("Date 'from' and date 'to' must have a value");
         }
@@ -141,7 +141,7 @@ public class UserController {
 
     @GetMapping("/{id}/lines")
     public ResponseEntity<List<Line>> findLinesByUserId(@RequestHeader("Authorization") final String sessionToken,
-                                                        @PathVariable final Long id) throws UserNotExistException, UserSessionNotExistException {
+                                                        @PathVariable final Long id) throws UserDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             List<Line> lines = lineService.findByUserId(id);
@@ -151,7 +151,7 @@ public class UserController {
     }
 
     @GetMapping("/me/lines")
-    public ResponseEntity<List<Line>> findLinesByUserSession(@RequestHeader("Authorization") final String sessionToken) throws UserNotExistException, UserSessionNotExistException {
+    public ResponseEntity<List<Line>> findLinesByUserSession(@RequestHeader("Authorization") final String sessionToken) throws UserDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         List<Line> lines = lineService.findByUserId(currentUser.getId());
         return (lines.size() > 0) ? ResponseEntity.ok(lines) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -160,7 +160,7 @@ public class UserController {
     @GetMapping("/me/invoices")
     public ResponseEntity<List<Invoice>> findInvoicesByUserSessionBetweenDates(@RequestHeader("Authorization") final String sessionToken,
                                                                                @RequestParam(name = "from") final String from,
-                                                                               @RequestParam(name = "to") final String to) throws ParseException, UserNotExistException, UserSessionNotExistException {
+                                                                               @RequestParam(name = "to") final String to) throws ParseException, UserDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         Date fromDate = new SimpleDateFormat("dd/MM/yyyy").parse(from);
         Date toDate = new SimpleDateFormat("dd/MM/yyyy").parse(to);
@@ -169,7 +169,7 @@ public class UserController {
     }
 
     @GetMapping("/me/cities/top")
-    public ResponseEntity<List<CityTop>> findTopCitiesCallsByUserSession(@RequestHeader("Authorization") final String sessionToken) throws UserNotExistException, UserSessionNotExistException {
+    public ResponseEntity<List<CityTop>> findTopCitiesCallsByUserSession(@RequestHeader("Authorization") final String sessionToken) throws UserDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         List<CityTop> citiesTops = cityService.findTopCitiesCallsByUserId(currentUser.getId());
         return (citiesTops.size() > 0) ? ResponseEntity.ok(citiesTops) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();

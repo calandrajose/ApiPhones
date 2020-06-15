@@ -1,21 +1,5 @@
 package com.phones.phones.controller;
 
-import com.phones.phones.exception.user.UserNotExistException;
-import com.phones.phones.exception.user.UserSessionNotExistException;
-import com.phones.phones.model.City;
-import com.phones.phones.model.User;
-import com.phones.phones.service.UserService;
-import org.hibernate.usertype.UserType;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-
-import java.util.ArrayList;
-
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-
 public class UserControllerTests {
 /*
     UserController userController;

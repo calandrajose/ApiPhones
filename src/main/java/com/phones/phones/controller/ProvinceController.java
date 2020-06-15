@@ -1,8 +1,8 @@
 package com.phones.phones.controller;
 
 import com.phones.phones.exception.province.ProviceAlreadyExistException;
-import com.phones.phones.exception.province.ProvinceNotExistException;
-import com.phones.phones.exception.user.UserSessionNotExistException;
+import com.phones.phones.exception.province.ProvinceDoesNotExistException;
+import com.phones.phones.exception.user.UserSessionDoesNotExistException;
 import com.phones.phones.model.Province;
 import com.phones.phones.model.User;
 import com.phones.phones.service.ProvinceService;
@@ -33,7 +33,7 @@ public class ProvinceController {
 
 
     public ResponseEntity createProvince(@RequestHeader("Authorization") final String sessionToken,
-                                         @RequestBody @Valid final Province province) throws ProviceAlreadyExistException, UserSessionNotExistException {
+                                         @RequestBody @Valid final Province province) throws ProviceAlreadyExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             Province newProvince = provinceService.create(province);
@@ -42,7 +42,7 @@ public class ProvinceController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    public ResponseEntity<List<Province>> findAllProvinces(@RequestHeader("Authorization") final String sessionToken) throws UserSessionNotExistException {
+    public ResponseEntity<List<Province>> findAllProvinces(@RequestHeader("Authorization") final String sessionToken) throws UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             List<Province> provinces = provinceService.findAll();
@@ -52,7 +52,7 @@ public class ProvinceController {
     }
 
     public ResponseEntity<Province> findProvinceById(@RequestHeader("Authorization") final String sessionToken,
-                                                     @PathVariable final Long id) throws ProvinceNotExistException, UserSessionNotExistException {
+                                                     @PathVariable final Long id) throws ProvinceDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             Province province = provinceService.findById(id);

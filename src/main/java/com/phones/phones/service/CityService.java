@@ -1,8 +1,8 @@
 package com.phones.phones.service;
 
 import com.phones.phones.exception.city.CityAlreadyExistException;
-import com.phones.phones.exception.city.CityNotExistException;
-import com.phones.phones.exception.user.UserNotExistException;
+import com.phones.phones.exception.city.CityDoesNotExistException;
+import com.phones.phones.exception.user.UserDoesNotExistException;
 import com.phones.phones.model.City;
 import com.phones.phones.model.User;
 import com.phones.phones.projection.CityTop;
@@ -40,18 +40,18 @@ public class CityService {
         return cityRepository.findAll();
     }
 
-    public City findById(Long id) throws CityNotExistException {
+    public City findById(Long id) throws CityDoesNotExistException {
         Optional<City> city = cityRepository.findById(id);
         if (city.isEmpty()) {
-            throw new CityNotExistException();
+            throw new CityDoesNotExistException();
         }
         return city.get();
     }
 
-    public List<CityTop> findTopCitiesCallsByUserId(Long id) throws UserNotExistException {
+    public List<CityTop> findTopCitiesCallsByUserId(Long id) throws UserDoesNotExistException {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
-            throw new UserNotExistException();
+            throw new UserDoesNotExistException();
         }
         return cityRepository.findCitiesTopByUserId(id);
     }
