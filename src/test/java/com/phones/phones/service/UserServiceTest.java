@@ -75,7 +75,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testFindByIdOk() throws UserNotExistException {
+    public void testFindByIdOk() throws UserDoesNotExistException {
         User userGetById = TestFixture.testUser();
 
         when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(userGetById));
@@ -86,8 +86,8 @@ public class UserServiceTest {
     }
 
 
-    @Test(expected = UserNotExistException.class)
-    public void testFindByIdUserNotExist() throws UserNotExistException {
+    @Test(expected = UserDoesNotExistException.class)
+    public void testFindByIdUserNotExist() throws UserDoesNotExistException {
         when(userRepository.findById(2L)).thenReturn(Optional.empty());
         this.userService.findById(2L);
     }
@@ -95,11 +95,11 @@ public class UserServiceTest {
 
     /***
      * Returns True if disabled
-     * @throws UserNotExistException
+     * @throws UserDoesNotExistException
      * @throws UserAlreadyDisableException
      */
     @Test
-    public void testDisableByIdOk() throws UserNotExistException, UserAlreadyDisableException {
+    public void testDisableByIdOk() throws UserDoesNotExistException, UserAlreadyDisableException {
         User disabledUser = TestFixture.testUser();
         when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(disabledUser));
         when(userRepository.disableById(1L)).thenReturn(1);
@@ -108,15 +108,15 @@ public class UserServiceTest {
     }
 
 
-    @Test(expected = UserNotExistException.class)
-    public void testDisableByIdUserNotExist() throws UserNotExistException, UserAlreadyDisableException {
+    @Test(expected = UserDoesNotExistException.class)
+    public void testDisableByIdUserNotExist() throws UserDoesNotExistException, UserAlreadyDisableException {
 
         when(userRepository.findById(2L)).thenReturn(Optional.empty());
         this.userService.disableById(2L);
     }
 
     @Test(expected = UserAlreadyDisableException.class)
-    public void testDisableByIdUserIsNotActive() throws UserNotExistException, UserAlreadyDisableException {
+    public void testDisableByIdUserIsNotActive() throws UserDoesNotExistException, UserAlreadyDisableException {
         User disabledUser = TestFixture.testDisabledUser();
 
         when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(disabledUser));

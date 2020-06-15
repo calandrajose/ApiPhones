@@ -2,7 +2,7 @@ package com.phones.phones.controller;
 
 import com.phones.phones.dto.InfrastructureCallDto;
 import com.phones.phones.exception.line.LineCannotMakeCallsException;
-import com.phones.phones.exception.line.LineNumberNotExistException;
+import com.phones.phones.exception.line.LineNumberDoesNotExistException;
 import com.phones.phones.exception.user.UserInvalidLoginException;
 import com.phones.phones.model.Call;
 import com.phones.phones.service.CallService;
@@ -36,7 +36,7 @@ public class InfrastructureController {
      */
 
     @PostMapping("/call")
-    public ResponseEntity createCall(@RequestBody @Valid final InfrastructureCallDto infrastructureCallDto) throws LineNumberNotExistException, LineCannotMakeCallsException, UserInvalidLoginException {
+    public ResponseEntity createCall(@RequestBody @Valid final InfrastructureCallDto infrastructureCallDto) throws LineNumberDoesNotExistException, LineCannotMakeCallsException, UserInvalidLoginException {
         if (!login(infrastructureCallDto.getUser(), infrastructureCallDto.getPassword())) {
             throw new UserInvalidLoginException();
         }

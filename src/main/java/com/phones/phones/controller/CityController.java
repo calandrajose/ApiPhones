@@ -1,8 +1,8 @@
 package com.phones.phones.controller;
 
 import com.phones.phones.exception.city.CityAlreadyExistException;
-import com.phones.phones.exception.city.CityNotExistException;
-import com.phones.phones.exception.user.UserSessionNotExistException;
+import com.phones.phones.exception.city.CityDoesNotExistException;
+import com.phones.phones.exception.user.UserSessionDoesNotExistException;
 import com.phones.phones.model.City;
 import com.phones.phones.model.User;
 import com.phones.phones.service.CityService;
@@ -33,7 +33,7 @@ public class CityController {
 
 
     public ResponseEntity createCity(@RequestHeader("Authorization") String sessionToken,
-                                     @RequestBody @Valid final City city) throws CityAlreadyExistException, UserSessionNotExistException {
+                                     @RequestBody @Valid final City city) throws CityAlreadyExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             City newCity = cityService.create(city);
@@ -42,7 +42,7 @@ public class CityController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    public ResponseEntity<List<City>> findAllCities(@RequestHeader("Authorization") final String sessionToken) throws UserSessionNotExistException {
+    public ResponseEntity<List<City>> findAllCities(@RequestHeader("Authorization") final String sessionToken) throws UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             List<City> cities = cityService.findAll();
@@ -52,7 +52,7 @@ public class CityController {
     }
 
     public ResponseEntity<City> findCityById(@RequestHeader("Authorization") String sessionToken,
-                                             @PathVariable final Long id) throws CityNotExistException, UserSessionNotExistException {
+                                             @PathVariable final Long id) throws CityDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             City city = cityService.findById(id);

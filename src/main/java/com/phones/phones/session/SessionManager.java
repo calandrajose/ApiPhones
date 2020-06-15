@@ -1,6 +1,6 @@
 package com.phones.phones.session;
 
-import com.phones.phones.exception.user.UserSessionNotExistException;
+import com.phones.phones.exception.user.UserSessionDoesNotExistException;
 import com.phones.phones.model.User;
 import org.springframework.stereotype.Component;
 
@@ -41,8 +41,8 @@ public class SessionManager {
         }
     }
 
-    public User getCurrentUser(String token) throws UserSessionNotExistException {
-        return Optional.ofNullable(getSession(token).getLoggedUser()).orElseThrow(UserSessionNotExistException::new);
+    public User getCurrentUser(String token) throws UserSessionDoesNotExistException {
+        return Optional.ofNullable(getSession(token).getLoggedUser()).orElseThrow(UserSessionDoesNotExistException::new);
         //return getSession(token).getLoggedUser();
     }
 

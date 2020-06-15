@@ -1,7 +1,7 @@
 package com.phones.phones.controller;
 
-import com.phones.phones.exception.invoice.InvoiceNotExistException;
-import com.phones.phones.exception.user.UserSessionNotExistException;
+import com.phones.phones.exception.invoice.InvoiceDoesNotExistException;
+import com.phones.phones.exception.user.UserSessionDoesNotExistException;
 import com.phones.phones.model.Invoice;
 import com.phones.phones.model.User;
 import com.phones.phones.service.InvoiceService;
@@ -29,7 +29,7 @@ public class InvoiceController {
 
 
     @GetMapping("/")
-    public ResponseEntity<List<Invoice>> findAllInvoices(@RequestHeader("Authorization") final String sessionToken) throws UserSessionNotExistException {
+    public ResponseEntity<List<Invoice>> findAllInvoices(@RequestHeader("Authorization") final String sessionToken) throws UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             List<Invoice> invoices = invoiceService.findAll();;
@@ -40,7 +40,7 @@ public class InvoiceController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Invoice> findInvoiceById(@RequestHeader("Authorization") final String sessionToken,
-                                                   @PathVariable final Long id) throws InvoiceNotExistException, UserSessionNotExistException {
+                                                   @PathVariable final Long id) throws InvoiceDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             Invoice invoice = invoiceService.findById(id);
