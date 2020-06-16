@@ -322,11 +322,11 @@ DROP EVENT IF EXISTS `event_invoice`
 DELIMITER $$
 
 CREATE EVENT IF NOT EXISTS `event_invoice`
-ON
+ON SCHEDULE EVERY '1' MONTH STARTS CURDATE() + INTERVAL 1 MONTH - INTERVAL (DAYOFMONTH(CURDATE()) - 1) DAY
 DO
-
--- Llamamos al procedimiento
-
+    BEGIN
+        CALL sp_invoice_create();
+    END
 END $$
 
 
