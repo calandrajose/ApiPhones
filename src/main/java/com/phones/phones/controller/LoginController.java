@@ -2,7 +2,7 @@ package com.phones.phones.controller;
 
 import com.phones.phones.dto.UserLoginDto;
 import com.phones.phones.exception.user.UserInvalidLoginException;
-import com.phones.phones.exception.user.UserNotExistException;
+import com.phones.phones.exception.user.UserDoesNotExistException;
 import com.phones.phones.model.User;
 import com.phones.phones.session.SessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class LoginController {
 
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody final UserLoginDto userLoginDto) throws UserInvalidLoginException, ValidationException, UserNotExistException {
+    public ResponseEntity login(@RequestBody final UserLoginDto userLoginDto) throws UserInvalidLoginException, ValidationException, UserDoesNotExistException {
         ResponseEntity response;
         Optional<User> u = userController.login(userLoginDto.getUsername(), userLoginDto.getPassword());
         if (u.isEmpty()) {

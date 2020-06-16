@@ -1,11 +1,11 @@
 package com.phones.phones.service;
 
 import com.phones.phones.dto.InfrastructureCallDto;
-import com.phones.phones.exception.call.CallNotExistException;
+import com.phones.phones.exception.call.CallDoesNotExistException;
 import com.phones.phones.exception.line.LineCannotMakeCallsException;
-import com.phones.phones.exception.line.LineNotExistException;
-import com.phones.phones.exception.line.LineNumberNotExistException;
-import com.phones.phones.exception.user.UserNotExistException;
+import com.phones.phones.exception.line.LineDoesNotExistException;
+import com.phones.phones.exception.line.LineNumberDoesNotExistException;
+import com.phones.phones.exception.user.UserDoesNotExistException;
 import com.phones.phones.model.Call;
 import com.phones.phones.model.Line;
 import com.phones.phones.model.User;
@@ -40,12 +40,12 @@ public class CallService {
         callRepository.save(newCall);
     }
 
-    public Call create(InfrastructureCallDto infrastructureCallDto) throws LineNumberNotExistException, LineCannotMakeCallsException {
+    public Call create(InfrastructureCallDto infrastructureCallDto) throws LineNumberDoesNotExistException, LineCannotMakeCallsException {
         Optional<Line> originLine = lineRepository.findByNumber(infrastructureCallDto.getOriginNumber());
         Optional<Line> destinationLine = lineRepository.findByNumber(infrastructureCallDto.getDestinationNumber());
 
         if (originLine.isEmpty() || destinationLine.isEmpty()) {
-            throw new LineNumberNotExistException();
+            throw new LineNumberDoesNotExistException();
         }
 
         if (originLine.get().isDisabled() ||
@@ -62,43 +62,47 @@ public class CallService {
                         .originNumber(infrastructureCallDto.getOriginNumber())
                         .destinationNumber(infrastructureCallDto.getDestinationNumber())
                         .build();
+
         return callRepository.save(newCall);
     }
+
+
 
     public List<Call> findAll() {
         return callRepository.findAll();
     }
 
-    public Call findById(Long id) throws CallNotExistException {
+
+    public Call findById(Long id) throws CallDoesNotExistException {
         Optional<Call> call = callRepository.findById(id);
         if (call.isEmpty()) {
-            throw new CallNotExistException();
+            throw new CallDoesNotExistException();
         }
         return call.get();
     }
 
-    public List<Call> findByUserId(Long id) throws UserNotExistException {
+    public List<Call> findByUserId(Long id) throws UserDoesNotExistException {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
-            throw new UserNotExistException();
+            throw new UserDoesNotExistException();
         }
         return callRepository.findAllByUserId(id);
     }
 
-    public List<Call> findByLineId(Long id) throws LineNotExistException {
+    public List<Call> findByLineId(Long id) throws LineDoesNotExistException {
         Optional<Line> line = lineRepository.findById(id);
         if(line.isEmpty()) {
-            throw new LineNotExistException();
+            throw new LineDoesNotExistException();
         }
         return callRepository.findAllByLineId(id);
     }
 
     public List<Call> findByUserIdBetweenDates(Long id,
                                                Date from,
-                                               Date to) throws UserNotExistException {
+                                               Date to) throws UserDoesNotExistException {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
-            throw new UserNotExistException();
+            throw new UserDoesNotExistException();
         }
         return callRepository.findAllByUserIdBetweenDates(id, from, to);
     }

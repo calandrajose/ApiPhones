@@ -42,18 +42,18 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User findById(Long id) throws UserNotExistException {
+    public User findById(Long id) throws UserDoesNotExistException {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
-            throw new UserNotExistException();
+            throw new UserDoesNotExistException();
         }
         return user.get();
     }
 
-    public boolean disableById(Long id) throws UserNotExistException, UserAlreadyDisableException {
+    public boolean disableById(Long id) throws UserDoesNotExistException, UserAlreadyDisableException {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
-            throw new UserNotExistException();
+            throw new UserDoesNotExistException();
         }
         if (!user.get().isActive()) {
             throw new UserAlreadyDisableException();
@@ -62,10 +62,10 @@ public class UserService {
     }
 
     public User updateById(Long id,
-                           UserDto updatedUser) throws UserNotExistException, UsernameAlreadyExistException {
+                           UserDto updatedUser) throws UserDoesNotExistException, UsernameAlreadyExistException {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
-            throw new UserNotExistException();
+            throw new UserDoesNotExistException();
         }
         // Checkear, si el usuario pone su propio username, salta la excepcion...
         if (existsUsername(updatedUser.getUsername())) {

@@ -1,7 +1,7 @@
 package com.phones.phones.controller;
 
 import com.phones.phones.dto.RateDto;
-import com.phones.phones.exception.user.UserSessionNotExistException;
+import com.phones.phones.exception.user.UserSessionDoesNotExistException;
 import com.phones.phones.model.User;
 import com.phones.phones.service.RateService;
 import com.phones.phones.session.SessionManager;
@@ -28,7 +28,7 @@ public class RateController {
 
 
     @GetMapping("/")
-    public ResponseEntity<List<RateDto>> findAllRates(@RequestHeader("Authorization") final String sessionToken) throws UserSessionNotExistException {
+    public ResponseEntity<List<RateDto>> findAllRates(@RequestHeader("Authorization") final String sessionToken) throws UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             List<RateDto> rates = rateService.findAll();

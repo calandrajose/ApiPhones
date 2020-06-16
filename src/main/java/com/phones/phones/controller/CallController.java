@@ -1,7 +1,7 @@
 package com.phones.phones.controller;
 
-import com.phones.phones.exception.call.CallNotExistException;
-import com.phones.phones.exception.user.UserSessionNotExistException;
+import com.phones.phones.exception.call.CallDoesNotExistException;
+import com.phones.phones.exception.user.UserSessionDoesNotExistException;
 import com.phones.phones.model.Call;
 import com.phones.phones.model.User;
 import com.phones.phones.service.CallService;
@@ -28,7 +28,7 @@ public class CallController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<Call>> findAllCalls(@RequestHeader("Authorization") String sessionToken) throws UserSessionNotExistException {
+    public ResponseEntity<List<Call>> findAllCalls(@RequestHeader("Authorization") String sessionToken) throws UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             List<Call> calls = callService.findAll();
@@ -39,7 +39,7 @@ public class CallController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Call> findCallById(@RequestHeader("Authorization") String sessionToken,
-                                             @PathVariable final Long id) throws CallNotExistException, UserSessionNotExistException {
+                                             @PathVariable final Long id) throws CallDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
             Call call = callService.findById(id);

@@ -1,7 +1,7 @@
 package com.phones.phones.service;
 
 import com.phones.phones.exception.province.ProviceAlreadyExistException;
-import com.phones.phones.exception.province.ProvinceNotExistException;
+import com.phones.phones.exception.province.ProvinceDoesNotExistException;
 import com.phones.phones.model.Province;
 import com.phones.phones.repository.ProvinceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +33,10 @@ public class ProvinceService {
         return provinceRepository.findAll();
     }
 
-    public Province findById(Long id) throws ProvinceNotExistException {
+    public Province findById(Long id) throws ProvinceDoesNotExistException {
         Optional<Province> province = provinceRepository.findById(id);
         if (province.isEmpty()) {
-            throw new ProvinceNotExistException();
+            throw new ProvinceDoesNotExistException();
         }
         return province.get();
     }

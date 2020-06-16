@@ -1,7 +1,7 @@
 package com.phones.phones.service;
 
-import com.phones.phones.exception.invoice.InvoiceNotExistException;
-import com.phones.phones.exception.user.UserNotExistException;
+import com.phones.phones.exception.invoice.InvoiceDoesNotExistException;
+import com.phones.phones.exception.user.UserDoesNotExistException;
 import com.phones.phones.model.Invoice;
 import com.phones.phones.model.User;
 import com.phones.phones.repository.InvoiceRepository;
@@ -27,36 +27,36 @@ public class InvoiceService {
     }
 
 
-    public void create(Invoice newInvoice) {
+   /* public void create(Invoice newInvoice) {
         invoiceRepository.save(newInvoice);
-    }
+    }*/
 
     public List<Invoice> findAll() {
         return invoiceRepository.findAll();
     }
 
-    public Invoice findById(Long id) throws InvoiceNotExistException {
+    public Invoice findById(Long id) throws InvoiceDoesNotExistException {
         Optional<Invoice> invoice = invoiceRepository.findById(id);
         if (invoice.isEmpty()) {
-            throw new InvoiceNotExistException();
+            throw new InvoiceDoesNotExistException();
         }
         return invoice.get();
     }
 
-    public List<Invoice> findByUserId(Long id) throws UserNotExistException {
+    public List<Invoice> findByUserId(Long id) throws UserDoesNotExistException {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
-            throw new UserNotExistException();
+            throw new UserDoesNotExistException();
         }
         return invoiceRepository.findByUserId(id);
     }
 
     public List<Invoice> findByUserIdBetweenDates(Long id,
                                                   Date from,
-                                                  Date to) throws UserNotExistException {
+                                                  Date to) throws UserDoesNotExistException {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
-            throw new UserNotExistException();
+            throw new UserDoesNotExistException();
         }
         return invoiceRepository.findByUserIdBetweenDates(id, from, to);
     }
