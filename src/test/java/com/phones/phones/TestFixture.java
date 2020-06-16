@@ -210,7 +210,7 @@ public class TestFixture {
         return cities;
     }
 
-
+/*
     public static List<CityTop> testListOfCityTop() {
         List<City> cities = TestFixture.testListOfCities();
 
@@ -220,6 +220,8 @@ public class TestFixture {
         cities.add(newCity2);
         return cities;
     }
+
+ */
 
 
     /*********** Lines objects ***********/

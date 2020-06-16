@@ -261,45 +261,55 @@ END $$
 - recorrer todas las llamadas que no esten en una factura
 - determinar linea
 - cantidad de llamadas no facturadas
-- precios
+- precio total
 - fecha de creacion
 - fecha de vencimiento (+15 dias fecha de creacion)
 - generar una facturar por cada linea
+- updatear las llamadas, y ponerle la factura correspondiente
 
 -- Procedimiento
-DELIMITER $$
 DROP PROCEDURE `sp_invoice_create`;
+
+DELIMITER $$
 CREATE PROCEDURE `sp_invoice_create`()
 BEGIN
-    DECLARE vTotalPrice float;
-    DECLARE vCostPrice float;
-    DECLARE vIdLine int;
-    DECLARE vIdInvoice int;
-    DECLARE vNumberCalls int default 0;
-    DECLARE vFinished int DEFAULT 0;
+    DECLARE vTotalPrice FLOAT DEFAULT 0;
+    DECLARE vCostPrice FLOAT DEFAULT 0;
+    DECLARE vIdCall INT DEFAULT -1;
+    DECLARE vIdLine INT DEFAULT -1;
+    DECLARE vIdInvoice INT DEFAULT -1;
+    DECLARE vNumberCalls INT DEFAULT 0;
+    DECLARE vFinished INT DEFAULT 0;
 
     #Obtenemos todas las llamadas no facturadas, con su linea, cantidad de llamadas y precio total
     DECLARE cur_calls_invoice CURSOR FOR
-        SELECT c.id_origin_line, count(c.id) AS number_calls, sum(c.total_price) AS total_price FROM `calls` c
-        WHERE c.id_invoice IS NULL GROUP BY c.id_origin_line;
+        SELECT
+            c.id_origin_line,
+            count(c.id) AS number_calls,
+            sum(c.total_price) AS total_price
+        FROM `calls` c
+        WHERE c.id_invoice IS NULL
+        GROUP BY c.id_origin_line;
 
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET vFinished = 1;
 
-    #Empezamos a recorrer
+    #Empezamos a recorrer, fila por fila
     OPEN cur_calls_invoice;
-    #Obtenemos la primera fila
     FETCH cur_calls_invoice INTO vIdLine, vNumberCalls, vTotalPrice;
     WHILE (vFinished = 0) DO
 
         #Se inserta la factura
         INSERT INTO invoices(number_calls, cost_price, total_price, id_line, creation_date, due_date, is_paid)
-                    VALUES(vNumberCalls, 0, vTotalPrice, vIdLine, now(), now() + INTERVAL 15 DAY, 0);
+        VALUES(vNumberCalls, 0, vTotalPrice, vIdLine, now(), now() + INTERVAL 15 DAY, 0);
 
         #Se toma el id de la factura
         SET vIdInvoice = last_insert_id();
 
         #Se updatea las llamadas asignandole la factura
-        UPDATE `calls` SET id_invoice = vIdInvoice WHERE id = ?
+        #Como saco el id de llamadas?
+        #UPDATE `calls` SET id_invoice = vIdInvoice WHERE id = vIdCall;
+
+        FETCH cur_calls_invoice INTO vIdLine, vNumberCalls, vTotalPrice;
 
     END while;
     CLOSE cur_calls_invoice;
