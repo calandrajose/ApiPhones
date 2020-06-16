@@ -27,7 +27,6 @@ public class CallController {
         this.sessionManager = sessionManager;
     }
 
-
     @GetMapping("/")
     public ResponseEntity<List<Call>> findAllCalls(@RequestHeader("Authorization") String sessionToken) throws UserSessionNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
