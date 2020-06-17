@@ -21,6 +21,15 @@ public class Configuration {
         return registration;
     }
 
+    // fix
+    @Bean
+    public FilterRegistrationBean filterBackOffice() {
+        FilterRegistrationBean registration = new FilterRegistrationBean();
+        registration.setFilter(sessionFilter);
+        registration.addUrlPatterns("/api/backoffice/*");
+        return registration;
+    }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

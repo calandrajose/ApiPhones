@@ -168,6 +168,18 @@ public class UserController {
         return (invoices.size() > 0) ? ResponseEntity.ok(invoices) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @GetMapping("/{id}/invoices")
+    public ResponseEntity<List<Invoice>> findInvoicesByUserIdBetweenDates(@RequestHeader("Authorization") final String sessionToken,
+                                                                          @PathVariable final Long id,
+                                                                          @RequestParam(name = "from") final String from,
+                                                                          @RequestParam(name = "to") final String to) throws ParseException, UserDoesNotExistException, UserSessionDoesNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        Date fromDate = new SimpleDateFormat("dd/MM/yyyy").parse(from);
+        Date toDate = new SimpleDateFormat("dd/MM/yyyy").parse(to);
+        List<Invoice> invoices = invoiceService.findByUserIdBetweenDates(id, fromDate, toDate);
+        return (invoices.size() > 0) ? ResponseEntity.ok(invoices) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
     @GetMapping("/me/cities/top")
     public ResponseEntity<List<CityTop>> findTopCitiesCallsByUserSession(@RequestHeader("Authorization") final String sessionToken) throws UserDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
