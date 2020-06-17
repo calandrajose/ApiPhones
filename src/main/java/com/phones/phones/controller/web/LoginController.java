@@ -1,5 +1,6 @@
-package com.phones.phones.controller;
+package com.phones.phones.controller.web;
 
+import com.phones.phones.controller.UserController;
 import com.phones.phones.dto.UserLoginDto;
 import com.phones.phones.exception.user.UserInvalidLoginException;
 import com.phones.phones.exception.user.UserDoesNotExistException;

@@ -1,4 +1,4 @@
-package com.phones.phones.controller;
+package com.phones.phones.controller.web;
 
 import com.phones.phones.dto.InfrastructureCallDto;
 import com.phones.phones.exception.line.LineCannotMakeCallsException;
