@@ -354,8 +354,6 @@ public class TestFixture {
 
     public static InfrastructureCallDto testInfrastructureCallDto() {
         InfrastructureCallDto newCall = InfrastructureCallDto.builder()
-                .user("rl")
-                .password("123")
                 .originNumber("2235472861")
                 .destinationNumber("22322222")
                 .duration(5)

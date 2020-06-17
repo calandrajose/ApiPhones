@@ -256,8 +256,8 @@ CREATE TRIGGER `tbi_calls_new` BEFORE INSERT ON `calls`
         END IF;
 END $$
 
-/* FACTURACION */
 
+/* FACTURACION */
 - recorrer todas las llamadas que no esten en una factura
 - determinar linea
 - cantidad de llamadas no facturadas
@@ -269,7 +269,6 @@ END $$
 
 -- Procedimiento
 DROP PROCEDURE `sp_invoice_create`;
-
 DELIMITER $$
 CREATE PROCEDURE `sp_invoice_create`()
 BEGIN
@@ -317,15 +316,64 @@ END
 $$
 
 
--- Event
-DROP EVENT IF EXISTS `event_invoice`
-DELIMITER $$
 
+-- Secundary - works!
+DELIMITER $$
+CREATE PROCEDURE `sp_invoices_lines`()
+BEGIN
+
+    DECLARE vIdLine INT DEFAULT -1;
+    DECLARE vFinished INT DEFAULT 0;
+
+    DECLARE cur_lines_invoice CURSOR FOR SELECT l.id FROM `lines` l;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET vFinished = 1;
+
+    OPEN cur_lines_invoice;
+    FETCH cur_lines_invoice INTO vIdLine;
+    WHILE (vFinished = 0) DO
+        CALL sp_li_lines(vIdLine);
+        FETCH cur_lines_invoice INTO vIdLine;
+    END while;
+    CLOSE cur_lines_invoice;
+END
+$$
+
+DELIMITER $$
+CREATE PROCEDURE `sp_li_lines`(IN vIdLine INT)
+BEGIN
+
+    DECLARE vTotalPrice FLOAT DEFAULT 0;
+    DECLARE vCostPrice FLOAT DEFAULT 0;
+    DECLARE vNumberCalls INTEGER DEFAULT 0;
+    DECLARE vIdInvoice INTEGER;
+
+    SELECT count(c.id_origin_line), sum(c.total_price) INTO vNumberCalls, vTotalPrice
+    FROM `calls` c
+    INNER JOIN `lines` l ON c.id_origin_line = l.id
+    WHERE c.id_invoice IS NULL AND l.id = vIdLine;
+
+    INSERT INTO invoices(number_calls, cost_price, total_price, id_line, creation_date, due_date, is_paid)
+    VALUES(vNumberCalls, vCostPrice, vTotalPrice, vIdLine, now(), now() + INTERVAL 15 DAY, 0);
+
+    SET vIdInvoice = last_insert_id();
+
+    UPDATE `calls`
+    SET id_invoice = vIdInvoice
+    WHERE id_origin_line = vIdLine AND id_invoice IS NULL;
+
+END
+$$
+
+-- Event
+SET GLOBAL event_scheduler = ON;
+DROP EVENT IF EXISTS `event_invoice`;
+
+DELIMITER $$
 CREATE EVENT IF NOT EXISTS `event_invoice`
 ON SCHEDULE EVERY '1' MONTH STARTS CURDATE() + INTERVAL 1 MONTH - INTERVAL (DAYOFMONTH(CURDATE()) - 1) DAY
 DO
     BEGIN
-        CALL sp_invoice_create();
+        CALL sp_invoices_lines();
     END
 END $$
 

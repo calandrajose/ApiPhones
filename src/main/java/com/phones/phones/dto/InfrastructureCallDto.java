@@ -13,8 +13,6 @@ import java.util.Date;
 @NoArgsConstructor
 public class InfrastructureCallDto {
 
-    private String user;
-    private String password;
     private String originNumber;
     private String destinationNumber;
     private Integer duration;
