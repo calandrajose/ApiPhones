@@ -14,6 +14,7 @@ import com.phones.phones.session.SessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -21,8 +22,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/lines")
+@Controller
 public class LineController {
 
     private final LineService lineService;
@@ -39,7 +39,6 @@ public class LineController {
     }
 
 
-    @PostMapping("/")
     public ResponseEntity createLine(@RequestHeader("Authorization") String sessionToken,
                                      @RequestBody @Valid final Line line) throws LineNumberAlreadyExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
@@ -50,7 +49,6 @@ public class LineController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    @GetMapping("/")
     public ResponseEntity<List<Line>> findAllLines(@RequestHeader("Authorization") String sessionToken) throws UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
@@ -60,7 +58,6 @@ public class LineController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    @GetMapping("/{id}")
     public ResponseEntity<Line> findLineById(@RequestHeader("Authorization") String sessionToken,
                                              @PathVariable final Long id) throws LineDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
@@ -71,7 +68,6 @@ public class LineController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    @GetMapping("/calls/{id}")
     public ResponseEntity<List<Call>> findCallsByLineId(@RequestHeader("Authorization") String sessionToken,
                                                         @PathVariable final Long id) throws LineDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
@@ -82,7 +78,6 @@ public class LineController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    @DeleteMapping("/{id}")
     public ResponseEntity deleteLineById(@RequestHeader("Authorization") final String sessionToken,
                                          @PathVariable final Long id) throws LineDoesNotExistException, UserSessionDoesNotExistException, LineAlreadyDisabledException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
@@ -93,7 +88,6 @@ public class LineController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    @PutMapping("/{id}")
     public ResponseEntity updateLineByIdLine(@RequestHeader("Authorization") final String sessionToken,
                                              @RequestBody @Valid final LineDto updatedLine,
                                              @PathVariable final Long id) throws LineDoesNotExistException, UserSessionDoesNotExistException {

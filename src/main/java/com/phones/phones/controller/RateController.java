@@ -8,12 +8,12 @@ import com.phones.phones.session.SessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/rates")
+@Controller
 public class RateController {
 
     private final RateService rateService;
@@ -27,7 +27,6 @@ public class RateController {
     }
 
 
-    @GetMapping("/")
     public ResponseEntity<List<RateDto>> findAllRates(@RequestHeader("Authorization") final String sessionToken) throws UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {

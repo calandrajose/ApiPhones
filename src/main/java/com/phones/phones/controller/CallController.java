@@ -9,12 +9,12 @@ import com.phones.phones.session.SessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/calls")
+@Controller
 public class CallController {
 
     private final CallService callService;
@@ -27,7 +27,6 @@ public class CallController {
         this.sessionManager = sessionManager;
     }
 
-    @GetMapping("/")
     public ResponseEntity<List<Call>> findAllCalls(@RequestHeader("Authorization") String sessionToken) throws UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
@@ -37,7 +36,6 @@ public class CallController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    @GetMapping("/{id}")
     public ResponseEntity<Call> findCallById(@RequestHeader("Authorization") String sessionToken,
                                              @PathVariable final Long id) throws CallDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
