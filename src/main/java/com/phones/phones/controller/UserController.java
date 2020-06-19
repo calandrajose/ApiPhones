@@ -9,6 +9,7 @@ import com.phones.phones.session.SessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -21,8 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/api/users")
+@Controller
 public class UserController {
 
     private final UserService userService;
@@ -47,19 +47,7 @@ public class UserController {
         this.sessionManager = sessionManager;
     }
 
-    /*
-    public UserController(final UserService userService) {
-        this.userService = userService;
-        this.callService = null;
-        this.lineService = null;
-        this.cityService = null;
-        this.invoiceService = null;
-        this.sessionManager = null;
-    }
-     */
 
-
-    @PostMapping("/")
     public ResponseEntity createUser(@RequestHeader("Authorization") final String sessionToken,
                                      @RequestBody @Valid final User user) throws UsernameAlreadyExistException, UserAlreadyExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
@@ -70,7 +58,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    @GetMapping("/")
     public ResponseEntity<List<User>> findAllUsers(@RequestHeader("Authorization") final String sessionToken) throws UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
@@ -80,7 +67,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    @GetMapping("/{id}")
     public ResponseEntity<User> findUserById(@RequestHeader("Authorization") final String sessionToken,
                                              @PathVariable final Long id) throws UserDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
@@ -91,7 +77,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    @DeleteMapping("/{id}")
     public ResponseEntity deleteUserById(@RequestHeader("Authorization") final String sessionToken,
                                          @PathVariable final Long id) throws UserDoesNotExistException, UserAlreadyDisableException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
@@ -102,7 +87,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    @PutMapping("/{id}")
     public ResponseEntity updateUserById(@RequestHeader("Authorization") final String sessionToken,
                                          @RequestBody @Valid final UserDto updatedUser,
                                          @PathVariable final Long id) throws UserDoesNotExistException, UsernameAlreadyExistException, UserSessionDoesNotExistException {
@@ -114,7 +98,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    @GetMapping("/{id}/calls")
     public ResponseEntity<List<Call>> findCallsByUserId(@RequestHeader("Authorization") String sessionToken,
                                                         @PathVariable final Long id) throws UserDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
@@ -125,7 +108,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    @GetMapping("/me/calls")
     public ResponseEntity<List<Call>> findCallsByUserSessionBetweenDates(@RequestHeader("Authorization") final String sessionToken,
                                                                          @RequestParam(name = "from") final String from,
                                                                          @RequestParam(name = "to") final String to) throws ParseException, UserDoesNotExistException, UserSessionDoesNotExistException {
@@ -139,7 +121,6 @@ public class UserController {
         return (calls.size() > 0) ? ResponseEntity.ok(calls) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @GetMapping("/{id}/lines")
     public ResponseEntity<List<Line>> findLinesByUserId(@RequestHeader("Authorization") final String sessionToken,
                                                         @PathVariable final Long id) throws UserDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
@@ -150,14 +131,12 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    @GetMapping("/me/lines")
     public ResponseEntity<List<Line>> findLinesByUserSession(@RequestHeader("Authorization") final String sessionToken) throws UserDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         List<Line> lines = lineService.findByUserId(currentUser.getId());
         return (lines.size() > 0) ? ResponseEntity.ok(lines) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @GetMapping("/me/invoices")
     public ResponseEntity<List<Invoice>> findInvoicesByUserSessionBetweenDates(@RequestHeader("Authorization") final String sessionToken,
                                                                                @RequestParam(name = "from") final String from,
                                                                                @RequestParam(name = "to") final String to) throws ParseException, UserDoesNotExistException, UserSessionDoesNotExistException {
@@ -168,7 +147,17 @@ public class UserController {
         return (invoices.size() > 0) ? ResponseEntity.ok(invoices) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @GetMapping("/me/cities/top")
+    public ResponseEntity<List<Invoice>> findInvoicesByUserIdBetweenDates(@RequestHeader("Authorization") final String sessionToken,
+                                                                          @PathVariable final Long id,
+                                                                          @RequestParam(name = "from") final String from,
+                                                                          @RequestParam(name = "to") final String to) throws ParseException, UserDoesNotExistException, UserSessionDoesNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        Date fromDate = new SimpleDateFormat("dd/MM/yyyy").parse(from);
+        Date toDate = new SimpleDateFormat("dd/MM/yyyy").parse(to);
+        List<Invoice> invoices = invoiceService.findByUserIdBetweenDates(id, fromDate, toDate);
+        return (invoices.size() > 0) ? ResponseEntity.ok(invoices) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
     public ResponseEntity<List<CityTop>> findTopCitiesCallsByUserSession(@RequestHeader("Authorization") final String sessionToken) throws UserDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         List<CityTop> citiesTops = cityService.findTopCitiesCallsByUserId(currentUser.getId());

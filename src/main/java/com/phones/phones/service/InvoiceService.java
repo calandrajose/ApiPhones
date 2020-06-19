@@ -27,10 +27,6 @@ public class InvoiceService {
     }
 
 
-   /* public void create(Invoice newInvoice) {
-        invoiceRepository.save(newInvoice);
-    }*/
-
     public List<Invoice> findAll() {
         return invoiceRepository.findAll();
     }

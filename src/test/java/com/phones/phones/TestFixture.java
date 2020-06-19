@@ -278,7 +278,18 @@ public class TestFixture {
         return cities;
     }
 
+/*
+    public static List<CityTop> testListOfCityTop() {
+        List<City> cities = TestFixture.testListOfCities();
 
+
+
+        cities.add(newCity);
+        cities.add(newCity2);
+        return cities;
+    }
+
+ */
 
 
     /*********** Lines objects ***********/
@@ -411,8 +422,6 @@ public class TestFixture {
 
     public static InfrastructureCallDto testInfrastructureCallDto() {
         InfrastructureCallDto newCall = InfrastructureCallDto.builder()
-                .user("rl")
-                .password("123")
                 .originNumber("2235472861")
                 .destinationNumber("22322222")
                 .duration(5)

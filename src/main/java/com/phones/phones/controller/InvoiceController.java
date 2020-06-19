@@ -9,12 +9,12 @@ import com.phones.phones.session.SessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/invoices")
+@Controller
 public class InvoiceController {
 
     private final InvoiceService invoiceService;
@@ -28,7 +28,6 @@ public class InvoiceController {
     }
 
 
-    @GetMapping("/")
     public ResponseEntity<List<Invoice>> findAllInvoices(@RequestHeader("Authorization") final String sessionToken) throws UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         if (currentUser.hasRoleEmployee()) {
@@ -38,7 +37,6 @@ public class InvoiceController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    @GetMapping("/{id}")
     public ResponseEntity<Invoice> findInvoiceById(@RequestHeader("Authorization") final String sessionToken,
                                                    @PathVariable final Long id) throws InvoiceDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);

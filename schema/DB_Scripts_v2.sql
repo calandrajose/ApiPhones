@@ -257,6 +257,126 @@ CREATE TRIGGER `tbi_calls_new` BEFORE INSERT ON `calls`
 END $$
 
 
+/* FACTURACION */
+- recorrer todas las llamadas que no esten en una factura
+- determinar linea
+- cantidad de llamadas no facturadas
+- precio total
+- fecha de creacion
+- fecha de vencimiento (+15 dias fecha de creacion)
+- generar una facturar por cada linea
+- updatear las llamadas, y ponerle la factura correspondiente
+
+-- Procedimiento
+DROP PROCEDURE `sp_invoice_create`;
+DELIMITER $$
+CREATE PROCEDURE `sp_invoice_create`()
+BEGIN
+    DECLARE vTotalPrice FLOAT DEFAULT 0;
+    DECLARE vCostPrice FLOAT DEFAULT 0;
+    DECLARE vIdCall INT DEFAULT -1;
+    DECLARE vIdLine INT DEFAULT -1;
+    DECLARE vIdInvoice INT DEFAULT -1;
+    DECLARE vNumberCalls INT DEFAULT 0;
+    DECLARE vFinished INT DEFAULT 0;
+
+    #Obtenemos todas las llamadas no facturadas, con su linea, cantidad de llamadas y precio total
+    DECLARE cur_calls_invoice CURSOR FOR
+        SELECT
+            c.id_origin_line,
+            count(c.id) AS number_calls,
+            sum(c.total_price) AS total_price
+        FROM `calls` c
+        WHERE c.id_invoice IS NULL
+        GROUP BY c.id_origin_line;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET vFinished = 1;
+
+    #Empezamos a recorrer, fila por fila
+    OPEN cur_calls_invoice;
+    FETCH cur_calls_invoice INTO vIdLine, vNumberCalls, vTotalPrice;
+    WHILE (vFinished = 0) DO
+
+        #Se inserta la factura
+        INSERT INTO invoices(number_calls, cost_price, total_price, id_line, creation_date, due_date, is_paid)
+        VALUES(vNumberCalls, 0, vTotalPrice, vIdLine, now(), now() + INTERVAL 15 DAY, 0);
+
+        #Se toma el id de la factura
+        SET vIdInvoice = last_insert_id();
+
+        #Se updatea las llamadas asignandole la factura
+        #Como saco el id de llamadas?
+        #UPDATE `calls` SET id_invoice = vIdInvoice WHERE id = vIdCall;
+
+        FETCH cur_calls_invoice INTO vIdLine, vNumberCalls, vTotalPrice;
+
+    END while;
+    CLOSE cur_calls_invoice;
+END
+$$
+
+
+
+-- Secundary - works!
+DELIMITER $$
+CREATE PROCEDURE `sp_invoices_lines`()
+BEGIN
+
+    DECLARE vIdLine INT DEFAULT -1;
+    DECLARE vFinished INT DEFAULT 0;
+
+    DECLARE cur_lines_invoice CURSOR FOR SELECT l.id FROM `lines` l;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET vFinished = 1;
+
+    OPEN cur_lines_invoice;
+    FETCH cur_lines_invoice INTO vIdLine;
+    WHILE (vFinished = 0) DO
+        CALL sp_li_lines(vIdLine);
+        FETCH cur_lines_invoice INTO vIdLine;
+    END while;
+    CLOSE cur_lines_invoice;
+END
+$$
+
+DELIMITER $$
+CREATE PROCEDURE `sp_li_lines`(IN vIdLine INT)
+BEGIN
+
+    DECLARE vTotalPrice FLOAT DEFAULT 0;
+    DECLARE vCostPrice FLOAT DEFAULT 0;
+    DECLARE vNumberCalls INTEGER DEFAULT 0;
+    DECLARE vIdInvoice INTEGER;
+
+    SELECT count(c.id_origin_line), sum(c.total_price) INTO vNumberCalls, vTotalPrice
+    FROM `calls` c
+    INNER JOIN `lines` l ON c.id_origin_line = l.id
+    WHERE c.id_invoice IS NULL AND l.id = vIdLine;
+
+    INSERT INTO invoices(number_calls, cost_price, total_price, id_line, creation_date, due_date, is_paid)
+    VALUES(vNumberCalls, vCostPrice, vTotalPrice, vIdLine, now(), now() + INTERVAL 15 DAY, 0);
+
+    SET vIdInvoice = last_insert_id();
+
+    UPDATE `calls`
+    SET id_invoice = vIdInvoice
+    WHERE id_origin_line = vIdLine AND id_invoice IS NULL;
+
+END
+$$
+
+-- Event
+SET GLOBAL event_scheduler = ON;
+DROP EVENT IF EXISTS `event_invoice`;
+
+DELIMITER $$
+CREATE EVENT IF NOT EXISTS `event_invoice`
+ON SCHEDULE EVERY '1' MONTH STARTS CURDATE() + INTERVAL 1 MONTH - INTERVAL (DAYOFMONTH(CURDATE()) - 1) DAY
+DO
+    BEGIN
+        CALL sp_invoices_lines();
+    END
+END $$
+
 
 /* USUARIOS */
 -- BACKOFFICE ( USUARIOS, LINEAS Y TARIFAS )
