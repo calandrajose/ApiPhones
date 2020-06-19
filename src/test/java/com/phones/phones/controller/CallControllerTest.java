@@ -93,7 +93,7 @@ public class CallControllerTest {
     }
 
     @Test
-    public void findAllCallByIdIsNotEmployee() throws UserSessionDoesNotExistException, CallDoesNotExistException {
+    public void findCallByIdUserIsNotEmployee() throws UserSessionDoesNotExistException, CallDoesNotExistException {
         User loggedUser = TestFixture.testClientUser();
         ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);

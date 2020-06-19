@@ -103,8 +103,8 @@ public class UserServiceTest {
         User disabledUser = TestFixture.testUser();
         when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(disabledUser));
         when(userRepository.disableById(1L)).thenReturn(1);
-        boolean desableDTrue = userService.disableById(disabledUser.getId());
-        assertEquals(true, desableDTrue);
+        boolean desabledTrue = userService.disableById(disabledUser.getId());
+        assertEquals(true, desabledTrue);
     }
 
 

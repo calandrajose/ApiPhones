@@ -1,15 +1,21 @@
-/*
 package com.phones.phones.controller;
 
+import com.phones.phones.TestFixture;
 import com.phones.phones.dto.UserDto;
-import com.phones.phones.model.City;
+import com.phones.phones.exception.call.CallDoesNotExistException;
+import com.phones.phones.exception.user.UserAlreadyDisableException;
+import com.phones.phones.exception.user.UserDoesNotExistException;
+import com.phones.phones.exception.user.UserSessionDoesNotExistException;
+import com.phones.phones.exception.user.UsernameAlreadyExistException;
+import com.phones.phones.model.Call;
 import com.phones.phones.model.User;
 import com.phones.phones.service.*;
 import com.phones.phones.session.SessionManager;
-import org.hibernate.usertype.UserType;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,162 +47,174 @@ public class UserControllerTests {
     }
 
 
-    @Test
-    public void testLoginOk() throws UserNotExistsException, ValidationException {
+/*    @Test
+    public void createUserOk() throws UserSessionDoesNotExistException, UserAlreadyExistException, UsernameAlreadyExistException {
+        User loggedUser = TestFixture.testUser();
+        User newUser = TestFixture.testClientUser();
+        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
+        when(userService.create(newUser)).thenReturn(newUser);
 
-        User loggedUser = new User(1, "carlos", "lolo", 38888765, null, "username", "password", "email", null, null, null);
-        //cuando el mock llama a login con estos parametros devuelve loggedUser
-        when(userService.login("user", "pwd")).thenReturn(loggedUser);
-        User returnedUser = userController.login("user", "pwd");
-        //verifica que los campos coincidan
-        assertEquals(loggedUser.getId(), returnedUser.getId());
-        assertEquals(loggedUser.getFirstname(), returnedUser.getFirstname());
-        assertEquals(loggedUser.getSurname(), returnedUser.getSurname());
-        assertEquals(loggedUser.getDni(), returnedUser.getDni());
-        assertEquals(loggedUser.getBirthdate(), returnedUser.getBirthdate());
-        assertEquals(loggedUser.getUsername(), returnedUser.getUsername());
-        assertEquals(loggedUser.getPwd(), returnedUser.getPwd());
-        assertEquals(loggedUser.getEmail(), returnedUser.getEmail());
-        assertEquals(loggedUser.getUserType(), returnedUser.getUserType());
-        assertEquals(loggedUser.getUserStatus(), returnedUser.getUserStatus());
-        assertEquals(loggedUser.getCity(), returnedUser.getCity());
-        //verifica que el metodo login ha sido llamado una vez
-        verify(userService, times(1)).login("user", "pwd");
+        ResponseEntity <User> createdUser = userController.createUser("123", newUser);
 
-    }
+        assertEquals(loggedUser.getId(), createdUser.getBody().getId());
+        assertEquals(loggedUser.getDni(), createdUser.getBody().getDni());
+       // assertEquals(loggedUser.getLines().size(), createdUser.getBody().getLines().size());
+    }*/
 
-    @Test(expected = UserNotExistsException.class)
-    public void testLoginUserNotFound() throws UserNotExistsException, ValidationException {
-        when(userService.login("user", "pwd")).thenThrow(new UserNotExistsException());
-        userController.login("user", "pwd");
-    }
-
-    @Test(expected = ValidationException.class)
-    public void testLoginIvalidadData() throws UserNotExistsException, ValidationException {
-        userController.login(null, null);
-    }
 
     @Test
-    public void testAddOk() throws AlreadyExistsException {
-        User loggedUser = new User(1, "carlos", "lolo", 38888765, null, "username", "password", "email", null, null, null);
-        User user = new User(2, "ivan", "graciarena", 1, new Date(), "username", "pass", "email", UserType.EMPLOYEE, UserStatus.ACTIVE, new City());
-        when(userService.add(user)).thenReturn(loggedUser);
-        User returnedUser = userController.add(user);
-        assertEquals(loggedUser.getId(), returnedUser.getId());
-        assertEquals(loggedUser.getFirstname(), returnedUser.getFirstname());
-        assertEquals(loggedUser.getSurname(), returnedUser.getSurname());
-        assertEquals(loggedUser.getDni(), returnedUser.getDni());
-        assertEquals(loggedUser.getBirthdate(), returnedUser.getBirthdate());
-        assertEquals(loggedUser.getUsername(), returnedUser.getUsername());
-        assertEquals(loggedUser.getPwd(), returnedUser.getPwd());
-        assertEquals(loggedUser.getEmail(), returnedUser.getEmail());
-        assertEquals(loggedUser.getUserType(), returnedUser.getUserType());
-        assertEquals(loggedUser.getUserStatus(), returnedUser.getUserStatus());
-        assertEquals(loggedUser.getCity(), returnedUser.getCity());
+    public void findAllUsersOk() throws UserSessionDoesNotExistException {
+        User loggedUser = TestFixture.testUser();
+        List<User> users = TestFixture.testListOfUsers();
+        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
+        when(userService.findAll()).thenReturn(users);
+
+        ResponseEntity<List<User>> dbUsers = userController.findAllUsers("123");
+
+        assertEquals(users.size(), dbUsers.getBody().size());
+        assertEquals(users.get(0).getDni(), dbUsers.getBody().get(0).getDni());
     }
 
-    @Test(expected = AlreadyExistsException.class)
-    public void testAddAlreadyExistsException() throws AlreadyExistsException {
-        User user = new User(2, "ivan", "graciarena", 1, new Date(), "username", "pass", "email", UserType.EMPLOYEE, UserStatus.ACTIVE, new City());
-        when(userService.add(user)).thenThrow(new AlreadyExistsException());
-        userController.add(user);
+
+    @Test
+    public void findAllCallsUserIsNotEmployee() throws UserSessionDoesNotExistException {
+        User loggedUser = TestFixture.testClientUser();
+        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
+
+        ResponseEntity<List<User>> returnedUsers = userController.findAllUsers("123");
+        assertEquals(response.getStatusCode(), returnedUsers.getStatusCode());
+    }
+
+
+    @Test
+    public void findAllUsersNoUsersFound() throws UserSessionDoesNotExistException {
+        User loggedUser = TestFixture.testUser();
+        List<User> noUsers = new ArrayList<>();
+        ResponseEntity response = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
+        when(userService.findAll()).thenReturn(noUsers);
+
+        ResponseEntity<List<User>> returnedUsers = userController.findAllUsers("123");
+
+        assertEquals(response.getStatusCode(), returnedUsers.getStatusCode());
     }
 
     @Test
-    public void testRemoveUserOk() throws UserNotExistsException {
-        doNothing().when(userService).removeUser(1);
-        userController.removeUser(1);
-        verify(userService, times(1)).removeUser(1);
-    }
+    public void findUserByIdOk() throws UserSessionDoesNotExistException, CallDoesNotExistException, UserDoesNotExistException {
+        User loggedUser = TestFixture.testUser();
+        User user = TestFixture.testClientUser();
 
-    @Test(expected = UserNotExistsException.class)
-    public void testRemoveUserUserNotExistsException() throws UserNotExistsException {
-        doThrow(new UserNotExistsException()).when(userService).removeUser(null);
-        userController.removeUser(null);
-    }
+        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
+        when(userService.findById(1L)).thenReturn(user);
 
-    @Test
-    public void testUpdateUserOk() throws UserNotExistsException {
-        User user = new User(2, "ivan", "graciarena", 1, new Date(), "username", "pass", "email", UserType.EMPLOYEE, UserStatus.ACTIVE, new City());
-        doNothing().when(userService).updateUser(user);
-        userController.updateUser(user);
-        verify(userService, times(1)).updateUser(user);
-    }
+        ResponseEntity<User> returnedUser = userController.findUserById("123", 1L);
 
-    @Test(expected = UserNotExistsException.class)
-    public void testUpdateUserUserNotExistsException() throws UserNotExistsException {
-        User user = new User(2, "ivan", "graciarena", 1, new Date(), "username", "pass", "email", UserType.EMPLOYEE, UserStatus.ACTIVE, new City());
-        doThrow(new UserNotExistsException()).when(userService).updateUser(user);
-        userController.updateUser(user);
+        assertEquals(user.getId(), returnedUser.getBody().getId());
+        assertEquals(user.getDni(), returnedUser.getBody().getDni());
+        assertEquals(user.getSurname(), returnedUser.getBody().getSurname());
+        assertEquals(1L, returnedUser.getBody().getId());
     }
 
     @Test
-    public void testGetByIdOk() throws UserNotExistsException {
-        UserDto userDto = new UserDto("ivan", "graciarena", 333333, "ivanmdq22", "ivan@ivan.com", "mdp");
-        when(userService.getById(1)).thenReturn(userDto);
-        UserDto user = userController.getById(1);
-        assertEquals(userDto.getCityName(), user.getCityName());
-        assertEquals(userDto.getDni(), user.getDni());
-        assertEquals(user.getEmail(), userDto.getEmail());
-        assertEquals(user.getFirstName(), userDto.getFirstName());
-        assertEquals(user.getSurname(), userDto.getSurname());
-        verify(userService, times(1)).getById(1);
-    }
+    public void findAllCallByIdUserIsNotEmployee() throws UserSessionDoesNotExistException, CallDoesNotExistException, UserDoesNotExistException {
+        User loggedUser = TestFixture.testClientUser();
+        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
 
-    @Test(expected = UserNotExistsException.class)
-    public void testGetByIdUserNotExistsException() throws UserNotExistsException {
-        when(userService.getById(1)).thenThrow(new UserNotExistsException());
-        userController.getById(1);
+        ResponseEntity<User> returnedUser = userController.findUserById("123", 1L);
+        assertEquals(response.getStatusCode(), returnedUser.getStatusCode());
     }
 
     @Test
-    public void testGetMostCalledNumberOk() {
-        UserMostCalledNumberDto userMostCalledNumberDto = new UserMostCalledNumberDto("123", "ivan", "graciarena");
-        when(userService.getMostCalledNumber("111")).thenReturn(userMostCalledNumberDto);
-        UserMostCalledNumberDto mostCalledNumberDto = userController.getMostCalledNumber("111");
-        assertEquals(mostCalledNumberDto.getLineNumber(), userMostCalledNumberDto.getLineNumber());
-        assertEquals(mostCalledNumberDto.getName(), userMostCalledNumberDto.getName());
-        assertEquals(mostCalledNumberDto.getSurname(), userMostCalledNumberDto.getSurname());
-        verify(userService, times(1)).getMostCalledNumber("111");
+    public void deleteUserByIdOk() throws UserSessionDoesNotExistException, UserDoesNotExistException, UserAlreadyDisableException {
+        User loggedUser = TestFixture.testUser();
+
+        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
+        when(userService.disableById(1L)).thenReturn(true);
+
+        ResponseEntity deleted = userController.deleteUserById("123", 1L);
+
+        assertEquals(ResponseEntity.ok().build(), deleted);
     }
 
     @Test
-    public void testGetAllOk() {
-        List<UserDto> list = new ArrayList<>();
-        UserDto userDto = new UserDto("ivan", "graciarena", 333333, "ivanmdq22", "ivan@ivan.com", "mdp");
-        list.add(userDto);
-        when(userService.getAll()).thenReturn(list);
-        List<UserDto> returnedList = userController.getAll();
-        assertEquals(returnedList.size(), list.size());
-        verify(userService, times(1)).getAll();
+    public void deleteUserByIdUserIsNotEmployee() throws UserSessionDoesNotExistException, CallDoesNotExistException, UserDoesNotExistException, UserAlreadyDisableException {
+        User loggedUser = TestFixture.testClientUser();
+        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
+
+        ResponseEntity deleted = userController.deleteUserById("123", 1L);
+        assertEquals(response.getStatusCode(), deleted.getStatusCode());
     }
 
 
+    @Test
+    public void updateUserByIdOk() throws UserSessionDoesNotExistException, UserDoesNotExistException, UserAlreadyDisableException, UsernameAlreadyExistException {
+        User loggedUser = TestFixture.testUser();
+        User updatedUser = TestFixture.testClientUser();
+        UserDto userUpdate = TestFixture.testUserDto();
 
+        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
+        when(userService.updateById(1L, userUpdate)).thenReturn(updatedUser);
 
-    //no se como pasar token
-    @Test(expected = UserNotExistException.class)
-    public void testGetClientByIdNotFound() throws UserNotExistException, UserSessionNotExistException {
-        when(userService.findById((long) 15)).thenThrow(new UserNotExistException());
-        userController.findUserById("", (long) 15);
+        ResponseEntity updated = userController.updateUserById("123", userUpdate, 1L);
+
+        assertEquals(ResponseEntity.ok().build(), updated);
     }
 
     @Test
-    public void testGetClientByOk() throws UserNotExistException, UserSessionNotExistException {
-        User existingUser = User.builder().id((long) 6).name("").surname("")
-                .city(new City()).userRoles(new ArrayList<>())
-                .dni("").username("")
-                .password("").isActive(true)
-                .lines(new ArrayList<>()).build();
+    public void updateUserByIdUserIsNotEmployee() throws UserSessionDoesNotExistException, UserDoesNotExistException, UserAlreadyDisableException, UsernameAlreadyExistException {
+        User loggedUser = TestFixture.testClientUser();
+        UserDto userUpdate = TestFixture.testUserDto();
+        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
 
-        when(userService.findById((long) 6)).thenReturn(existingUser);
-
-        User clientTest = userController.findUserById("", (long) 6).getBody();
-
-
-        Assert.assertEquals(existingUser.getUsername(), clientTest.getUsername());
-        Assert.assertEquals(existingUser.getPassword(), clientTest.getPassword());
+        ResponseEntity updated = userController.updateUserById("123", userUpdate,1L);
+        assertEquals(response.getStatusCode(), updated.getStatusCode());
     }
 
-}
+    @Test
+    public void findCallsByUserIdOk() throws UserSessionDoesNotExistException, CallDoesNotExistException, UserDoesNotExistException {
+        User loggedUser = TestFixture.testUser();
+        List<Call> testCalls = TestFixture.testListOfCalls();
+
+        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
+        when(callService.findByUserId(1L)).thenReturn(testCalls);
+
+        ResponseEntity<List<Call>> returnedCalls = userController.findCallsByUserId("123", 1L);
+
+        assertEquals(testCalls.size(), returnedCalls.getBody().size());
+        assertEquals(testCalls.get(0).getOriginNumber(), returnedCalls.getBody().get(0).getOriginNumber());
+    }
+
+    @Test
+    public void findCallsByUserIdUserIsNotEmployee() throws UserSessionDoesNotExistException, UserDoesNotExistException, UserAlreadyDisableException, UsernameAlreadyExistException {
+        User loggedUser = TestFixture.testClientUser();
+
+        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
+
+        ResponseEntity<List<Call>> returnedCalls = userController.findCallsByUserId("123", 1L);
+        assertEquals(response.getStatusCode(), returnedCalls.getStatusCode());
+    }
+
+
+    @Test
+    public void findAllCallsByUserIdNoCallsDone() throws UserSessionDoesNotExistException, UserDoesNotExistException {
+        User loggedUser = TestFixture.testUser();
+        List<Call> emptyCalls = new ArrayList<>();
+
+        ResponseEntity response = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
+        when(callService.findByUserId(1L)).thenReturn(emptyCalls);
+
+        ResponseEntity<List<Call>> returnedCalls = userController.findCallsByUserId("123", 1L);
+
+        assertEquals(response.getStatusCode(), returnedCalls.getStatusCode());
+    }
+/*
+
+
 */
+}

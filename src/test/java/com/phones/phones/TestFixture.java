@@ -3,6 +3,7 @@ package com.phones.phones;
 import com.phones.phones.dto.InfrastructureCallDto;
 import com.phones.phones.dto.LineDto;
 import com.phones.phones.dto.RateDto;
+import com.phones.phones.dto.UserDto;
 import com.phones.phones.model.*;
 
 import java.util.*;
@@ -142,6 +143,21 @@ public class TestFixture {
 
         return users;
     }
+
+
+    public static UserDto testUserDto() {
+        UserDto newUser = UserDto.builder()
+                .name("Jose")
+                .surname("Calandra")
+                .dni("37557189")
+                .username("jc")
+                .password("123456")
+                .city(new City())
+                .userRoles(testBothUserRoles())
+                .build();
+        return newUser;
+    }
+
 
 
 
