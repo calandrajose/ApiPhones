@@ -1,6 +1,7 @@
 package com.phones.phones.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
+@Builder
 @NoArgsConstructor
 @Entity
 @Table(name = "user_roles")
