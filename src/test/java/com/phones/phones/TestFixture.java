@@ -294,18 +294,21 @@ public class TestFixture {
         return cities;
     }
 
-/*
-    public static List<CityTop> testListOfCityTop() {
-        List<City> cities = TestFixture.testListOfCities();
 
+/*    public static List<CityTop> testListOfCityTop() {
+        ProjectionFactory factory = new SpelAwareProxyProjectionFactory();
+        List<CityTop> cities = new ArrayList();
+        CityTop newCity = factory.createProjection(CityTop.class);
+        newCity.setGetName("");
+    }
 
 
         cities.add(newCity);
         cities.add(newCity2);
         return cities;
-    }
+    }*/
 
- */
+
 
 
     /*********** Lines objects ***********/
