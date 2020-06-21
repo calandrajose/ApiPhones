@@ -37,6 +37,9 @@ public class LoginController {
             throw new UserInvalidLoginException();
         }
         String token = sessionManager.createSession(u.get());
+
+        System.out.printf("Token: " + token );
+
         response = ResponseEntity.ok().headers(createHeaders(token)).build();
         return response;
     }

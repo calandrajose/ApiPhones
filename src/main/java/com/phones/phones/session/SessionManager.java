@@ -11,7 +11,7 @@ public class SessionManager {
 
     Map<String, Session> sessionMap = new Hashtable<>();
 
-    int sesionExpiration = 60;
+    int sessionExpiration = 60;
 
     public String createSession(User user) {
         String token = UUID.randomUUID().toString();
@@ -20,8 +20,11 @@ public class SessionManager {
     }
 
     public Session getSession(String token) {
+        if (token == null) {
+            return null;
+        }
         Session session = sessionMap.get(token);
-        if (session!=null) {
+        if (session != null) {
             session.setLastAction(new Date(System.currentTimeMillis()));
         }
         return session;
@@ -34,7 +37,7 @@ public class SessionManager {
     public void expireSessions() {
         for (String k : sessionMap.keySet()) {
             Session v = sessionMap.get(k);
-            if (v.getLastAction().getTime() < System.currentTimeMillis() + (sesionExpiration*1000)) {
+            if (v.getLastAction().getTime() < System.currentTimeMillis() + (sessionExpiration * 1000)) {
                 System.out.println("Expiring session " + k);
                 sessionMap.remove(k);
             }
@@ -42,8 +45,9 @@ public class SessionManager {
     }
 
     public User getCurrentUser(String token) throws UserSessionDoesNotExistException {
-        return Optional.ofNullable(getSession(token).getLoggedUser()).orElseThrow(UserSessionDoesNotExistException::new);
-        //return getSession(token).getLoggedUser();
+        return Optional
+                .ofNullable(getSession(token).getLoggedUser())
+                .orElseThrow(UserSessionDoesNotExistException::new);
     }
 
 }

@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Service
-public class SessionFilter extends OncePerRequestFilter {
+public class SessionClientFilter extends OncePerRequestFilter {
 
     @Autowired
     private SessionManager sessionManager;
@@ -24,14 +24,13 @@ public class SessionFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String sessionToken = request.getHeader("Authorization");
-
-        System.out.printf("SessionToken: " + sessionToken + "\n\n");
-
         Session session = sessionManager.getSession(sessionToken);
-        if (null != session) {
+        if (null != session && session.getLoggedUser().hasRoleClient()) {
+            System.out.printf("ENTRE SESSION CLIENT");
             filterChain.doFilter(request, response);
         } else {
             response.setStatus(HttpStatus.FORBIDDEN.value());
         }
     }
+
 }

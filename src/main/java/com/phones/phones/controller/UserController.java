@@ -51,20 +51,21 @@ public class UserController {
     public ResponseEntity createUser(@RequestHeader("Authorization") final String sessionToken,
                                      @RequestBody @Valid final User user) throws UsernameAlreadyExistException, UserAlreadyExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        if (currentUser.hasRoleEmployee()) {
+        //if (currentUser.hasRoleEmployee()) {
             User newUser = userService.create(user);
             return ResponseEntity.created(getLocation(newUser)).build();
-        }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        //}
+        //return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     public ResponseEntity<List<User>> findAllUsers(@RequestHeader("Authorization") final String sessionToken) throws UserSessionDoesNotExistException {
+        System.out.printf(" - ENTRE USER CONTROLLER");
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        if (currentUser.hasRoleEmployee()) {
+        //if (currentUser.hasRoleEmployee()) {
             List<User> users = userService.findAll();
             return (users.size() > 0) ? ResponseEntity.ok(users) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        //}
+        //return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     public ResponseEntity<User> findUserById(@RequestHeader("Authorization") final String sessionToken,

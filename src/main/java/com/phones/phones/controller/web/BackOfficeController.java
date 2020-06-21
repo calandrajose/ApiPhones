@@ -14,6 +14,7 @@ import com.phones.phones.model.Call;
 import com.phones.phones.model.Invoice;
 import com.phones.phones.model.Line;
 import com.phones.phones.model.User;
+import com.phones.phones.session.SessionManager;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,14 +26,16 @@ import java.util.List;
 @RequestMapping("/api/backoffice")
 public class BackOfficeController {
 
-    // Ver filtro de session solo para administradores
+    private final SessionManager sessionManager;
     private final UserController userController;
     private final LineController lineController;
     private final RateController rateController;
 
-    public BackOfficeController(final UserController userController,
+    public BackOfficeController(final SessionManager sessionManager,
+                                final UserController userController,
                                 final LineController lineController,
                                 final RateController rateController) {
+        this.sessionManager = sessionManager;
         this.userController = userController;
         this.lineController = lineController;
         this.rateController = rateController;
@@ -48,7 +51,8 @@ public class BackOfficeController {
 
     @GetMapping("/users/")
     public ResponseEntity<List<User>> findAllUsers(@RequestHeader("Authorization") final String sessionToken,
-                                                   @RequestBody @Valid final User user) throws UsernameAlreadyExistException, UserAlreadyExistException, UserSessionDoesNotExistException {
+                                                   @RequestBody @Valid final User user) throws UserSessionDoesNotExistException {
+        System.out.printf("ENTRE METODO");
         return userController.findAllUsers(sessionToken);
     }
 
