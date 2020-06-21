@@ -3,17 +3,61 @@ package com.phones.phones;
 import com.phones.phones.dto.InfrastructureCallDto;
 import com.phones.phones.dto.LineDto;
 import com.phones.phones.dto.RateDto;
+import com.phones.phones.dto.UserDto;
 import com.phones.phones.model.*;
-import com.phones.phones.projection.CityTop;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static com.phones.phones.model.LineStatus.DISABLED;
 import static com.phones.phones.model.LineStatus.ENABLED;
 
 public class TestFixture {
+
+    /*********** User role ***********/
+
+    public static Set<UserRole> testEmployeeRole() {
+        Set<UserRole> role = new HashSet<UserRole>();
+        UserRole employee = UserRole
+                .builder()
+                .id(1L)
+                .role("Employee")
+                .build();
+        role.add(employee);
+        return role;
+    }
+
+    public static Set<UserRole> testClientRole() {
+        Set<UserRole> role = new HashSet<UserRole>();
+        UserRole client = UserRole
+                .builder()
+                .id(1L)
+                .role("Client")
+                .build();
+        role.add(client);
+        return role;
+    }
+
+    public static Set<UserRole> testBothUserRoles() {
+        Set<UserRole> bothRoles = new HashSet<UserRole>();
+
+        UserRole client = UserRole
+                .builder()
+                .id(1L)
+                .role("Client")
+                .build();
+
+        UserRole employee = UserRole
+                .builder()
+                .id(1L)
+                .role("Employee")
+                .build();
+
+        bothRoles.add(client);
+        bothRoles.add(employee);
+
+        return bothRoles;
+    }
+
 
 
     /*********** User objects ***********/
@@ -28,7 +72,10 @@ public class TestFixture {
                 .password("123")
                 .isActive(false)
                 .city(new City())
+                .userRoles(testBothUserRoles())
+                .lines(new ArrayList<>())
                 .build();
+
         return newUser;
     }
 
@@ -42,6 +89,24 @@ public class TestFixture {
                 .password("123")
                 .isActive(true)
                 .city(new City())
+                .userRoles(testBothUserRoles())
+                .lines(new ArrayList<>())
+                .build();
+        return newUser;
+    }
+
+    public static User testClientUser() {
+        User newUser = User.builder()
+                .id(1L)
+                .name("Rodrigo")
+                .surname("Leon")
+                .dni("404040")
+                .username("rl")
+                .password("123")
+                .isActive(true)
+                .city(new City())
+                .userRoles(testClientRole())
+                .lines(new ArrayList<>())
                 .build();
         return newUser;
     }
@@ -57,6 +122,8 @@ public class TestFixture {
                 .password("123")
                 .isActive(true)
                 .city(new City())
+                .userRoles(testBothUserRoles())
+                .lines(new ArrayList<>())
                 .build();
 
         User newUser2 = User.builder()
@@ -68,12 +135,29 @@ public class TestFixture {
                 .password("123")
                 .isActive(true)
                 .city(new City())
+                .userRoles(testBothUserRoles())
+                .lines(new ArrayList<>())
                 .build();
         users.add(newUser);
         users.add(newUser2);
 
         return users;
     }
+
+
+    public static UserDto testUserDto() {
+        UserDto newUser = UserDto.builder()
+                .name("Jose")
+                .surname("Calandra")
+                .dni("37557189")
+                .username("jc")
+                .password("123456")
+                .city(new City())
+                .userRoles(testBothUserRoles())
+                .build();
+        return newUser;
+    }
+
 
 
 
@@ -210,18 +294,21 @@ public class TestFixture {
         return cities;
     }
 
-/*
-    public static List<CityTop> testListOfCityTop() {
-        List<City> cities = TestFixture.testListOfCities();
 
+/*    public static List<CityTop> testListOfCityTop() {
+        ProjectionFactory factory = new SpelAwareProxyProjectionFactory();
+        List<CityTop> cities = new ArrayList();
+        CityTop newCity = factory.createProjection(CityTop.class);
+        newCity.setGetName("");
+    }
 
 
         cities.add(newCity);
         cities.add(newCity2);
         return cities;
-    }
+    }*/
 
- */
+
 
 
     /*********** Lines objects ***********/

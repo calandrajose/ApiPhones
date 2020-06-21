@@ -26,7 +26,11 @@ import java.util.List;
 @RequestMapping("/api/backoffice")
 public class BackOfficeController {
 
+<<<<<<< HEAD
     private final SessionManager sessionManager;
+=======
+     /**todo Ver filtro de session solo para administradores *///
+>>>>>>> 6cc96a96675f51cfadd24726d287526906c49d7c
     private final UserController userController;
     private final LineController lineController;
     private final RateController rateController;
