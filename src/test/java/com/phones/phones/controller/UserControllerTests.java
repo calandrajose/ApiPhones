@@ -122,7 +122,7 @@ public class UserControllerTests {
      * */
 
     @Test
-    public void findUserByIdOk() throws UserSessionDoesNotExistException, CallDoesNotExistException, UserDoesNotExistException {
+    public void findUserByIdOk() throws UserSessionDoesNotExistException, UserDoesNotExistException {
         User loggedUser = TestFixture.testUser();
         User user = TestFixture.testClientUser();
 
@@ -138,7 +138,7 @@ public class UserControllerTests {
     }
 
     @Test
-    public void findUserByIdUserIsNotEmployee() throws UserSessionDoesNotExistException, CallDoesNotExistException, UserDoesNotExistException {
+    public void findUserByIdUserIsNotEmployee() throws UserSessionDoesNotExistException, UserDoesNotExistException {
         User loggedUser = TestFixture.testClientUser();
         ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
@@ -167,7 +167,7 @@ public class UserControllerTests {
     }
 
     @Test
-    public void deleteUserByIdUserIsNotEmployee() throws UserSessionDoesNotExistException, CallDoesNotExistException, UserDoesNotExistException, UserAlreadyDisableException {
+    public void deleteUserByIdUserIsNotEmployee() throws UserSessionDoesNotExistException, UserDoesNotExistException, UserAlreadyDisableException {
         User loggedUser = TestFixture.testClientUser();
         ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
@@ -185,7 +185,7 @@ public class UserControllerTests {
 
 
     @Test
-    public void updateUserByIdOk() throws UserSessionDoesNotExistException, UserDoesNotExistException, UserAlreadyDisableException, UsernameAlreadyExistException {
+    public void updateUserByIdOk() throws UserSessionDoesNotExistException, UserDoesNotExistException, UsernameAlreadyExistException {
         User loggedUser = TestFixture.testUser();
         User updatedUser = TestFixture.testClientUser();
         UserDto userUpdate = TestFixture.testUserDto();
@@ -199,7 +199,7 @@ public class UserControllerTests {
     }
 
     @Test
-    public void updateUserByIdUserIsNotEmployee() throws UserSessionDoesNotExistException, UserDoesNotExistException, UserAlreadyDisableException, UsernameAlreadyExistException {
+    public void updateUserByIdUserIsNotEmployee() throws UserSessionDoesNotExistException, UserDoesNotExistException, UsernameAlreadyExistException {
         User loggedUser = TestFixture.testClientUser();
         UserDto userUpdate = TestFixture.testUserDto();
         ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
