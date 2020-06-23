@@ -13,10 +13,9 @@ import java.text.ParseException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/client")
+@RequestMapping("/api/clients")
 public class ClientController {
 
-    // Ver filtro de session para clientes o administradores
     private final UserController userController;
 
     public ClientController(final UserController userController) {

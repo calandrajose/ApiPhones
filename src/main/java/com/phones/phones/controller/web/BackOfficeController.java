@@ -26,11 +26,8 @@ import java.util.List;
 @RequestMapping("/api/backoffice")
 public class BackOfficeController {
 
-<<<<<<< HEAD
+     /**todo Ver filtro de session solo para administradores */
     private final SessionManager sessionManager;
-=======
-     /**todo Ver filtro de session solo para administradores *///
->>>>>>> 6cc96a96675f51cfadd24726d287526906c49d7c
     private final UserController userController;
     private final LineController lineController;
     private final RateController rateController;
@@ -56,7 +53,7 @@ public class BackOfficeController {
     @GetMapping("/users/")
     public ResponseEntity<List<User>> findAllUsers(@RequestHeader("Authorization") final String sessionToken,
                                                    @RequestBody @Valid final User user) throws UserSessionDoesNotExistException {
-        System.out.printf("ENTRE METODO");
+        System.out.print("ENTRE METODO");
         return userController.findAllUsers(sessionToken);
     }
 

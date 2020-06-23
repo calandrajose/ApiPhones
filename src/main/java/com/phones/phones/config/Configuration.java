@@ -48,7 +48,7 @@ public class Configuration {
     public FilterRegistrationBean filterClient() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(sessionClientFilter);
-        registration.addUrlPatterns("/api/client/*");
+        registration.addUrlPatterns("/api/clients/*");
         return registration;
     }
 
