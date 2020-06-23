@@ -14,7 +14,6 @@ import com.phones.phones.model.Call;
 import com.phones.phones.model.Invoice;
 import com.phones.phones.model.Line;
 import com.phones.phones.model.User;
-import com.phones.phones.session.SessionManager;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,14 +42,11 @@ public class BackOfficeController {
     @PostMapping("/users/")
     public ResponseEntity createUser(@RequestHeader("Authorization") final String sessionToken,
                                      @RequestBody @Valid final User user) throws UsernameAlreadyExistException, UserAlreadyExistException, UserSessionDoesNotExistException {
-        System.out.print("ENTRE METODO CREAR   ");
         return userController.createUser(sessionToken, user);
     }
 
-    // No anda
     @GetMapping("/users/")
-    public ResponseEntity<List<User>> findAllUsers(@RequestHeader("Authorization") final String sessionToken,
-                                                   @RequestBody @Valid final User user) throws UserSessionDoesNotExistException {
+    public ResponseEntity<List<User>> findAllUsers(@RequestHeader("Authorization") final String sessionToken) throws UserSessionDoesNotExistException {
         System.out.print("ENTRE METODO FIND     ");
         return userController.findAllUsers(sessionToken);
     }
@@ -74,6 +70,7 @@ public class BackOfficeController {
                                          @PathVariable final Long id) throws UserDoesNotExistException, UsernameAlreadyExistException, UserSessionDoesNotExistException {
         return userController.updateUserById(sessionToken, updatedUser, id);
     }
+
 
     /* CRUD Lines */
     @PostMapping("/lines/")
@@ -106,11 +103,13 @@ public class BackOfficeController {
         return lineController.updateLineByIdLine(sessionToken, updatedLine, id);
     }
 
+
     /* Rates */
     @GetMapping("/rates")
     public ResponseEntity<List<RateDto>> findAllRates(@RequestHeader("Authorization") final String sessionToken) throws UserSessionDoesNotExistException {
         return rateController.findAllRates(sessionToken);
     }
+
 
     /* Clients calls */
     @GetMapping("/users/{id}/calls")
@@ -119,8 +118,8 @@ public class BackOfficeController {
         return userController.findCallsByUserId(sessionToken, id);
     }
 
+
     /* Clients invoices */
-    //NO ANDA
     @GetMapping("/users/{id}/invoices")
     public ResponseEntity<List<Invoice>> findInvoicesByUserIdBetweenDates(@RequestHeader("Authorization") final String sessionToken,
                                                                           @PathVariable final Long id,

@@ -29,11 +29,8 @@ public class RateController {
 
     public ResponseEntity<List<RateDto>> findAllRates(@RequestHeader("Authorization") final String sessionToken) throws UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        if (currentUser.hasRoleEmployee()) {
-            List<RateDto> rates = rateService.findAll();
-            return (rates.size() > 0) ? ResponseEntity.ok(rates) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        List<RateDto> rates = rateService.findAll();
+        return (rates.size() > 0) ? ResponseEntity.ok(rates) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /*

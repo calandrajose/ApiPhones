@@ -42,61 +42,43 @@ public class LineController {
     public ResponseEntity createLine(@RequestHeader("Authorization") String sessionToken,
                                      @RequestBody @Valid final Line line) throws LineNumberAlreadyExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        //if (currentUser.hasRoleEmployee()) {
-            Line newLine = lineService.create(line);
-            return ResponseEntity.created(getLocation(newLine)).build();
-        //}
-        //return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        Line newLine = lineService.create(line);
+        return ResponseEntity.created(getLocation(newLine)).build();
     }
 
     public ResponseEntity<List<Line>> findAllLines(@RequestHeader("Authorization") String sessionToken) throws UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        //if (currentUser.hasRoleEmployee()) {
-            List<Line> lines = lineService.findAll();
-            return (lines.size() > 0) ? ResponseEntity.ok(lines) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        //}
-        //return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        List<Line> lines = lineService.findAll();
+        return (lines.size() > 0) ? ResponseEntity.ok(lines) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     public ResponseEntity<Line> findLineById(@RequestHeader("Authorization") String sessionToken,
                                              @PathVariable final Long id) throws LineDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        //if (currentUser.hasRoleEmployee()) {
-            Line line = lineService.findById(id);
-            return ResponseEntity.ok(line);
-        //}
-        //return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        Line line = lineService.findById(id);
+        return ResponseEntity.ok(line);
     }
 
     public ResponseEntity<List<Call>> findCallsByLineId(@RequestHeader("Authorization") String sessionToken,
                                                         @PathVariable final Long id) throws LineDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        if (currentUser.hasRoleEmployee()) {
-            List<Call> calls = callService.findByLineId(id);
-            return (calls.size() > 0) ? ResponseEntity.ok(calls) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        List<Call> calls = callService.findByLineId(id);
+        return (calls.size() > 0) ? ResponseEntity.ok(calls) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     public ResponseEntity deleteLineById(@RequestHeader("Authorization") final String sessionToken,
                                          @PathVariable final Long id) throws LineDoesNotExistException, UserSessionDoesNotExistException, LineAlreadyDisabledException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        //if (currentUser.hasRoleEmployee()) {
-            int deleted = lineService.disableById(id);
-            return (deleted > 0) ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        //}
-        //return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        int deleted = lineService.disableById(id);
+        return (deleted > 0) ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
     public ResponseEntity updateLineByIdLine(@RequestHeader("Authorization") final String sessionToken,
                                              @RequestBody @Valid final LineDto updatedLine,
                                              @PathVariable final Long id) throws LineDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        //if (currentUser.hasRoleEmployee()) {
-            boolean line = lineService.updateLineByIdLine(id, updatedLine);
-            return ResponseEntity.ok().build();
-        //}
-        //return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        boolean line = lineService.updateLineByIdLine(id, updatedLine);
+        return ResponseEntity.ok().build();
     }
 
     private URI getLocation(Line line) {

@@ -267,7 +267,7 @@ END $$
 - generar una facturar por cada linea
 - updatear las llamadas, y ponerle la factura correspondiente
 
--- Procedimiento
+-- Procedimiento - NO ANDA ESTE
 DROP PROCEDURE `sp_invoice_create`;
 DELIMITER $$
 CREATE PROCEDURE `sp_invoice_create`()
@@ -347,6 +347,8 @@ BEGIN
     DECLARE vNumberCalls INTEGER DEFAULT 0;
     DECLARE vIdInvoice INTEGER;
 
+    ##SET NEW.total_price = ((NEW.duration / 60) * priceRate);
+
     SELECT count(c.id_origin_line), sum(c.total_price) INTO vNumberCalls, vTotalPrice
     FROM `calls` c
     INNER JOIN `lines` l ON c.id_origin_line = l.id
@@ -379,11 +381,30 @@ END $$
 
 
 /* USUARIOS */
--- BACKOFFICE ( USUARIOS, LINEAS Y TARIFAS )
--- CLIENTES ( CONSULTA LLAMADAS Y FACTURACION )
--- INFRAESTRUCTURA ( INFORMACION DE LA LLAMDA A LA DB )
--- FACTURACION ( PROCESO AUTOMATICO )
 
+ // BackOffice
+ CREATE USER 'backoffice'@'localhost' identified BY '123';
+ GRANT ALL ON phones.users TO 'backoffice'@'localhost';
+ GRANT ALL ON phones.lines TO 'backoffice'@'localhost';
+ GRANT ALL ON phones.rates TO 'backoffice'@'localhost';
+ GRANT ALL ON phones.invoices TO 'backoffice'@'localhost';
+
+ // Clients
+ CREATE USER 'clients'@'localhost' identified BY '123';
+ GRANT SELECT ON phones.calls TO 'clients'@'localhost';
+ GRANT SELECT ON phones.invoices TO 'clients'@'localhost';
+ GRANT SELECT ON phones.cities TO clients'@'localhost';
+
+ // Infrastructure
+ CREATE USER 'infrastructure'@'localhost' identified BY '123';
+ GRANT INSERT ON phones.calls TO 'infrastructure'@'localhost';
+ grant trigger on phones.* TO 'infrastructure'@'localhost';     // Q HACE
+
+ // Invoice
+ CREATE USER 'invoice'@'localhost' identified BY '1234';
+ GRANT EVENT ON TPFinal.* TO 'invoice'@'localhost';
+ GRANT EXECUTE ON PROCEDURE sp_get_calls_cost_and_price TO 'invoice'@'localhost';
+ GRANT EXECUTE ON PROCEDURE sp_assign_id_invoice_to_calls TO 'invoice'@'localhost';
 
 
 /* VISTAS */

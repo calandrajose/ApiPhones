@@ -24,9 +24,6 @@ public class SessionFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String sessionToken = request.getHeader("Authorization");
-
-        System.out.printf(" -- Filter => SessionToken: " + sessionToken + "\n\n");
-
         Session session = sessionManager.getSession(sessionToken);
         if (null != session) {
             filterChain.doFilter(request, response);

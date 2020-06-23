@@ -51,62 +51,43 @@ public class UserController {
     public ResponseEntity createUser(@RequestHeader("Authorization") final String sessionToken,
                                      @RequestBody @Valid final User user) throws UsernameAlreadyExistException, UserAlreadyExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        //if (currentUser.hasRoleEmployee()) {
-            User newUser = userService.create(user);
-            return ResponseEntity.created(getLocation(newUser)).build();
-        //}
-        //return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        User newUser = userService.create(user);
+        return ResponseEntity.created(getLocation(newUser)).build();
     }
 
     public ResponseEntity<List<User>> findAllUsers(@RequestHeader("Authorization") final String sessionToken) throws UserSessionDoesNotExistException {
-        System.out.printf(" - ENTRE USER CONTROLLER");
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        //if (currentUser.hasRoleEmployee()) {
-            List<User> users = userService.findAll();
-            return (users.size() > 0) ? ResponseEntity.ok(users) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        //}
-        //return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        List<User> users = userService.findAll();
+        return (users.size() > 0) ? ResponseEntity.ok(users) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     public ResponseEntity<User> findUserById(@RequestHeader("Authorization") final String sessionToken,
                                              @PathVariable final Long id) throws UserDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        //if (currentUser.hasRoleEmployee()) {
-            User user = userService.findById(id);
-            return ResponseEntity.ok(user);
-        //}
-        //return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        User user = userService.findById(id);
+        return ResponseEntity.ok(user);
     }
 
     public ResponseEntity deleteUserById(@RequestHeader("Authorization") final String sessionToken,
                                          @PathVariable final Long id) throws UserDoesNotExistException, UserAlreadyDisableException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        //if (currentUser.hasRoleEmployee()) {
-            boolean deleted = userService.disableById(id);
-            return deleted ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        //}
-        //return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        boolean deleted = userService.disableById(id);
+        return deleted ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
     public ResponseEntity updateUserById(@RequestHeader("Authorization") final String sessionToken,
                                          @RequestBody @Valid final UserDto updatedUser,
                                          @PathVariable final Long id) throws UserDoesNotExistException, UsernameAlreadyExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        //if (currentUser.hasRoleEmployee()) {
-            User updated = userService.updateById(id, updatedUser);
-            return ResponseEntity.ok().build();
-        //}
-        //return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        User updated = userService.updateById(id, updatedUser);
+        return ResponseEntity.ok().build();
     }
 
     public ResponseEntity<List<Call>> findCallsByUserId(@RequestHeader("Authorization") String sessionToken,
                                                         @PathVariable final Long id) throws UserDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        //if (currentUser.hasRoleEmployee()) {
-            List<Call> calls = callService.findByUserId(id);
-            return (calls.size() > 0) ? ResponseEntity.ok(calls) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        //}
-        //return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        List<Call> calls = callService.findByUserId(id);
+        return (calls.size() > 0) ? ResponseEntity.ok(calls) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     public ResponseEntity<List<Call>> findCallsByUserSessionBetweenDates(@RequestHeader("Authorization") final String sessionToken,
@@ -125,11 +106,8 @@ public class UserController {
     public ResponseEntity<List<Line>> findLinesByUserId(@RequestHeader("Authorization") final String sessionToken,
                                                         @PathVariable final Long id) throws UserDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        if (currentUser.hasRoleEmployee()) {
-            List<Line> lines = lineService.findByUserId(id);
-            return (lines.size() > 0) ? ResponseEntity.ok(lines) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        List<Line> lines = lineService.findByUserId(id);
+        return (lines.size() > 0) ? ResponseEntity.ok(lines) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     public ResponseEntity<List<Line>> findLinesByUserSession(@RequestHeader("Authorization") final String sessionToken) throws UserDoesNotExistException, UserSessionDoesNotExistException {

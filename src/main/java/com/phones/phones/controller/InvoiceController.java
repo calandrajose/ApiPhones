@@ -30,21 +30,15 @@ public class InvoiceController {
 
     public ResponseEntity<List<Invoice>> findAllInvoices(@RequestHeader("Authorization") final String sessionToken) throws UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        if (currentUser.hasRoleEmployee()) {
-            List<Invoice> invoices = invoiceService.findAll();;
-            return (invoices.size() > 0) ? ResponseEntity.ok(invoices) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        List<Invoice> invoices = invoiceService.findAll();;
+        return (invoices.size() > 0) ? ResponseEntity.ok(invoices) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     public ResponseEntity<Invoice> findInvoiceById(@RequestHeader("Authorization") final String sessionToken,
                                                    @PathVariable final Long id) throws InvoiceDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        if (currentUser.hasRoleEmployee()) {
-            Invoice invoice = invoiceService.findById(id);
-            return ResponseEntity.ok(invoice);
-        }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        Invoice invoice = invoiceService.findById(id);
+        return ResponseEntity.ok(invoice);
     }
 
 }

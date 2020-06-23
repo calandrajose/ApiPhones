@@ -24,18 +24,10 @@ public class SessionClientFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String sessionToken = request.getHeader("Authorization");
-
-        System.out.printf(" -- ClientFilter => SessionToken: " + sessionToken + "\n\n");
-
         Session session = sessionManager.getSession(sessionToken);
-
-        System.out.print(session.getLoggedUser().getId());
-
         if (null != session && session.getLoggedUser().hasRoleClient()) {
-            System.out.printf("ENTRE SESSION CLIENT");
             filterChain.doFilter(request, response);
         } else {
-            System.out.printf("NO TIENE ROL CLIENTE");
             response.setStatus(HttpStatus.FORBIDDEN.value());
         }
     }

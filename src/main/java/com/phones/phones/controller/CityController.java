@@ -35,30 +35,21 @@ public class CityController {
     public ResponseEntity createCity(@RequestHeader("Authorization") String sessionToken,
                                      @RequestBody @Valid final City city) throws CityAlreadyExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        if (currentUser.hasRoleEmployee()) {
-            City newCity = cityService.create(city);
-            return ResponseEntity.created(getLocation(newCity)).build();
-        }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        City newCity = cityService.create(city);
+        return ResponseEntity.created(getLocation(newCity)).build();
     }
 
     public ResponseEntity<List<City>> findAllCities(@RequestHeader("Authorization") final String sessionToken) throws UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        if (currentUser.hasRoleEmployee()) {
-            List<City> cities = cityService.findAll();
-            return (cities.size() > 0) ? ResponseEntity.ok(cities) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        List<City> cities = cityService.findAll();
+        return (cities.size() > 0) ? ResponseEntity.ok(cities) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     public ResponseEntity<City> findCityById(@RequestHeader("Authorization") String sessionToken,
                                              @PathVariable final Long id) throws CityDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        if (currentUser.hasRoleEmployee()) {
-            City city = cityService.findById(id);
-            return ResponseEntity.ok(city);
-        }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        City city = cityService.findById(id);
+        return ResponseEntity.ok(city);
     }
 
     private URI getLocation(City city) {

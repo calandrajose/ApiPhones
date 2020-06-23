@@ -29,21 +29,15 @@ public class CallController {
 
     public ResponseEntity<List<Call>> findAllCalls(@RequestHeader("Authorization") String sessionToken) throws UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        if (currentUser.hasRoleEmployee()) {
-            List<Call> calls = callService.findAll();
-            return (calls.size() > 0) ? ResponseEntity.ok(calls) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        List<Call> calls = callService.findAll();
+        return (calls.size() > 0) ? ResponseEntity.ok(calls) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     public ResponseEntity<Call> findCallById(@RequestHeader("Authorization") String sessionToken,
                                              @PathVariable final Long id) throws CallDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        if (currentUser.hasRoleEmployee()) {
-            Call call = callService.findById(id);
-            return ResponseEntity.ok(call);
-        }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        Call call = callService.findById(id);
+        return ResponseEntity.ok(call);
     }
 
 }

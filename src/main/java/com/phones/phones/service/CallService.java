@@ -66,12 +66,9 @@ public class CallService {
         return callRepository.save(newCall);
     }
 
-
-
     public List<Call> findAll() {
         return callRepository.findAll();
     }
-
 
     public Call findById(Long id) throws CallDoesNotExistException {
         Optional<Call> call = callRepository.findById(id);

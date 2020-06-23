@@ -35,30 +35,21 @@ public class ProvinceController {
     public ResponseEntity createProvince(@RequestHeader("Authorization") final String sessionToken,
                                          @RequestBody @Valid final Province province) throws ProviceAlreadyExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        if (currentUser.hasRoleEmployee()) {
-            Province newProvince = provinceService.create(province);
-            return ResponseEntity.created(getLocation(newProvince)).build();
-        }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        Province newProvince = provinceService.create(province);
+        return ResponseEntity.created(getLocation(newProvince)).build();
     }
 
     public ResponseEntity<List<Province>> findAllProvinces(@RequestHeader("Authorization") final String sessionToken) throws UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        if (currentUser.hasRoleEmployee()) {
-            List<Province> provinces = provinceService.findAll();
-            return (provinces.size() > 0) ? ResponseEntity.ok(provinces) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        List<Province> provinces = provinceService.findAll();
+        return (provinces.size() > 0) ? ResponseEntity.ok(provinces) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     public ResponseEntity<Province> findProvinceById(@RequestHeader("Authorization") final String sessionToken,
                                                      @PathVariable final Long id) throws ProvinceDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        if (currentUser.hasRoleEmployee()) {
-            Province province = provinceService.findById(id);
-            return ResponseEntity.ok(province);
-        }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        Province province = provinceService.findById(id);
+        return ResponseEntity.ok(province);
     }
 
     private URI getLocation(Province province) {
