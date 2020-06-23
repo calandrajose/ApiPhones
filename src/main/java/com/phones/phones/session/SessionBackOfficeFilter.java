@@ -24,11 +24,15 @@ public class SessionBackOfficeFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String sessionToken = request.getHeader("Authorization");
+
+        System.out.printf(" -- BackOfficeFilter => SessionToken: " + sessionToken + "\n\n");
+
         Session session = sessionManager.getSession(sessionToken);
         if (null != session && session.getLoggedUser().hasRoleEmployee()) {
             System.out.printf("ENTRE SESSION BACKOFFICE");
             filterChain.doFilter(request, response);
         } else {
+            System.out.printf("NO TIENE ROL BACKOFFICE");
             response.setStatus(HttpStatus.FORBIDDEN.value());
         }
     }

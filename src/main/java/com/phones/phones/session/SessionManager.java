@@ -14,6 +14,7 @@ public class SessionManager {
     int sessionExpiration = 60;
 
     public String createSession(User user) {
+        System.out.printf("1");
         String token = UUID.randomUUID().toString();
         sessionMap.put(token, new Session(token, user, new Date(System.currentTimeMillis())));
         return token;

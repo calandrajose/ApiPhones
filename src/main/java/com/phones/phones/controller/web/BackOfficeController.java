@@ -26,17 +26,13 @@ import java.util.List;
 @RequestMapping("/api/backoffice")
 public class BackOfficeController {
 
-     /**todo Ver filtro de session solo para administradores */
-    private final SessionManager sessionManager;
     private final UserController userController;
     private final LineController lineController;
     private final RateController rateController;
 
-    public BackOfficeController(final SessionManager sessionManager,
-                                final UserController userController,
+    public BackOfficeController(final UserController userController,
                                 final LineController lineController,
                                 final RateController rateController) {
-        this.sessionManager = sessionManager;
         this.userController = userController;
         this.lineController = lineController;
         this.rateController = rateController;
@@ -47,13 +43,15 @@ public class BackOfficeController {
     @PostMapping("/users/")
     public ResponseEntity createUser(@RequestHeader("Authorization") final String sessionToken,
                                      @RequestBody @Valid final User user) throws UsernameAlreadyExistException, UserAlreadyExistException, UserSessionDoesNotExistException {
+        System.out.print("ENTRE METODO CREAR   ");
         return userController.createUser(sessionToken, user);
     }
 
+    // No anda
     @GetMapping("/users/")
     public ResponseEntity<List<User>> findAllUsers(@RequestHeader("Authorization") final String sessionToken,
                                                    @RequestBody @Valid final User user) throws UserSessionDoesNotExistException {
-        System.out.print("ENTRE METODO");
+        System.out.print("ENTRE METODO FIND     ");
         return userController.findAllUsers(sessionToken);
     }
 
@@ -69,6 +67,7 @@ public class BackOfficeController {
         return userController.deleteUserById(sessionToken, id);
     }
 
+    // Arreeglar
     @PutMapping("/users/{id}")
     public ResponseEntity updateUserById(@RequestHeader("Authorization") final String sessionToken,
                                          @RequestBody @Valid final UserDto updatedUser,
@@ -121,6 +120,7 @@ public class BackOfficeController {
     }
 
     /* Clients invoices */
+    //NO ANDA
     @GetMapping("/users/{id}/invoices")
     public ResponseEntity<List<Invoice>> findInvoicesByUserIdBetweenDates(@RequestHeader("Authorization") final String sessionToken,
                                                                           @PathVariable final Long id,

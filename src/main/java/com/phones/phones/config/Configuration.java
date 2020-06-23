@@ -18,29 +18,19 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class Configuration {
 
-    //private final SessionFilter sessionFilter;
+    private final SessionFilter sessionFilter;
     private final SessionClientFilter sessionClientFilter;
     private final SessionBackOfficeFilter sessionBackOfficeFilter;
 
     @Autowired
-    public Configuration(
-            //final SessionFilter sessionFilter,
+    public Configuration(final SessionFilter sessionFilter,
                          final SessionClientFilter sessionClientFilter,
                          final SessionBackOfficeFilter sessionBackOfficeFilter) {
-      //  this.sessionFilter = sessionFilter;
+        this.sessionFilter = sessionFilter;
         this.sessionClientFilter = sessionClientFilter;
         this.sessionBackOfficeFilter = sessionBackOfficeFilter;
     }
 
-    /*
-    @Bean
-    public FilterRegistrationBean myFilter() {
-        FilterRegistrationBean registration = new FilterRegistrationBean();
-        registration.setFilter(sessionFilter);
-        registration.addUrlPatterns("/api/*");
-        return registration;
-    }
-     */
 
     @Bean
     public FilterRegistrationBean filterBackOffice() {
@@ -55,6 +45,14 @@ public class Configuration {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(sessionClientFilter);
         registration.addUrlPatterns("/api/clients/*");
+        return registration;
+    }
+
+    @Bean
+    public FilterRegistrationBean myFilter() {
+        FilterRegistrationBean registration = new FilterRegistrationBean();
+        registration.setFilter(sessionFilter);
+        registration.addUrlPatterns("/api/*");
         return registration;
     }
 
