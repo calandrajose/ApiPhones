@@ -2,7 +2,6 @@ package com.phones.phones.controller;
 
 import com.phones.phones.TestFixture;
 import com.phones.phones.dto.UserDto;
-import com.phones.phones.exception.call.CallDoesNotExistException;
 import com.phones.phones.exception.user.*;
 import com.phones.phones.model.Call;
 import com.phones.phones.model.Invoice;
@@ -219,7 +218,7 @@ public class UserControllerTests {
 
 
     @Test
-    public void findCallsByUserIdOk() throws UserSessionDoesNotExistException, CallDoesNotExistException, UserDoesNotExistException {
+    public void findCallsByUserIdOk() throws UserSessionDoesNotExistException, UserDoesNotExistException {
         User loggedUser = TestFixture.testUser();
         List<Call> testCalls = TestFixture.testListOfCalls();
 
