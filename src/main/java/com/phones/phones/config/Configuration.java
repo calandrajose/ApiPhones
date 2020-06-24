@@ -67,6 +67,7 @@ public class Configuration {
                 .host("localhost:8080")
                 .select()
                 .paths(PathSelectors.ant("/api/backoffice/*/"))
+                //.paths(PathSelectors.ant("/api/clients/*/"))
                 .apis(RequestHandlerSelectors.basePackage("com.phones.phones"))
                 .build();
     }

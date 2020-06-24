@@ -123,35 +123,33 @@ public class UserController {
             throw new ValidationException("Date 'from' and date 'to' must have a value");
         }
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        Date fromDate = new SimpleDateFormat("dd/MM/yyyy").parse(from);
-        Date toDate = new SimpleDateFormat("dd/MM/yyyy").parse(to);
-        List<Invoice> invoices = invoiceService.findByUserIdBetweenDates(currentUser.getId(), fromDate, toDate);
+        List<Invoice> invoices = findInvoicesById(currentUser.getId(), from, to);
         return (invoices.size() > 0) ? ResponseEntity.ok(invoices) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
 
     public ResponseEntity<List<Invoice>> findInvoicesByUserIdBetweenDates(@RequestHeader("Authorization") final String sessionToken,
                                                                           @PathVariable final Long id,
                                                                           @RequestParam(name = "from") final String from,
                                                                           @RequestParam(name = "to") final String to) throws ParseException, UserDoesNotExistException, UserSessionDoesNotExistException {
-
         if (from == null || to == null) {
             throw new ValidationException("Date 'from' and date 'to' must have a value");
         }
         User currentUser = sessionManager.getCurrentUser(sessionToken);
-        Date fromDate = new SimpleDateFormat("dd/MM/yyyy").parse(from);
-        Date toDate = new SimpleDateFormat("dd/MM/yyyy").parse(to);
-        List<Invoice> invoices = invoiceService.findByUserIdBetweenDates(id, fromDate, toDate);
+        List<Invoice> invoices = findInvoicesById(id, from, to);
         return (invoices.size() > 0) ? ResponseEntity.ok(invoices) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    public List<Invoice> findInvoicesById(final Long id, String from, String to) throws UserDoesNotExistException, ParseException {
+        Date fromDate = new SimpleDateFormat("dd/MM/yyyy").parse(from);
+        Date toDate = new SimpleDateFormat("dd/MM/yyyy").parse(to);
+        return invoiceService.findByUserIdBetweenDates(id, fromDate, toDate);
+    }
 
     public ResponseEntity<List<CityTop>> findTopCitiesCallsByUserSession(@RequestHeader("Authorization") final String sessionToken) throws UserDoesNotExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         List<CityTop> citiesTops = cityService.findTopCitiesCallsByUserId(currentUser.getId());
         return (citiesTops.size() > 0) ? ResponseEntity.ok(citiesTops) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
 
     public Optional<User> login(final String username,
                                 final String password) throws ValidationException, UserInvalidLoginException {

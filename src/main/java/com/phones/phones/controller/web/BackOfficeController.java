@@ -47,7 +47,6 @@ public class BackOfficeController {
 
     @GetMapping("/users/")
     public ResponseEntity<List<User>> findAllUsers(@RequestHeader("Authorization") final String sessionToken) throws UserSessionDoesNotExistException {
-        System.out.print("ENTRE METODO FIND     ");
         return userController.findAllUsers(sessionToken);
     }
 

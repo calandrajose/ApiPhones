@@ -14,7 +14,7 @@ import java.util.List;
 public class IntegrationComponent {
 
     RestTemplate rest;
-    private static String url = "httt://localhost:8080/api/backoffice/users/";  /*url a consumir***/
+    private static String url = "http://localhost:8080/api/backoffice/users/";  /*url a consumir***/
 
 
     @PostConstruct

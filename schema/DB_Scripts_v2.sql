@@ -338,6 +338,7 @@ BEGIN
 END
 $$
 
+DROP PROCEDURE `sp_li_lines`;
 DELIMITER $$
 CREATE PROCEDURE `sp_li_lines`(IN vIdLine INT)
 BEGIN
@@ -349,7 +350,12 @@ BEGIN
 
     ##SET NEW.total_price = ((NEW.duration / 60) * priceRate);
 
-    SELECT count(c.id_origin_line), sum(c.total_price) INTO vNumberCalls, vTotalPrice
+    SELECT
+            count(c.id_origin_line),
+            ifnull(sum(c.total_price), 0),
+            --ifnull(sum(select r.cost from calls c inner join rates r on r.id = c.id_rate), 0)
+            ifnull( select r.cost as cost from calls c inner join rates r on r.id = c.id_rate where c.id_origin_line = 1, 0)
+        INTO vNumberCalls, vTotalPrice
     FROM `calls` c
     INNER JOIN `lines` l ON c.id_origin_line = l.id
     WHERE c.id_invoice IS NULL AND l.id = vIdLine;
