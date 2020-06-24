@@ -66,9 +66,10 @@ public class Configuration {
         return new Docket(DocumentationType.SWAGGER_2)
                 .host("localhost:8080")
                 .select()
-                .paths(PathSelectors.ant("/api/backoffice/*/"))
-                //.paths(PathSelectors.ant("/api/clients/*/"))
                 .apis(RequestHandlerSelectors.basePackage("com.phones.phones"))
+                .paths(PathSelectors.any())
+                //.paths(PathSelectors.ant("/api/backoffice/*/"))
+                //.paths(PathSelectors.ant("/api/clients/*/"))
                 .build();
     }
 

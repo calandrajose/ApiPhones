@@ -5,6 +5,7 @@ import com.phones.phones.dto.UserLoginDto;
 import com.phones.phones.exception.user.UserInvalidLoginException;
 import com.phones.phones.exception.user.UserDoesNotExistException;
 import com.phones.phones.model.User;
+import com.phones.phones.service.integration.IntegrationComponent;
 import com.phones.phones.session.SessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -21,13 +22,22 @@ public class LoginController {
     private final UserController userController;
     private final SessionManager sessionManager;
 
+    private final IntegrationComponent integrationComponent;
+
     @Autowired
     public LoginController(final UserController userController,
-                           final SessionManager sessionManager) {
+                           final SessionManager sessionManager,
+                           IntegrationComponent integrationComponent) {
         this.userController = userController;
         this.sessionManager = sessionManager;
+        this.integrationComponent = integrationComponent;
     }
 
+
+    @GetMapping("/wtf")
+    public void test() {
+        integrationComponent.getUsersFromRandomApi();
+    }
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody final UserLoginDto userLoginDto) throws UserInvalidLoginException, ValidationException, UserDoesNotExistException {

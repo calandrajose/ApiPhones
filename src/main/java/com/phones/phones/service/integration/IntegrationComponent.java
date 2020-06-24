@@ -14,17 +14,30 @@ import java.util.List;
 public class IntegrationComponent {
 
     RestTemplate rest;
-    private static String url = "http://localhost:8080/api/backoffice/users/";  /*url a consumir***/
+
+    /* Url's a consumir */
+    private static final String url = "http://localhost:8080/api/backoffice/users/";
+    private final String urlRandomPersons = "https://randomuser.me/api/";
 
 
     @PostConstruct
-    private void init(){
+    private void init() {
         rest = new RestTemplateBuilder()
                 .build();
     }
 
-    public List<User> getUserFromApi(){
+    public List<User> getUserFromApi() {
         return (List<User>) rest.getForObject(url, User.class);
+    }
+
+    public User addUserFromApi(User user) {
+        // Poner url necesaria...
+        return rest.postForObject(url, user, User.class);
+    }
+
+    public void getUsersFromRandomApi() {
+        String json = rest.getForObject(urlRandomPersons, String.class);
+        System.out.println(json);
     }
 
 }
