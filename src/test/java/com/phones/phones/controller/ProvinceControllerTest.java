@@ -53,16 +53,6 @@ public class ProvinceControllerTest {
 
 
     @Test
-    public void findAllProvincesUserIsNotEmployee() throws UserSessionDoesNotExistException {
-        User loggedUser = TestFixture.testClientUser();
-        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
-
-        ResponseEntity<List<Province>> returnedProvinces = provinceController.findAllProvinces("123");
-        assertEquals(response.getStatusCode(), returnedProvinces.getStatusCode());
-    }
-
-    @Test
     public void findAllProvincesNoProvincesFound() throws UserSessionDoesNotExistException {
         User loggedUser = TestFixture.testUser();
         List<Province> emptyList = new ArrayList<>();
@@ -91,15 +81,6 @@ public class ProvinceControllerTest {
         assertEquals(1L, returnedProvinces.getBody().getId());
     }
 
-    @Test
-    public void findProvinceByIdUserIsNotEmployee() throws UserSessionDoesNotExistException, ProvinceDoesNotExistException {
-        User loggedUser = TestFixture.testClientUser();
-        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
-
-        ResponseEntity<Province> returnedProvinces = provinceController.findProvinceById("123", 1L);
-        assertEquals(response.getStatusCode(), returnedProvinces.getStatusCode());
-    }
 
     /**todo getLocation
             create
