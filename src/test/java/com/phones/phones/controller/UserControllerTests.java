@@ -89,17 +89,6 @@ public class UserControllerTests {
 
 
     @Test
-    public void findAllUsersNotEmployeeLogged() throws UserSessionDoesNotExistException {
-        User loggedUser = TestFixture.testClientUser();
-        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
-
-        ResponseEntity<List<User>> returnedUsers = userController.findAllUsers("123");
-        assertEquals(response.getStatusCode(), returnedUsers.getStatusCode());
-    }
-
-
-    @Test
     public void findAllUsersNoUsersFound() throws UserSessionDoesNotExistException {
         User loggedUser = TestFixture.testUser();
         List<User> noUsers = new ArrayList<>();
@@ -136,17 +125,6 @@ public class UserControllerTests {
         assertEquals(1L, returnedUser.getBody().getId());
     }
 
-    @Test
-    public void findUserByIdUserIsNotEmployee() throws UserSessionDoesNotExistException, UserDoesNotExistException {
-        User loggedUser = TestFixture.testClientUser();
-        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
-
-        ResponseEntity<User> returnedUser = userController.findUserById("123", 1L);
-        assertEquals(response.getStatusCode(), returnedUser.getStatusCode());
-    }
-
-
     /**
      *
      * deleteUserById
@@ -164,17 +142,6 @@ public class UserControllerTests {
 
         assertEquals(ResponseEntity.ok().build(), deleted);
     }
-
-    @Test
-    public void deleteUserByIdUserIsNotEmployee() throws UserSessionDoesNotExistException, UserDoesNotExistException, UserAlreadyDisableException {
-        User loggedUser = TestFixture.testClientUser();
-        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
-
-        ResponseEntity deleted = userController.deleteUserById("123", 1L);
-        assertEquals(response.getStatusCode(), deleted.getStatusCode());
-    }
-
 
     /**
      *
@@ -195,17 +162,6 @@ public class UserControllerTests {
         ResponseEntity updated = userController.updateUserById("123", userUpdate, 1L);
 
         assertEquals(ResponseEntity.ok().build(), updated);
-    }
-
-    @Test
-    public void updateUserByIdUserIsNotEmployee() throws UserSessionDoesNotExistException, UserDoesNotExistException, UsernameAlreadyExistException {
-        User loggedUser = TestFixture.testClientUser();
-        UserDto userUpdate = TestFixture.testUserDto();
-        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
-
-        ResponseEntity updated = userController.updateUserById("123", userUpdate,1L);
-        assertEquals(response.getStatusCode(), updated.getStatusCode());
     }
 
 
@@ -332,18 +288,6 @@ public class UserControllerTests {
         assertEquals(testLines.get(0).getUser().getUsername(), returnedCalls.getBody().get(0). getUser().getUsername());
         assertEquals("rl", returnedCalls.getBody().get(0). getUser().getUsername());
         assertEquals("404040", returnedCalls.getBody().get(0). getUser().getDni());
-    }
-
-    @Test
-    public void findLinesByUserIdUserIsNotEmployee() throws UserSessionDoesNotExistException, UserDoesNotExistException {
-        User loggedUser = TestFixture.testClientUser();
-
-        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
-
-        ResponseEntity<List<Line>> returnedLines = userController.findLinesByUserId("123", 1L);
-        assertEquals(response.getStatusCode(), returnedLines.getStatusCode());
-        assertEquals(HttpStatus.FORBIDDEN, returnedLines.getStatusCode());
     }
 
 

@@ -161,23 +161,6 @@ public class UserController {
     }
 
 
-    /*
-        @GetMapping("/{id}/maxCalled")
-        public ResponseEntity<MostCalledDto> findMostCalledById(@PathVariable final Long id) throws UserNotExistException {
-
-            Optional<UserDto> currentUser = userService.findById(id);
-            MostCalledDto prueba = new MostCalledDto();
-            if (currentUser != null) {
-                String mostCalled = callService.findMostCalledByOriginId(currentUser.get().getId());
-
-                prueba.setCallerName(currentUser.get().getName());
-                prueba.setCallerSurname(currentUser.get().getSurname());
-                prueba.setMostCalled(mostCalled);
-            }
-            return (prueba != null) ? ResponseEntity.ok(prueba) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-     */
-
     private URI getLocation(User user) {
         return ServletUriComponentsBuilder
                 .fromCurrentRequest()
