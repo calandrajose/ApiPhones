@@ -1,17 +1,16 @@
 package com.phones.phones;
 
-import com.phones.phones.model.Province;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
 public class RestUtils {
 
-    public static URI getProvinceLocation(Province province) {
+    public static URI getLocation(Long id) {
         return ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(province.getId())
+                .buildAndExpand(id)
                 .toUri();
     }
 }
