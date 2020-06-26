@@ -1,6 +1,6 @@
 package com.phones.phones.controller;
 
-import com.phones.phones.RestUtils;
+import com.phones.phones.utils.RestUtils;
 import com.phones.phones.exception.province.ProviceAlreadyExistException;
 import com.phones.phones.exception.province.ProvinceDoesNotExistException;
 import com.phones.phones.exception.user.UserSessionDoesNotExistException;

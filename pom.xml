@@ -127,6 +127,7 @@
 				<configuration>
 					<excludes>
 						<exclude>**/model/**</exclude>
+						<exclude>**/utils/**</exclude>
 						<exclude>**/dto/**</exclude>
 						<exclude>**/projection/**</exclude>
 						<exclude>**/session/**</exclude>
@@ -165,7 +166,7 @@
 										<limit>
 											<counter>LINE</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>0.7</minimum>
+											<minimum>0.30</minimum>
 										</limit>
 									</limits>
 								</rule>

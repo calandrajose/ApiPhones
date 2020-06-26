@@ -1,4 +1,4 @@
-package com.phones.phones;
+package com.phones.phones.utils;
 
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
