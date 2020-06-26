@@ -1,9 +1,6 @@
 package com.phones.phones;
 
-import com.phones.phones.dto.InfrastructureCallDto;
-import com.phones.phones.dto.LineDto;
-import com.phones.phones.dto.RateDto;
-import com.phones.phones.dto.UserDto;
+import com.phones.phones.dto.*;
 import com.phones.phones.model.*;
 
 import java.util.*;
@@ -157,6 +154,14 @@ public class TestFixture {
         return newUser;
     }
 
+
+    public static UserLoginDto testUserLoginDto() {
+        UserLoginDto newUser = UserLoginDto.builder()
+                .username("jc")
+                .password("123456")
+                .build();
+        return newUser;
+    }
 
 
 

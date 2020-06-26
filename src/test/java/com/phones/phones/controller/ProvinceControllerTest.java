@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,10 @@ public class ProvinceControllerTest {
         initMocks(this);
         provinceController = new ProvinceController(provinceService, sessionManager);
     }
+
+
+
+    when(UriGenerator.getLocation(phoneLine.getId())).thenReturn(URI.create("miUri.com"));
 
     @Test
     public void findAllProvincesOk() throws UserSessionDoesNotExistException {
