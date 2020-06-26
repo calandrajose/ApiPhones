@@ -23,7 +23,7 @@ public class ClientController {
     }
 
 
-    /* Consulta de llamadas del usuario logueado por rango de fechas */
+    /** Consulta de llamadas del usuario logueado por rango de fechas */
     @GetMapping("/me/calls")
     public ResponseEntity<List<Call>> findCallsByUserSessionBetweenDates(@RequestHeader("Authorization") final String sessionToken,
                                                                          @RequestParam(name = "from") final String from,
@@ -31,7 +31,7 @@ public class ClientController {
         return userController.findCallsByUserSessionBetweenDates(sessionToken, from, to);
     }
 
-    /* Consulta de facturas del usuario logueado por rango de fechas */
+    /** Consulta de facturas del usuario logueado por rango de fechas */
     @GetMapping("/me/invoices")
     public ResponseEntity<List<Invoice>> findInvoicesByUserSessionBetweenDates(@RequestHeader("Authorization") final String sessionToken,
                                                                                @RequestParam(name = "from") final String from,
@@ -39,7 +39,7 @@ public class ClientController {
         return userController.findInvoicesByUserSessionBetweenDates(sessionToken, from, to);
     }
 
-    /* Consulta de TOP 10 destinos más llamados por el usuario */
+    /** Consulta de TOP 10 destinos más llamados por el usuario */
     @GetMapping("/me/cities/top")
     public ResponseEntity<List<CityTop>> findTopCitiesCallsByUserSession(@RequestHeader("Authorization") final String sessionToken) throws UserDoesNotExistException, UserSessionDoesNotExistException {
         return userController.findTopCitiesCallsByUserSession(sessionToken);

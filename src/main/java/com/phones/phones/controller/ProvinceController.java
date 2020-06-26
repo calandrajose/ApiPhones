@@ -1,5 +1,6 @@
 package com.phones.phones.controller;
 
+import com.phones.phones.utils.RestUtils;
 import com.phones.phones.exception.province.ProviceAlreadyExistException;
 import com.phones.phones.exception.province.ProvinceDoesNotExistException;
 import com.phones.phones.exception.user.UserSessionDoesNotExistException;
@@ -11,11 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
 
 @Controller
@@ -32,11 +33,18 @@ public class ProvinceController {
     }
 
 
-    public ResponseEntity createProvince(@RequestHeader("Authorization") final String sessionToken,
+/*    public ResponseEntity createProvince(@RequestHeader("Authorization") final String sessionToken,
                                          @RequestBody @Valid final Province province) throws ProviceAlreadyExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         Province newProvince = provinceService.create(province);
         return ResponseEntity.created(getLocation(newProvince)).build();
+    }*/
+
+    public ResponseEntity createProvince(@RequestHeader("Authorization") final String sessionToken,
+                                         @RequestBody @Valid final Province province) throws ProviceAlreadyExistException, UserSessionDoesNotExistException {
+        User currentUser = sessionManager.getCurrentUser(sessionToken);
+        Province newProvince = provinceService.create(province);
+        return ResponseEntity.created(RestUtils.getLocation(newProvince.getId())).build();
     }
 
     public ResponseEntity<List<Province>> findAllProvinces(@RequestHeader("Authorization") final String sessionToken) throws UserSessionDoesNotExistException {
@@ -52,12 +60,12 @@ public class ProvinceController {
         return ResponseEntity.ok(province);
     }
 
-    private URI getLocation(Province province) {
+/*    private URI getLocation(Province province) {
         return ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(province.getId())
                 .toUri();
-    }
+    }*/
 
 }

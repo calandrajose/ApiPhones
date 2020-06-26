@@ -1,5 +1,6 @@
 package com.phones.phones.controller;
 
+import com.phones.phones.utils.RestUtils;
 import com.phones.phones.TestFixture;
 import com.phones.phones.dto.UserDto;
 import com.phones.phones.exception.user.*;
@@ -11,11 +12,16 @@ import com.phones.phones.service.*;
 import com.phones.phones.session.SessionManager;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import javax.validation.ValidationException;
+import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,6 +34,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+
+@PrepareForTest(RestUtils.class)
+@RunWith(PowerMockRunner.class)
 public class UserControllerTests {
     UserController userController;
 
@@ -47,25 +56,26 @@ public class UserControllerTests {
     @Before
     public void setUp() {
         initMocks(this);
+        PowerMockito.mockStatic(RestUtils.class);
         userController = new UserController(userService, callService, lineService, cityService, invoiceService, sessionManager);
     }
 
-/***
+
     @Test
     public void createUserOk() throws UserSessionDoesNotExistException, UserAlreadyExistException, UsernameAlreadyExistException {
         User loggedUser = TestFixture.testUser();
         User newUser = TestFixture.testClientUser();
+
         when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
         when(userService.create(newUser)).thenReturn(newUser);
+        when(RestUtils.getLocation(newUser.getId())).thenReturn(URI.create("miUri.com"));
 
-        ResponseEntity <User> createdUser = userController.createUser("123", newUser);
+        ResponseEntity response = userController.createUser("123", newUser);
 
-        assertEquals(loggedUser.getId(), createdUser.getBody().getId());
-        assertEquals(loggedUser.getDni(), createdUser.getBody().getDni());
-       // assertEquals(loggedUser.getLines().size(), createdUser.getBody().getLines().size());
+        assertEquals(URI.create("miUri.com"), response.getHeaders().getLocation());
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
-    todo create
- */
+
 
     /**
      *
@@ -188,18 +198,6 @@ public class UserControllerTests {
     }
 
     @Test
-    public void findCallsByUserIdUserIsNotEmployee() throws UserSessionDoesNotExistException, UserDoesNotExistException, UserAlreadyDisableException, UsernameAlreadyExistException {
-        User loggedUser = TestFixture.testClientUser();
-
-        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
-
-        ResponseEntity<List<Call>> returnedCalls = userController.findCallsByUserId("123", 1L);
-        assertEquals(response.getStatusCode(), returnedCalls.getStatusCode());
-    }
-
-
-    @Test
     public void findAllCallsByUserIdNoCallsDone() throws UserSessionDoesNotExistException, UserDoesNotExistException {
         User loggedUser = TestFixture.testUser();
         List<Call> emptyCalls = new ArrayList<>();
@@ -212,8 +210,6 @@ public class UserControllerTests {
 
         assertEquals(response.getStatusCode(), returnedCalls.getStatusCode());
     }
-
-
 
 
     /**

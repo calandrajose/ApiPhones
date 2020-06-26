@@ -1,7 +1,6 @@
 package com.phones.phones.controller;
 
 import com.phones.phones.TestFixture;
-import com.phones.phones.exception.city.CityDoesNotExistException;
 import com.phones.phones.exception.invoice.InvoiceDoesNotExistException;
 import com.phones.phones.exception.user.UserSessionDoesNotExistException;
 import com.phones.phones.model.Invoice;
@@ -53,16 +52,6 @@ public class InvoiceControllerTest {
 
 
     @Test
-    public void findAllInvoicesUserIsNotEmployee() throws UserSessionDoesNotExistException {
-        User loggedUser = TestFixture.testClientUser();
-        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
-
-        ResponseEntity<List<Invoice>> returnedInvoices = invoiceController.findAllInvoices("123");
-        assertEquals(response.getStatusCode(), returnedInvoices.getStatusCode());
-    }
-
-    @Test
     public void findAllInvoicesNoInvoiceFound() throws UserSessionDoesNotExistException {
         User loggedUser = TestFixture.testUser();
         List<Invoice> emptyList = new ArrayList<>();
@@ -91,16 +80,6 @@ public class InvoiceControllerTest {
         assertEquals(1L, returnedInvoices.getBody().getId());
     }
 
-
-    @Test
-    public void findInvoiceByIdUserIsNotEmployee() throws UserSessionDoesNotExistException, CityDoesNotExistException, InvoiceDoesNotExistException {
-        User loggedUser = TestFixture.testClientUser();
-        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
-
-        ResponseEntity<Invoice> returnedInvoices = invoiceController.findInvoiceById("123", 1L);
-        assertEquals(response.getStatusCode(), returnedInvoices.getStatusCode());
-    }
 
     /**todo getLocation*/
 }

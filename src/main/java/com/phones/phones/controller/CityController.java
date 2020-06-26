@@ -1,5 +1,6 @@
 package com.phones.phones.controller;
 
+import com.phones.phones.utils.RestUtils;
 import com.phones.phones.exception.city.CityAlreadyExistException;
 import com.phones.phones.exception.city.CityDoesNotExistException;
 import com.phones.phones.exception.user.UserSessionDoesNotExistException;
@@ -11,11 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
 
 @Controller
@@ -36,7 +37,7 @@ public class CityController {
                                      @RequestBody @Valid final City city) throws CityAlreadyExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         City newCity = cityService.create(city);
-        return ResponseEntity.created(getLocation(newCity)).build();
+        return ResponseEntity.created(RestUtils.getLocation(newCity.getId())).build();
     }
 
     public ResponseEntity<List<City>> findAllCities(@RequestHeader("Authorization") final String sessionToken) throws UserSessionDoesNotExistException {
@@ -50,14 +51,6 @@ public class CityController {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         City city = cityService.findById(id);
         return ResponseEntity.ok(city);
-    }
-
-    private URI getLocation(City city) {
-        return ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(city.getId())
-                .toUri();
     }
 
 }

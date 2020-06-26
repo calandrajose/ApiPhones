@@ -1,5 +1,6 @@
 package com.phones.phones.controller;
 
+import com.phones.phones.utils.RestUtils;
 import com.phones.phones.dto.LineDto;
 import com.phones.phones.exception.line.LineAlreadyDisabledException;
 import com.phones.phones.exception.line.LineDoesNotExistException;
@@ -15,11 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
 
 @Controller
@@ -43,7 +44,7 @@ public class LineController {
                                      @RequestBody @Valid final Line line) throws LineNumberAlreadyExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         Line newLine = lineService.create(line);
-        return ResponseEntity.created(getLocation(newLine)).build();
+        return ResponseEntity.created(RestUtils.getLocation(newLine.getId())).build();
     }
 
     public ResponseEntity<List<Line>> findAllLines(@RequestHeader("Authorization") String sessionToken) throws UserSessionDoesNotExistException {
@@ -80,13 +81,4 @@ public class LineController {
         boolean line = lineService.updateLineByIdLine(id, updatedLine);
         return ResponseEntity.ok().build();
     }
-
-    private URI getLocation(Line line) {
-        return ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(line.getId())
-                .toUri();
-    }
-
 }

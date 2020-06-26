@@ -1,8 +1,12 @@
 package com.phones.phones.controller;
 
+import com.phones.phones.utils.RestUtils;
 import com.phones.phones.dto.UserDto;
 import com.phones.phones.exception.user.*;
-import com.phones.phones.model.*;
+import com.phones.phones.model.Call;
+import com.phones.phones.model.Invoice;
+import com.phones.phones.model.Line;
+import com.phones.phones.model.User;
 import com.phones.phones.projection.CityTop;
 import com.phones.phones.service.*;
 import com.phones.phones.session.SessionManager;
@@ -10,12 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import javax.validation.ValidationException;
-import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -52,7 +57,7 @@ public class UserController {
                                      @RequestBody @Valid final User user) throws UsernameAlreadyExistException, UserAlreadyExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
         User newUser = userService.create(user);
-        return ResponseEntity.created(getLocation(newUser)).build();
+        return ResponseEntity.created(RestUtils.getLocation(newUser.getId())).build();
     }
 
     public ResponseEntity<List<User>> findAllUsers(@RequestHeader("Authorization") final String sessionToken) throws UserSessionDoesNotExistException {
@@ -159,6 +164,7 @@ public class UserController {
             throw new ValidationException("Username and password must have a value");
         }
     }
+
 
     private URI getLocation(User user) {
         return ServletUriComponentsBuilder

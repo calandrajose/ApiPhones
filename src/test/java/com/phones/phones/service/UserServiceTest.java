@@ -1,6 +1,7 @@
 package com.phones.phones.service;
 
 import com.phones.phones.TestFixture;
+import com.phones.phones.dto.UserDto;
 import com.phones.phones.exception.user.*;
 import com.phones.phones.model.User;
 import com.phones.phones.repository.UserRepository;
@@ -22,6 +23,9 @@ public class UserServiceTest {
     UserService userService;
 
     @Mock
+    UserService userService2;
+
+    @Mock
     UserRepository userRepository;
 
     @Mock
@@ -35,7 +39,7 @@ public class UserServiceTest {
 
 
     @Test
-    public void testAddOk() throws UsernameAlreadyExistException, UserAlreadyExistException {
+    public void testCreateOk() throws UsernameAlreadyExistException, UserAlreadyExistException {
         User newUser = TestFixture.testUser();
 
         when(userRepository.save(newUser)).thenReturn(newUser);
@@ -47,7 +51,7 @@ public class UserServiceTest {
     }
 
     @Test(expected = UserAlreadyExistException.class)
-    public void testAddExistingUser() throws UsernameAlreadyExistException, UserAlreadyExistException {
+    public void testCreateExistingUser() throws UsernameAlreadyExistException, UserAlreadyExistException {
 
         User newUser = TestFixture.testUser();
         when(this.userRepository.findByDni(newUser.getDni())).thenReturn(Optional.ofNullable(newUser));
@@ -135,34 +139,30 @@ public class UserServiceTest {
         verify(userRepository, times(1)).findByUsername("rl");
     }
 
-
-
-
-
-
-
-/*
-
-
-
-    @Test(expected = UserNotexistException.class)
-    public void testLoginUserNotFound() throws UserNotexistException {
-        when(dao.getByUsername("user","pwd")).thenReturn(null);
-        service.login("user", "pwd");
-    }
-
-    }
-
     @Test
-    public void testUpdateByIdOk() {
+    public void testUpdateByIdOk() throws UserDoesNotExistException, UsernameAlreadyExistException {
+        User loggedUser = TestFixture.testUser();
+        UserDto update = TestFixture.testUserDto();
+        when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(loggedUser));
+        when(userService2.existsUsername("rl")).thenReturn(false);
+        when(passwordEncoder.encode(update.getPassword())).thenReturn("asd32a1s3d21as");
+        when(userRepository.save(loggedUser)).thenReturn(loggedUser);
+
+         User updatedUser  = userService.updateById(1L, update);
+
+        assertEquals(loggedUser.getId(), updatedUser.getId());
+        assertEquals(loggedUser.getUsername(), updatedUser.getUsername());
+
     }
 
-    @Test(expected = UserNotExistException.class)
-    public void testUpdateByIdUserNotExist() {
+    @Test(expected = UserDoesNotExistException.class)
+    public void testUpdateByIdOkExistingUser() throws UsernameAlreadyExistException, UserDoesNotExistException {
+        UserDto newUser = TestFixture.testUserDto();
+        when(this.userRepository.findById(1L)).thenReturn(Optional.empty());
+        userService.updateById(1L, newUser);
     }
 
-    @Test
-    public void testConverterToDtoOk() {
-    }*/
+
+
 
 }
