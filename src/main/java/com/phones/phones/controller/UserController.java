@@ -165,4 +165,13 @@ public class UserController {
         }
     }
 
+
+    private URI getLocation(User user) {
+        return ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(user.getId())
+                .toUri();
+    }
+
 }

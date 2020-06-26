@@ -33,12 +33,4 @@ public class RateController {
         return (rates.size() > 0) ? ResponseEntity.ok(rates) : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    /*
-        @GetMapping("/test")
-        public RateByCity getRateByCities(@RequestParam(name = "cityFrom") Integer idCityFrom,
-                                          @RequestParam(name = "cityTo") Integer idCityTo){
-            return this.rateService.getRateByCities(idCityFrom, idCityTo);
-        }
-     */
-
 }

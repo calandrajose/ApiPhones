@@ -31,10 +31,7 @@ CREATE TABLE `users` (
     `dni` VARCHAR(255) NOT NULL UNIQUE,
 	`username` VARCHAR(255) NOT NULL UNIQUE,
     `password` VARCHAR(255) NOT NULL,
-
-    /* Si hay error, usar DATETIME en vez de TIMESTAMP */
     `creation_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
     `is_active` BOOLEAN DEFAULT TRUE,
     `id_city` INT NOT NULL,    
     CONSTRAINT `Pk_users` PRIMARY KEY (`id`),
@@ -68,9 +65,7 @@ CREATE TABLE `line_types` (
 CREATE TABLE `lines` (
 	`id` INT AUTO_INCREMENT NOT NULL,
     `number` VARCHAR(255) NOT NULL UNIQUE,
-
     `creation_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
     `status` ENUM('ENABLED', 'DISABLED', 'SUSPENDED') NOT NULL,
     `id_user` INT NOT NULL,
     `id_line_type` INT NOT NULL,
@@ -99,9 +94,7 @@ CREATE TABLE `invoices` (
     `cost_price` FLOAT NOT NULL,
     `total_price` FLOAT NOT NULL,
     `id_line` INT NOT NULL,
-
     `creation_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
     `due_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `is_paid` BOOLEAN DEFAULT FALSE,
     CONSTRAINT `Pk_invoices` PRIMARY KEY (`id`),
@@ -207,6 +200,7 @@ CREATE TABLE `calls` (
 
 
 /* FUNCTIONS */
+
 DELIMITER $$
 CREATE FUNCTION `find_city_by_call_number`(number VARCHAR(255)) RETURNS INT DETERMINISTIC
 BEGIN
@@ -267,57 +261,7 @@ END $$
 - generar una facturar por cada linea
 - updatear las llamadas, y ponerle la factura correspondiente
 
--- Procedimiento - NO ANDA ESTE
-DROP PROCEDURE `sp_invoice_create`;
-DELIMITER $$
-CREATE PROCEDURE `sp_invoice_create`()
-BEGIN
-    DECLARE vTotalPrice FLOAT DEFAULT 0;
-    DECLARE vCostPrice FLOAT DEFAULT 0;
-    DECLARE vIdCall INT DEFAULT -1;
-    DECLARE vIdLine INT DEFAULT -1;
-    DECLARE vIdInvoice INT DEFAULT -1;
-    DECLARE vNumberCalls INT DEFAULT 0;
-    DECLARE vFinished INT DEFAULT 0;
 
-    #Obtenemos todas las llamadas no facturadas, con su linea, cantidad de llamadas y precio total
-    DECLARE cur_calls_invoice CURSOR FOR
-        SELECT
-            c.id_origin_line,
-            count(c.id) AS number_calls,
-            sum(c.total_price) AS total_price
-        FROM `calls` c
-        WHERE c.id_invoice IS NULL
-        GROUP BY c.id_origin_line;
-
-    DECLARE CONTINUE HANDLER FOR NOT FOUND SET vFinished = 1;
-
-    #Empezamos a recorrer, fila por fila
-    OPEN cur_calls_invoice;
-    FETCH cur_calls_invoice INTO vIdLine, vNumberCalls, vTotalPrice;
-    WHILE (vFinished = 0) DO
-
-        #Se inserta la factura
-        INSERT INTO invoices(number_calls, cost_price, total_price, id_line, creation_date, due_date, is_paid)
-        VALUES(vNumberCalls, 0, vTotalPrice, vIdLine, now(), now() + INTERVAL 15 DAY, 0);
-
-        #Se toma el id de la factura
-        SET vIdInvoice = last_insert_id();
-
-        #Se updatea las llamadas asignandole la factura
-        #Como saco el id de llamadas?
-        #UPDATE `calls` SET id_invoice = vIdInvoice WHERE id = vIdCall;
-
-        FETCH cur_calls_invoice INTO vIdLine, vNumberCalls, vTotalPrice;
-
-    END while;
-    CLOSE cur_calls_invoice;
-END
-$$
-
-
-
--- Secundary - works!
 DELIMITER $$
 CREATE PROCEDURE `sp_invoices_lines`()
 BEGIN
@@ -348,12 +292,12 @@ BEGIN
     DECLARE vNumberCalls INTEGER DEFAULT 0;
     DECLARE vIdInvoice INTEGER;
 
-    ##SET NEW.total_price = ((NEW.duration / 60) * priceRate);
+    -- FALTA SACAR EL COSTO!!!!!!!!!!!!!!!!!
+    -- SET NEW.total_price = ((NEW.duration / 60) * priceRate);
 
     SELECT
             count(c.id_origin_line),
             ifnull(sum(c.total_price), 0),
-            --ifnull(sum(select r.cost from calls c inner join rates r on r.id = c.id_rate), 0)
             ifnull( select r.cost as cost from calls c inner join rates r on r.id = c.id_rate where c.id_origin_line = 1, 0)
         INTO vNumberCalls, vTotalPrice
     FROM `calls` c
@@ -386,6 +330,18 @@ DO
 END $$
 
 
+
+/* INDICES */
+
+
+
+
+
+
+
+
+
+
 /* USUARIOS */
 
  // BackOffice
@@ -408,9 +364,7 @@ END $$
 
  // Invoice
  CREATE USER 'invoice'@'localhost' identified BY '1234';
- GRANT EVENT ON TPFinal.* TO 'invoice'@'localhost';
- GRANT EXECUTE ON PROCEDURE sp_get_calls_cost_and_price TO 'invoice'@'localhost';
- GRANT EXECUTE ON PROCEDURE sp_assign_id_invoice_to_calls TO 'invoice'@'localhost';
+ GRANT EVENT ON phones.* TO 'invoice'@'localhost';
 
 
 /* VISTAS */
