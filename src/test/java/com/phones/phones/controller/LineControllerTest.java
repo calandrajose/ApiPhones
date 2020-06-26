@@ -1,9 +1,11 @@
 package com.phones.phones.controller;
 
+import com.phones.phones.utils.RestUtils;
 import com.phones.phones.TestFixture;
 import com.phones.phones.dto.LineDto;
 import com.phones.phones.exception.line.LineAlreadyDisabledException;
 import com.phones.phones.exception.line.LineDoesNotExistException;
+import com.phones.phones.exception.line.LineNumberAlreadyExistException;
 import com.phones.phones.exception.user.UserSessionDoesNotExistException;
 import com.phones.phones.model.Call;
 import com.phones.phones.model.Line;
@@ -13,10 +15,15 @@ import com.phones.phones.service.LineService;
 import com.phones.phones.session.SessionManager;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+@PrepareForTest(RestUtils.class)
+@RunWith(PowerMockRunner.class)
 public class LineControllerTest {
     LineController lineController;
 
@@ -38,9 +47,26 @@ public class LineControllerTest {
     @Before
     public void setUp() {
         initMocks(this);
+        PowerMockito.mockStatic(RestUtils.class);
         lineController = new LineController(lineService, callService, sessionManager);
     }
 
+
+
+    @Test
+    public void createLineOk() throws UserSessionDoesNotExistException, LineNumberAlreadyExistException {
+        User loggedUser = TestFixture.testUser();
+        Line newLine = TestFixture.testLine("2235472861");
+
+        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
+        when(lineService.create(newLine)).thenReturn(newLine);
+        when(RestUtils.getLocation(newLine.getId())).thenReturn(URI.create("miUri.com"));
+
+        ResponseEntity response = lineController.createLine("123", newLine);
+
+        assertEquals(URI.create("miUri.com"), response.getHeaders().getLocation());
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    }
 
     /**
      *

@@ -6,13 +6,12 @@ import com.phones.phones.exception.line.LineNumberDoesNotExistException;
 import com.phones.phones.exception.user.UserInvalidLoginException;
 import com.phones.phones.model.Call;
 import com.phones.phones.service.CallService;
+import com.phones.phones.utils.RestUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
 
 @RestController
 @RequestMapping("/infrastructure")
@@ -30,12 +29,12 @@ public class InfrastructureController {
                                      @RequestBody @Valid final InfrastructureCallDto infrastructureCallDto) throws LineNumberDoesNotExistException, LineCannotMakeCallsException, UserInvalidLoginException {
         if (token.equals(sessionToken)) {
             Call newCall = callService.create(infrastructureCallDto);
-            return ResponseEntity.created(getLocation(newCall)).build();
+            return ResponseEntity.created(RestUtils.getLocation(newCall.getId())).build();
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    // arreglar esto, uri incorrecta
+    /*// arreglar esto, uri incorrecta
     private URI getLocation(Call call) {
         String template = "/api/calls";
         return ServletUriComponentsBuilder
@@ -43,6 +42,6 @@ public class InfrastructureController {
                 .path("/{id}")
                 .buildAndExpand(call.getId())
                 .toUri();
-    }
+    }*/
 
 }
