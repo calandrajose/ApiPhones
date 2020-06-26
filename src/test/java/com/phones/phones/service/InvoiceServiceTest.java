@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -94,5 +95,31 @@ public class InvoiceServiceTest {
     public void testFindByUserIdUserNotExist() throws UserDoesNotExistException {
         when(userRepository.findById(2L)).thenReturn(Optional.empty());
         List<Invoice> returnedInvoice = this.invoiceService.findByUserId(2L);
+    }
+
+
+    @Test
+    public void testFindByUserIdBetweenDatesOk() throws UserDoesNotExistException {
+        User userGetById = TestFixture.testUser();
+        List<Invoice> invoices = TestFixture.testListOfInvoices();
+        Date from = new Date(2020,06,10);
+        Date to = new Date(2020,06,14);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(userGetById));
+        when(invoiceRepository.findByUserIdBetweenDates(1L, from, to)).thenReturn(invoices);
+
+        List<Invoice> returnedCalls = this.invoiceService.findByUserIdBetweenDates(1L, from, to);
+        assertEquals(invoices.size(), returnedCalls.size());
+        assertEquals(invoices.get(0).getId(), returnedCalls.get(0).getId());
+    }
+
+    @Test(expected = UserDoesNotExistException.class)
+    public void testFindByUserIdBetweenDatesUserDoesNotExist() throws UserDoesNotExistException {
+
+        Date from = new Date(2020,06,10);
+        Date to = new Date(2020,06,14);
+
+        this.invoiceService.findByUserIdBetweenDates(1L, from, to);
+
     }
 }

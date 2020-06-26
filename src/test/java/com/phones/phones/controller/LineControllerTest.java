@@ -66,16 +66,6 @@ public class LineControllerTest {
 
 
     @Test
-    public void findAllLinesUserIsNotEmployee() throws UserSessionDoesNotExistException {
-        User loggedUser = TestFixture.testClientUser();
-        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
-
-        ResponseEntity<List<Line>> returnedLines = lineController.findAllLines("123");
-        assertEquals(response.getStatusCode(), returnedLines.getStatusCode());
-    }
-
-    @Test
     public void findAllLinesNoLinesFound() throws UserSessionDoesNotExistException {
         User loggedUser = TestFixture.testUser();
         List<Line> emptyList = new ArrayList<>();
@@ -112,15 +102,6 @@ public class LineControllerTest {
         assertEquals(1L, returnedLine.getBody().getId());
     }
 
-    @Test
-    public void findLineByIdUserIsNotEmployee() throws UserSessionDoesNotExistException, LineDoesNotExistException {
-        User loggedUser = TestFixture.testClientUser();
-        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
-
-        ResponseEntity<Line> returnedLine = lineController.findLineById("123", 1L);
-        assertEquals(response.getStatusCode(), returnedLine.getStatusCode());
-    }
 
     /**
      *
@@ -141,17 +122,6 @@ public class LineControllerTest {
         assertEquals(listOfCalls.size(), returnedCalls.getBody().size());
         assertEquals(listOfCalls.get(0).getDuration(), returnedCalls.getBody().get(0).getDuration());
         assertEquals(listOfCalls.get(1).getId(), returnedCalls.getBody().get(1).getId());
-    }
-
-
-    @Test
-    public void findCallsByLineIdUserIsNotEmployee() throws UserSessionDoesNotExistException, LineDoesNotExistException {
-        User loggedUser = TestFixture.testClientUser();
-        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
-
-        ResponseEntity<List<Call>> returnedCalls = lineController.findCallsByLineId("123", 1L);
-        assertEquals(response.getStatusCode(), returnedCalls.getStatusCode());
     }
 
     @Test
@@ -187,17 +157,6 @@ public class LineControllerTest {
     }
 
 
-    @Test
-    public void deleteLineByIdUserIsNotEmployee() throws UserSessionDoesNotExistException, LineAlreadyDisabledException, LineDoesNotExistException {
-        User loggedUser = TestFixture.testClientUser();
-        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
-
-        ResponseEntity deleted = lineController.deleteLineById("123", 1L);
-        assertEquals(response.getStatusCode(), deleted.getStatusCode());
-    }
-
-
     /**
      *
      * updateLineByIdLine
@@ -218,16 +177,6 @@ public class LineControllerTest {
         assertEquals(ResponseEntity.ok().build(), updated);
     }
 
-    @Test
-    public void updateLineByIdLineUserIsNotEmployee() throws UserSessionDoesNotExistException, LineDoesNotExistException {
-        User loggedUser = TestFixture.testClientUser();
-        LineDto lineUpdate = TestFixture.testLineDto();
-        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
-
-        ResponseEntity updated = lineController.updateLineByIdLine("123", lineUpdate,1L);
-        assertEquals(response.getStatusCode(), updated.getStatusCode());
-    }
 
 
     /**todo getLocation*/

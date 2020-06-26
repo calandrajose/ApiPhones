@@ -53,16 +53,6 @@ public class RateControllerTest {
 
 
     @Test
-    public void findAllRatesUserIsNotEmployee() throws UserSessionDoesNotExistException {
-        User loggedUser = TestFixture.testClientUser();
-        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
-
-        ResponseEntity<List<RateDto>> returnedRates = rateController.findAllRates("123");
-        assertEquals(response.getStatusCode(), returnedRates.getStatusCode());
-    }
-
-    @Test
     public void findAllRatesNoRatesFound() throws UserSessionDoesNotExistException {
         User loggedUser = TestFixture.testUser();
         List<RateDto> emptyList = new ArrayList<>();

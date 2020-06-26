@@ -188,18 +188,6 @@ public class UserControllerTests {
     }
 
     @Test
-    public void findCallsByUserIdUserIsNotEmployee() throws UserSessionDoesNotExistException, UserDoesNotExistException, UserAlreadyDisableException, UsernameAlreadyExistException {
-        User loggedUser = TestFixture.testClientUser();
-
-        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
-
-        ResponseEntity<List<Call>> returnedCalls = userController.findCallsByUserId("123", 1L);
-        assertEquals(response.getStatusCode(), returnedCalls.getStatusCode());
-    }
-
-
-    @Test
     public void findAllCallsByUserIdNoCallsDone() throws UserSessionDoesNotExistException, UserDoesNotExistException {
         User loggedUser = TestFixture.testUser();
         List<Call> emptyCalls = new ArrayList<>();
@@ -212,8 +200,6 @@ public class UserControllerTests {
 
         assertEquals(response.getStatusCode(), returnedCalls.getStatusCode());
     }
-
-
 
 
     /**

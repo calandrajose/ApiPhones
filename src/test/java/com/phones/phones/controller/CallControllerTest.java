@@ -54,16 +54,6 @@ public class CallControllerTest {
 
 
     @Test
-    public void findAllCallsUserIsNotEmployee() throws UserSessionDoesNotExistException {
-        User loggedUser = TestFixture.testClientUser();
-        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
-
-        ResponseEntity<List<Call>> returnedCalls = callController.findAllCalls("123");
-        assertEquals(response.getStatusCode(), returnedCalls.getStatusCode());
-    }
-
-    @Test
     public void findAllCallsNoCallsDone() throws UserSessionDoesNotExistException {
         User loggedUser = TestFixture.testUser();
         List<Call> emptyCalls = new ArrayList<>();
@@ -90,16 +80,6 @@ public class CallControllerTest {
         assertEquals(call.getDuration(), returnedCall.getBody().getDuration());
         assertEquals(call.getOriginLine(), returnedCall.getBody().getOriginLine());
         assertEquals(1L, returnedCall.getBody().getId());
-    }
-
-    @Test
-    public void findCallByIdUserIsNotEmployee() throws UserSessionDoesNotExistException, CallDoesNotExistException {
-        User loggedUser = TestFixture.testClientUser();
-        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
-
-        ResponseEntity<Call> returnedCall = callController.findCallById("123", 1L);
-        assertEquals(response.getStatusCode(), returnedCall.getStatusCode());
     }
 
 }

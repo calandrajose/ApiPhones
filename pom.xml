@@ -32,12 +32,6 @@
 			<artifactId>spring-security-crypto</artifactId>
 			<version>5.3.2.RELEASE</version>
 		</dependency>
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
@@ -87,6 +81,16 @@
 			<artifactId>springfox-swagger-ui</artifactId>
 			<version>2.9.2</version>
 		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<version>2.0.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito2</artifactId>
+			<version>2.0.7</version>
+		</dependency>
 
 		<!--        <dependency>
                     <groupId>org.testng</groupId>
@@ -119,6 +123,21 @@
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.5</version>
+
+				<configuration>
+					<excludes>
+						<exclude>**/model/**</exclude>
+						<exclude>**/dto/**</exclude>
+						<exclude>**/projection/**</exclude>
+						<exclude>**/session/**</exclude>
+						<exclude>**/config/**</exclude>
+						<exclude>**/repository/**</exclude>
+						<exclude>**/exception/**</exclude>
+						<exclude>**/controller/ControllerAdvice.class</exclude>
+						<exclude>**/controller/web/LoginController.class</exclude>
+						<exclude>**/PhonesApplication.class</exclude>
+					</excludes>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>

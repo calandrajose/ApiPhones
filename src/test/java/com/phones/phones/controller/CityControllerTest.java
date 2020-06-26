@@ -53,16 +53,6 @@ public class CityControllerTest {
 
 
     @Test
-    public void findAllCitiesUserIsNotEmployee() throws UserSessionDoesNotExistException {
-        User loggedUser = TestFixture.testClientUser();
-        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
-
-        ResponseEntity<List<City>> returnedCities = cityController.findAllCities("123");
-        assertEquals(response.getStatusCode(), returnedCities.getStatusCode());
-    }
-
-    @Test
     public void findAllCitiesNoCitiesFound() throws UserSessionDoesNotExistException {
         User loggedUser = TestFixture.testUser();
         List<City> emptyList = new ArrayList<>();
@@ -91,15 +81,6 @@ public class CityControllerTest {
         assertEquals(1L, returnedCity.getBody().getId());
     }
 
-    @Test
-    public void findCityByIdUserIsNotEmployee() throws UserSessionDoesNotExistException, CityDoesNotExistException {
-        User loggedUser = TestFixture.testClientUser();
-        ResponseEntity response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        when(sessionManager.getCurrentUser("123")).thenReturn(loggedUser);
-
-        ResponseEntity<City> returnedCity = cityController.findCityById("123", 1L);
-        assertEquals(response.getStatusCode(), returnedCity.getStatusCode());
-    }
 
     /**todo getLocation*/
 }
