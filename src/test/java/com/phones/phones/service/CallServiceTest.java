@@ -1,8 +1,11 @@
 package com.phones.phones.service;
 
 import com.phones.phones.TestFixture;
+import com.phones.phones.dto.InfrastructureCallDto;
 import com.phones.phones.exception.call.CallDoesNotExistException;
+import com.phones.phones.exception.line.LineCannotMakeCallsException;
 import com.phones.phones.exception.line.LineDoesNotExistException;
+import com.phones.phones.exception.line.LineNumberDoesNotExistException;
 import com.phones.phones.exception.user.UserDoesNotExistException;
 import com.phones.phones.model.Call;
 import com.phones.phones.model.Line;
@@ -46,7 +49,80 @@ public class CallServiceTest {
         this.callService = new CallService(callRepository, lineRepository, userRepository);
     }
 
-    /*todo Test Create method, need to mock builder
+    /**todo Test Create method, need to mock builder*/
+
+    @Test
+    public void createCallParamOk(){
+        Call testCall = TestFixture.testCall();
+        when(callRepository.save(testCall)).thenReturn(testCall);
+
+        callService.create(testCall);
+
+    }
+
+    @Test(expected = LineNumberDoesNotExistException.class)
+    public void testCreateDTODestinationNumberDoesNotExistException() throws LineNumberDoesNotExistException, LineCannotMakeCallsException {
+        InfrastructureCallDto infrastructureCallDto= TestFixture.testInfrastructureCallDto();
+        Line testOriginLine = TestFixture.testLine(infrastructureCallDto.getOriginNumber());
+
+        when(lineRepository.findByNumber(infrastructureCallDto.getDestinationNumber())).thenReturn(Optional.empty());
+        when(lineRepository.findByNumber(infrastructureCallDto.getOriginNumber())).thenReturn(Optional.ofNullable(testOriginLine));
+        this.callService.create(infrastructureCallDto);
+    }
+
+    @Test(expected = LineNumberDoesNotExistException.class)
+    public void testCreateDTOOriginNumberDoesNotExistException() throws LineNumberDoesNotExistException, LineCannotMakeCallsException {
+        InfrastructureCallDto infrastructureCallDto= TestFixture.testInfrastructureCallDto();
+        Line testDestinationLine = TestFixture.testLine(infrastructureCallDto.getDestinationNumber());
+
+        when(lineRepository.findByNumber(infrastructureCallDto.getDestinationNumber())).thenReturn(Optional.ofNullable(testDestinationLine));
+        when(lineRepository.findByNumber(infrastructureCallDto.getOriginNumber())).thenReturn(Optional.empty());
+        this.callService.create(infrastructureCallDto);
+    }
+
+    @Test(expected = LineCannotMakeCallsException.class)
+    public void testCreateDTOOriginDisabled() throws LineNumberDoesNotExistException, LineCannotMakeCallsException {
+        InfrastructureCallDto infrastructureCallDto= TestFixture.testInfrastructureCallDto();
+        Line testDestinationLine = TestFixture.testDisabledLine(infrastructureCallDto.getDestinationNumber());
+        Line testOriginLine = TestFixture.testLine(infrastructureCallDto.getOriginNumber());
+
+        when(lineRepository.findByNumber(infrastructureCallDto.getDestinationNumber())).thenReturn(Optional.ofNullable(testDestinationLine));
+        when(lineRepository.findByNumber(infrastructureCallDto.getOriginNumber())).thenReturn(Optional.ofNullable(testOriginLine));
+        this.callService.create(infrastructureCallDto);
+    }
+
+    @Test(expected = LineCannotMakeCallsException.class)
+    public void testCreateDTODestinationDisabled() throws LineNumberDoesNotExistException, LineCannotMakeCallsException {
+        InfrastructureCallDto infrastructureCallDto= TestFixture.testInfrastructureCallDto();
+        Line testDestinationLine = TestFixture.testLine(infrastructureCallDto.getDestinationNumber());
+        Line testOriginLine = TestFixture.testDisabledLine(infrastructureCallDto.getOriginNumber());
+
+        when(lineRepository.findByNumber(infrastructureCallDto.getDestinationNumber())).thenReturn(Optional.ofNullable(testDestinationLine));
+        when(lineRepository.findByNumber(infrastructureCallDto.getOriginNumber())).thenReturn(Optional.ofNullable(testOriginLine));
+        this.callService.create(infrastructureCallDto);
+    }
+
+    @Test(expected = LineCannotMakeCallsException.class)
+    public void testCreateDTOOriginSuspended() throws LineNumberDoesNotExistException, LineCannotMakeCallsException {
+        InfrastructureCallDto infrastructureCallDto= TestFixture.testInfrastructureCallDto();
+        Line testDestinationLine = TestFixture.testSuspendedLine(infrastructureCallDto.getDestinationNumber());
+        Line testOriginLine = TestFixture.testLine(infrastructureCallDto.getOriginNumber());
+
+        when(lineRepository.findByNumber(infrastructureCallDto.getDestinationNumber())).thenReturn(Optional.ofNullable(testDestinationLine));
+        when(lineRepository.findByNumber(infrastructureCallDto.getOriginNumber())).thenReturn(Optional.ofNullable(testOriginLine));
+        this.callService.create(infrastructureCallDto);
+    }
+
+    @Test(expected = LineCannotMakeCallsException.class)
+    public void testCreateDTODestinationSuspended() throws LineNumberDoesNotExistException, LineCannotMakeCallsException {
+        InfrastructureCallDto infrastructureCallDto= TestFixture.testInfrastructureCallDto();
+        Line testDestinationLine = TestFixture.testLine(infrastructureCallDto.getDestinationNumber());
+        Line testOriginLine = TestFixture.testSuspendedLine(infrastructureCallDto.getOriginNumber());
+
+        when(lineRepository.findByNumber(infrastructureCallDto.getDestinationNumber())).thenReturn(Optional.ofNullable(testDestinationLine));
+        when(lineRepository.findByNumber(infrastructureCallDto.getOriginNumber())).thenReturn(Optional.ofNullable(testOriginLine));
+        this.callService.create(infrastructureCallDto);
+    }
 /*    @Test
     public void testCreateOk() throws LineNumberNotExistException, LineCannotMakeCallsException {
         InfrastructureCallDto infrastructureCallDto= TestFixture.testInfrastructureCallDto();
@@ -145,8 +221,8 @@ public class CallServiceTest {
 
     @Test(expected = UserDoesNotExistException.class)
     public void testFindByLineIdLineNotExist() throws UserDoesNotExistException {
-        when(userRepository.findById(2L)).thenReturn(Optional.empty());
-        List<Call> returnedCalls = this.callService.findByUserId(2L);
+        when(lineRepository.findById(2L)).thenReturn(Optional.empty());
+        this.callService.findByUserId(2L);
     }
 
     @Test

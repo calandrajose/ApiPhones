@@ -32,12 +32,6 @@
 			<artifactId>spring-security-crypto</artifactId>
 			<version>5.3.2.RELEASE</version>
 		</dependency>
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
@@ -119,6 +113,20 @@
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.5</version>
+
+				<configuration>
+					<excludes>
+						<exclude>**/model/**</exclude>
+						<exclude>**/dto/**</exclude>
+						<exclude>**/projection/**</exclude>
+						<exclude>**/session/**</exclude>
+						<exclude>**/config/**</exclude>
+						<exclude>**/repository/**</exclude>
+						<exclude>**/exception/**</exclude>
+						<exclude>**/controller/ControllerAdvice.class</exclude>
+						<exclude>**/PhonesApplication.class</exclude>
+					</excludes>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>

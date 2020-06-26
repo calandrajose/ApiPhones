@@ -85,7 +85,7 @@ public class UserService {
         return userRepository.save(user.get());
     }
 
-    private boolean existsUsername(String username) {
+    public boolean existsUsername(String username) {
         return userRepository.findByUsernameBoolean(username) > 0;
     }
 

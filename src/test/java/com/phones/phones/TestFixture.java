@@ -8,8 +8,7 @@ import com.phones.phones.model.*;
 
 import java.util.*;
 
-import static com.phones.phones.model.LineStatus.DISABLED;
-import static com.phones.phones.model.LineStatus.ENABLED;
+import static com.phones.phones.model.LineStatus.*;
 
 public class TestFixture {
 
@@ -345,6 +344,21 @@ public class TestFixture {
                 .number(number)
                 .creationDate(new Date(2020, 01, 10))
                 .status(DISABLED)
+                .lineType(new LineType(1L, "Mobile", new ArrayList<>()))
+                .user(testUser())
+                .invoices(new ArrayList<>())
+                .originCalls(new ArrayList<>())
+                .destinationCalls(new ArrayList<>())
+                .build();
+        return newLine;
+    }
+
+    public static Line testSuspendedLine(String number) {
+        Line newLine = Line.builder()
+                .id(1L)
+                .number(number)
+                .creationDate(new Date(2020, 01, 10))
+                .status(SUSPENDED)
                 .lineType(new LineType(1L, "Mobile", new ArrayList<>()))
                 .user(testUser())
                 .invoices(new ArrayList<>())
