@@ -34,11 +34,6 @@ public class LoginController {
     }
 
 
-    @GetMapping("/wtf")
-    public void test() {
-        integrationComponent.getUsersFromRandomApi();
-    }
-
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody final UserLoginDto userLoginDto) throws UserInvalidLoginException, ValidationException, UserDoesNotExistException {
         ResponseEntity response;
