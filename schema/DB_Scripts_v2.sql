@@ -419,7 +419,7 @@ END $$
         `lines` l ON c.id_origin_line = l.id
     INNER JOIN
         `users` u ON l.id_user = u.id
-    WHERE u.id = 1
+    WHERE u.id = 1;
 
 
 /* NOSQL */

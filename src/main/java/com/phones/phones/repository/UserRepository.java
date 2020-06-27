@@ -31,6 +31,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
     )
     int findByUsernameBoolean(String username);
 
+    @Query(
+            value = "SELECT count(u.id) " +
+                    "FROM users u " +
+                    "WHERE u.username = ?1 AND u.id != ?2",
+            nativeQuery = true
+    )
+    int findByUsernameToUpdateBoolean(String username, Long id);
+
     Optional<User> findByDni(String dni);
 
     Optional<User> findByUsername(String username);

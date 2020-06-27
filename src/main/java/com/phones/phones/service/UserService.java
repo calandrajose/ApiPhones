@@ -67,8 +67,7 @@ public class UserService {
         if (user.isEmpty()) {
             throw new UserDoesNotExistException();
         }
-        // Checkear, si el usuario pone su propio username, salta la excepcion...
-        if (existsUsername(updatedUser.getUsername())) {
+        if (existsUsernameToUpdate(updatedUser.getUsername(), user.get().getId())) {
             throw new UsernameAlreadyExistException();
         }
         user.get().setName(updatedUser.getName());
@@ -87,6 +86,10 @@ public class UserService {
 
     public boolean existsUsername(String username) {
         return userRepository.findByUsernameBoolean(username) > 0;
+    }
+
+    public boolean existsUsernameToUpdate(String username, Long id) {
+        return userRepository.findByUsernameToUpdateBoolean(username, id) > 0;
     }
 
     public Optional<User> login(String username,

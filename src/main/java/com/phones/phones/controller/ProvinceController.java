@@ -33,13 +33,6 @@ public class ProvinceController {
     }
 
 
-/*    public ResponseEntity createProvince(@RequestHeader("Authorization") final String sessionToken,
-                                         @RequestBody @Valid final Province province) throws ProviceAlreadyExistException, UserSessionDoesNotExistException {
-        User currentUser = sessionManager.getCurrentUser(sessionToken);
-        Province newProvince = provinceService.create(province);
-        return ResponseEntity.created(getLocation(newProvince)).build();
-    }*/
-
     public ResponseEntity createProvince(@RequestHeader("Authorization") final String sessionToken,
                                          @RequestBody @Valid final Province province) throws ProviceAlreadyExistException, UserSessionDoesNotExistException {
         User currentUser = sessionManager.getCurrentUser(sessionToken);
