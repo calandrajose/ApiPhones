@@ -331,40 +331,57 @@ END $$
 
 
 
-/* INDICES */
+/* INDEXES */
+
+    // Users
+        - Filtro por username - Hash
+            - Es necesario? Por que todos van a ser distintos...
+    CREATE INDEX idx_users_username ON users(username) USING HASH;
+
+
+    // Lines
+
+
+    // Calls
+        - Filtro por id_user y entre fechas de creacion
+        - Crear un indice compuesto(id/fechas) ??? , o solo con las fechas basta?
+    CREATE INDEX idx_calls_creation_date ON calls(creation_date) USING BTREE;
+
+
+    // Invoices
+        - Filtro por id_user y entre fechas de creacion
+        - Crear un indice compuesto(id/fechas) ??? , o solo con las fechas basta?
+    CREATE INDEX idx_invoices_creation_date ON invoices(creation_date) USING BTREE;
 
 
 
-
-
-
-
-
-
-
-/* USUARIOS */
+/* USERS */
 
  // BackOffice
  CREATE USER 'backoffice'@'localhost' identified BY '123';
- GRANT ALL ON phones.users TO 'backoffice'@'localhost';
- GRANT ALL ON phones.lines TO 'backoffice'@'localhost';
- GRANT ALL ON phones.rates TO 'backoffice'@'localhost';
- GRANT ALL ON phones.invoices TO 'backoffice'@'localhost';
+ GRANT INSERT, SELECT, UPDATE ON phones.users TO 'backoffice'@'localhost';
+ GRANT INSERT, SELECT, UPDATE ON phones.lines TO 'backoffice'@'localhost';
+ GRANT SELECT ON phones.rates TO 'backoffice'@'localhost';
+ GRANT SELECT ON phones.cities TO 'backoffice'@'localhost';
+ GRANT SELECT ON phones.calls TO 'backoffice'@'localhost';
+ GRANT SELECT ON phones.invoices TO 'backoffice'@'localhost';
 
  // Clients
- CREATE USER 'clients'@'localhost' identified BY '123';
- GRANT SELECT ON phones.calls TO 'clients'@'localhost';
- GRANT SELECT ON phones.invoices TO 'clients'@'localhost';
- GRANT SELECT ON phones.cities TO clients'@'localhost';
+ CREATE USER 'client'@'localhost' identified BY '123';
+ GRANT SELECT ON phones.users TO 'client'@'localhost';
+ GRANT SELECT ON phones.calls TO 'client'@'localhost';
+ GRANT SELECT ON phones.invoices TO 'client'@'localhost';
+ GRANT SELECT ON phones.cities TO 'client'@'localhost';
 
  // Infrastructure
  CREATE USER 'infrastructure'@'localhost' identified BY '123';
  GRANT INSERT ON phones.calls TO 'infrastructure'@'localhost';
- grant trigger on phones.* TO 'infrastructure'@'localhost';     // Q HACE
+ GRANT TRIGGER ON phones.calls TO 'infrastructure'@'localhost';
 
  // Invoice
- CREATE USER 'invoice'@'localhost' identified BY '1234';
+ CREATE USER 'invoice'@'localhost' identified BY '123';
  GRANT EVENT ON phones.* TO 'invoice'@'localhost';
+
 
 
 /* VISTAS */

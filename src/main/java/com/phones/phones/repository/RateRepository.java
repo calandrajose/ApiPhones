@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RateRepository extends JpaRepository<Rate, Long> {
+
     @Query(value = "select" +
             " rates.price" +
             " from rates " +

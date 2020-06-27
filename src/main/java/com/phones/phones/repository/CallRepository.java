@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public interface    CallRepository extends JpaRepository<Call, Long> {
+public interface CallRepository extends JpaRepository<Call, Long> {
 
     @Query(
             value = "SELECT c.* from `calls` c " +
