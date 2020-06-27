@@ -395,6 +395,23 @@ END $$
           -- vi) Duración
           -- vii) Fecha y hora de llamada
 
+ CREATE VIEW
+    call_report
+ AS
+    SELECT
+        c.origin_number AS origin_number,
+        (
+        SELECT c.name FROM cities c WHERE origin_number LIKE CONCAT(c.prefix, '%') ORDER BY length(c.prefix) DESC LIMIT 1
+        ) AS origin_city,
+        c.destination_number AS destination_number,
+        (
+        SELECT c.name FROM cities c WHERE destination_number LIKE CONCAT(c.prefix, '%') ORDER BY length(c.prefix) DESC LIMIT 1
+        ) AS destination_city,
+        c.total_price AS total_price,
+        c.duration AS duration,
+        c.creation_date AS creation_date
+    FROM
+        `calls` c
 
 
 /* NOSQL */
