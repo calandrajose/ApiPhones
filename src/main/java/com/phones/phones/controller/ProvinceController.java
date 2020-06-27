@@ -53,12 +53,4 @@ public class ProvinceController {
         return ResponseEntity.ok(province);
     }
 
-/*    private URI getLocation(Province province) {
-        return ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(province.getId())
-                .toUri();
-    }*/
-
 }
