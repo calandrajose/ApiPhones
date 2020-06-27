@@ -106,6 +106,7 @@ CREATE TABLE `calls` (
 	`id` INT AUTO_INCREMENT NOT NULL,
     `duration` INT,
     `total_price` FLOAT,
+    `total_cost` FLOAT,
     `creation_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `id_origin_line` INT,
     `id_destination_line` INT,
@@ -200,7 +201,6 @@ CREATE TABLE `calls` (
 
 
 /* FUNCTIONS */
-
 DELIMITER $$
 CREATE FUNCTION `find_city_by_call_number`(number VARCHAR(255)) RETURNS INT DETERMINISTIC
 BEGIN
@@ -222,6 +222,7 @@ CREATE TRIGGER `tbi_calls_new` BEFORE INSERT ON `calls`
         DECLARE idDestinationCity INT DEFAULT -1;
         DECLARE idRate INT DEFAULT -1;
         DECLARE priceRate INT DEFAULT -1;
+        DECLARE costRate INT DEFAULT -1;
 
         SELECT l.id INTO idOriginLine FROM `lines` l WHERE l.number = NEW.origin_number;
         SELECT l.id INTO idDestinationLine FROM `lines` l WHERE l.number = NEW.destination_number;
@@ -234,10 +235,11 @@ CREATE TRIGGER `tbi_calls_new` BEFORE INSERT ON `calls`
             SET NEW.id_origin_line = idOriginLine;
             SET NEW.id_destination_line = idDestinationLine;
 
-			SELECT r.id, r.price_minute INTO idRate, priceRate FROM `rates` r WHERE r.id_city_origin = idOriginCity AND r.id_city_destination = idDestinationCity;
+			SELECT r.id, r.price_minute, r.cost INTO idRate, priceRate, costRate FROM `rates` r WHERE r.id_city_origin = idOriginCity AND r.id_city_destination = idDestinationCity;
 
             IF (idRate > 0) THEN
                 SET NEW.total_price = ((NEW.duration / 60) * priceRate);
+                SET NEW.total_cost = ((NEW.duration / 60) * costRate);
                 SET NEW.id_rate = idRate;
 			ELSE
 				SIGNAL SQLSTATE '45000'
@@ -283,6 +285,7 @@ END
 $$
 
 DROP PROCEDURE `sp_li_lines`;
+
 DELIMITER $$
 CREATE PROCEDURE `sp_li_lines`(IN vIdLine INT)
 BEGIN
@@ -292,14 +295,11 @@ BEGIN
     DECLARE vNumberCalls INTEGER DEFAULT 0;
     DECLARE vIdInvoice INTEGER;
 
-    -- FALTA SACAR EL COSTO!!!!!!!!!!!!!!!!!
-    -- SET NEW.total_price = ((NEW.duration / 60) * priceRate);
-
     SELECT
             count(c.id_origin_line),
             ifnull(sum(c.total_price), 0),
-            ifnull( select r.cost as cost from calls c inner join rates r on r.id = c.id_rate where c.id_origin_line = 1, 0)
-        INTO vNumberCalls, vTotalPrice
+            ifnull(sum(c.total_cost), 0)
+        INTO vNumberCalls, vTotalPrice, vCostPrice
     FROM `calls` c
     INNER JOIN `lines` l ON c.id_origin_line = l.id
     WHERE c.id_invoice IS NULL AND l.id = vIdLine;
@@ -312,7 +312,6 @@ BEGIN
     UPDATE `calls`
     SET id_invoice = vIdInvoice
     WHERE id_origin_line = vIdLine AND id_invoice IS NULL;
-
 END
 $$
 
@@ -324,10 +323,8 @@ DELIMITER $$
 CREATE EVENT IF NOT EXISTS `event_invoice`
 ON SCHEDULE EVERY '1' MONTH STARTS CURDATE() + INTERVAL 1 MONTH - INTERVAL (DAYOFMONTH(CURDATE()) - 1) DAY
 DO
-    BEGIN
-        CALL sp_invoices_lines();
-    END
-END $$
+    CALL sp_invoices_lines();
+
 
 
 
