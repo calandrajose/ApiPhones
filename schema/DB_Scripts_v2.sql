@@ -339,7 +339,8 @@ END $$
     CREATE INDEX idx_users_username ON users(username) USING HASH;
 
 
-    // Lines
+    // Cities
+    CREATE INDEX idx_cities_prefix ON cities(prefix) USING BTREE;
 
 
     // Calls
@@ -395,6 +396,8 @@ END $$
           -- vi) Duración
           -- vii) Fecha y hora de llamada
 
+-- Falta filtro
+
  CREATE VIEW
     call_report
  AS
@@ -412,6 +415,11 @@ END $$
         c.creation_date AS creation_date
     FROM
         `calls` c
+    INNER JOIN
+        `lines` l ON c.id_origin_line = l.id
+    INNER JOIN
+        `users` u ON l.id_user = u.id
+    WHERE u.id = 1
 
 
 /* NOSQL */
