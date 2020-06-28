@@ -62,7 +62,6 @@ public class BackOfficeController {
         return userController.deleteUserById(sessionToken, id);
     }
 
-    // Arreeglar
     @PutMapping("/users/{id}")
     public ResponseEntity updateUserById(@RequestHeader("Authorization") final String sessionToken,
                                          @RequestBody @Valid final UserDto updatedUser,

@@ -25,6 +25,8 @@ public class Call {
 
     private Float totalPrice;
 
+    private Float totalCost;
+
     private Date creationDate;
 
     private String originNumber;

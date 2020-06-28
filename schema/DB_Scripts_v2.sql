@@ -209,6 +209,14 @@ BEGIN
     RETURN id;
 END $$
 
+DELIMITER $$
+CREATE FUNCTION `find_name_city_by_call_number`(number VARCHAR(255)) RETURNS VARCHAR(50) DETERMINISTIC
+BEGIN
+	DECLARE name VARCHAR(50);
+    SELECT c.name INTO name FROM cities c WHERE number LIKE CONCAT(c.prefix, '%') ORDER BY length(c.prefix) DESC LIMIT 1;
+    RETURN name;
+END $$
+
 
 /* TRIGGERS */
 DROP TRIGGER IF EXISTS `tbi_calls_new`;
@@ -393,20 +401,13 @@ DO
           -- vi) Duración
           -- vii) Fecha y hora de llamada
 
--- Falta filtro
-
  CREATE VIEW
     call_report
  AS
     SELECT
         c.origin_number AS origin_number,
-        (
-        SELECT c.name FROM cities c WHERE origin_number LIKE CONCAT(c.prefix, '%') ORDER BY length(c.prefix) DESC LIMIT 1
-        ) AS origin_city,
-        c.destination_number AS destination_number,
-        (
-        SELECT c.name FROM cities c WHERE destination_number LIKE CONCAT(c.prefix, '%') ORDER BY length(c.prefix) DESC LIMIT 1
-        ) AS destination_city,
+        find_name_city_by_call_number(c.origin_number) AS origin_city,
+        find_name_city_by_call_number(c.destination_number) AS destination_number,
         c.total_price AS total_price,
         c.duration AS duration,
         c.creation_date AS creation_date
@@ -417,6 +418,15 @@ DO
     INNER JOIN
         `users` u ON l.id_user = u.id
     WHERE u.id = 1;
+
+
+DELIMITER $$
+CREATE FUNCTION `find_calls_report_by_user_id`(id INTEGER) RETURNS VARCHAR(50) DETERMINISTIC
+BEGIN
+
+
+
+END $$
 
 
 /* NOSQL */
