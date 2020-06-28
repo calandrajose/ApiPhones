@@ -136,6 +136,7 @@
 						<exclude>**/exception/**</exclude>
 						<exclude>**/controller/ControllerAdvice.class</exclude>
 						<exclude>**/controller/web/LoginController.class</exclude>
+						<exclude>**/controller/web/InfrastructureController.class</exclude>
 						<exclude>**/PhonesApplication.class</exclude>
 					</excludes>
 				</configuration>
@@ -166,7 +167,7 @@
 										<limit>
 											<counter>LINE</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>0.30</minimum>
+											<minimum>0.70</minimum>
 										</limit>
 									</limits>
 								</rule>

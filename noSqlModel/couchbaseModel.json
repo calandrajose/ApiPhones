@@ -1,0 +1,100 @@
+
+BUCKET_DATA
+[
+    {
+      "key": "User::37557189",
+      "dni":"37557189",
+      "username": "jc",
+      "password": "123456",
+      "docType": "User",
+      "Calls":
+      [
+        {
+            "phone_number_from":"2235472871",
+            "city_from":{
+                "name": "Mar del Plata",
+                "prefix": "223",
+                "province":"Buenos Aires",
+              },
+            "phone_number_to":"0110303456",
+            "city_to":{
+                "name": "Ciudad Autonoma de Buenos Aires",
+                "prefix": "011",
+                "province":"Ciudad Autonoma de Buenos Aires",
+              },
+            "call_date":"2020-15-05 10:40:02 +0000",
+            "fare_per_minute":"21.85",
+            "seconds_duration":"700",
+            "total_price":"254.91666666667",
+            "invoice":{},
+        },
+        {
+            "phone_number_from":"2235472871",
+            "city_from":{
+                "name": "Mar del Plata",
+                "prefix": "223",
+                "province":"Buenos Aires",
+              },
+            "phone_number_to":"2234742498",
+            "city_to":{
+                "name": "Mar del Plata",
+                "prefix": "223",
+                "province":"Buenos Aires",
+              },
+            "call_date":"2020-28-04 11:30:02 +0000",
+            "fare_per_minute":"20",
+            "seconds_duration":"600",
+            "total_price":"200.0000000000",
+            "invoice":{},
+        }
+      ] 
+    }           
+    {
+        "key": "Date::2020-28-04",
+        "date":"2020-28-04",
+        "docType": "Date",
+        "Calls":
+        [
+          {
+            "phone_number_from":"2235472871",
+            "city_from":{
+                "name": "Mar del Plata",
+                "prefix": "223",
+                "province":"Buenos Aires",
+            },
+            "phone_number_to":"0110303456",
+            "city_to":{
+                "name": "Ciudad Autonoma de Buenos Aires",
+                "prefix": "011",
+                "province":"Ciudad Autonoma de Buenos Aires",
+            },
+            "call_date":"2020-28-04 10:40:02 +0000",
+            "fare_per_minute":"21.85",
+            "seconds_duration":"700",
+            "total_price":"254.91666666667",
+            "invoice":{},
+          },
+          {
+            "phone_number_from":"2235472871",
+            "city_from":{
+                "name": "Mar del Plata",
+                "prefix": "223",
+                "province":"Buenos Aires",
+            },
+            "phone_number_to":"2234742498",
+            "city_to":{
+                "name": "Mar del Plata",
+                "prefix": "223",
+                "province":"Buenos Aires",
+            },
+            "call_date":"2020-28-04 11:30:02 +0000",
+            "fare_per_minute":"20",
+            "seconds_duration":"600",
+            "total_price":"200.0000000000",
+            "invoice":{},
+          }
+        ] 
+    }   
+
+
+]
