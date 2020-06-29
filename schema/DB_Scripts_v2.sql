@@ -427,6 +427,3 @@ BEGIN
 
 
 END $$
-
-
-/* NOSQL */

@@ -1,0 +1,118 @@
+[
+  {
+    "key": "User::404040",
+    "docType": "User",
+    "name": "Pepe",
+    "surname": "Pepito",
+    "dni": "404040",
+    "username": "thepepe",
+    "creation_date": "2020-28-04 11:30:02 +0000",
+    "is_active": true,
+    "city": {
+      "name": "Mar del Plata",
+      "province": "Buenos Aires"
+    },
+    "calls": [
+      {
+        "origin_line": {
+          "number": "223505050",
+          "creation_date": "2020-28-04 11:30:02 +0000",
+          "status": "ENABLED",
+          "line_type": "Mobile"
+        },
+        "destination_line": {
+          "number": "223505050",
+          "creation_date": "2020-28-04 11:30:02 +0000",
+          "status": "ENABLED",
+          "line_type": "Mobile"
+        },
+        "call_date": "2020-15-05 10:40:02 +0000",
+        "rate": {
+          "price_minute": 10,
+          "price_cost": 5
+        },
+        "seconds_duration":" 700",
+        "total_cost": "50",
+        "total_price": "254.91666666667"
+      }
+    ],
+    "userRoles": [
+      {
+        "rol": "Client"
+      },
+      {
+        "rol": "Employee"
+      }
+    ]
+  },
+  {
+    "key": "Line::223505050",
+    "docType": "Line",
+    "number": "223505050",
+    "creation_date": "2020-28-04 11:30:02 +0000",
+    "status": "ENABLED",
+    "line_type": "Mobile",
+    "user": {
+      "name": "Pepe",
+      "surname": "Pepito",
+      "dni": "404040",
+      "username": "thepepe",
+      "creation_date": "2020-28-04 11:30:02 +0000",
+      "city": {
+        "name": "Mar del Plata",
+        "province": "Buenos Aires"
+      }
+    }
+  },
+  {
+    "key": "Invoice::1",
+    "docType": "Invoice",
+    "number_calls": 5,
+    "cost_price": 100,
+    "total_price": 300,
+    "creation_date": "2020-28-04 11:30:02 +0000",
+    "due_date": "2020-28-04 11:30:02 +0000",
+    "line": {
+      "number": "223505050",
+      "creation_date": "2020-28-04 11:30:02 +0000",
+      "status": "ENABLED",
+      "line_type": "Mobile",
+      "user": {
+        "name": "Pepe",
+        "surname": "Pepito",
+        "dni": "404040",
+        "username": "thepepe",
+        "creation_date": "2020-28-04 11:30:02 +0000",
+        "city": {
+          "name": "Mar del Plata",
+          "province": "Buenos Aires"
+        }
+      }
+    },
+    "calls": [
+      {
+        "origin_line": {
+          "number": "223505050",
+          "creation_date": "2020-28-04 11:30:02 +0000",
+          "status": "ENABLED",
+          "line_type": "Mobile"
+        },
+        "destination_line": {
+          "number": "223505050",
+          "creation_date": "2020-28-04 11:30:02 +0000",
+          "status": "ENABLED",
+          "line_type": "Mobile"
+        },
+        "call_date": "2020-15-05 10:40:02 +0000",
+        "rate": {
+          "price_minute": 10,
+          "price_cost": 5
+        },
+        "seconds_duration":" 700",
+        "total_cost": "50",
+        "total_price": "254.91666666667"
+      }
+    ]
+  }
+
+]
